@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Streamus" namespace="Streamus.Domain">
+  
+  <class name="User" table="[Users]" lazy="false">
+    <id name="Id" unsaved-value="00000000-0000-0000-0000-000000000000">
+      <generator class="guid.comb" />
+    </id>
+    
+    <property name="Name" not-null="true" />
+
+    <set name="Folders" inverse="true" fetch="join" cascade="all-delete-orphan" >
+      <key column="UserId" />
+      <one-to-many class="Folder" />
+    </set>
+  </class>
+  
+</hibernate-mapping>

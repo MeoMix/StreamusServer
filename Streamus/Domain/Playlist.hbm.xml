@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="Streamus" namespace="Streamus.Domain">
+  
+  <class name="Playlist" table="[Playlists]" >
+    <id name="Id" unsaved-value="00000000-0000-0000-0000-000000000000">
+      <generator class="guid.comb" />
+    </id>
+    
+    <property name="Title" not-null="true" />
+    
+    <set name="Items" inverse="true" fetch="join" cascade="all-delete-orphan" >
+      <key column="PlaylistId" />
+      <one-to-many class="PlaylistItem" />
+    </set>
+
+    <many-to-one name="Folder" column="FolderId" />
+    <many-to-one name="NextPlaylist" column="NextPlaylistId" />
+    <many-to-one name="PreviousPlaylist" column="PreviousPlaylistId" />
+    <many-to-one name="FirstItem" column="FirstItemId" />
+    
+  </class>
+  
+</hibernate-mapping>
