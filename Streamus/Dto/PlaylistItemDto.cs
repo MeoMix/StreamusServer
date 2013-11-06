@@ -18,12 +18,6 @@ namespace Streamus.Dto
         [DataMember(Name = "sequence")]
         public int Sequence { get; set; }
 
-        //[DataMember(Name = "nextItemId")]
-        //public Guid NextItemId { get; set; }
-
-        //[DataMember(Name = "previousItemId")]
-        //public Guid PreviousItemId { get; set; }
-
         //  Store Title on PlaylistItem as well as on Video because user might want to rename PlaylistItem.
         [DataMember(Name = "title")]
         public string Title { get; set; }

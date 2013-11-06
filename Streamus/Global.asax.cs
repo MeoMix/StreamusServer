@@ -48,28 +48,17 @@ namespace Streamus
             Mapper.CreateMap<Error, ErrorDto>()
                   .ReverseMap();
 
-            IPlaylistItemDao playlistItemDao = daoFactory.GetPlaylistItemDao();
             IPlaylistDao playlistDao = daoFactory.GetPlaylistDao();
             IFolderDao folderDao = daoFactory.GetFolderDao();
             IUserDao userDao = daoFactory.GetUserDao();
 
             Mapper.CreateMap<Playlist, PlaylistDto>()
                   .ReverseMap()
-                  //.ForMember(playlist => playlist.FirstItem,
-                  //           opt => opt.MapFrom(playlistDto => playlistItemDao.Get(playlistDto.FirstItemId)))
-                  .ForMember(playlist => playlist.NextPlaylist,
-                             opt => opt.MapFrom(playlistDto => playlistDao.Get(playlistDto.NextPlaylistId)))
-                  .ForMember(playlist => playlist.PreviousPlaylist,
-                             opt => opt.MapFrom(playlistDto => playlistDao.Get(playlistDto.PreviousPlaylistId)))
                   .ForMember(playlist => playlist.Folder,
                              opt => opt.MapFrom(playlistDto => folderDao.Get(playlistDto.FolderId)));
 
             Mapper.CreateMap<PlaylistItem, PlaylistItemDto>()
                   .ReverseMap()
-                  //.ForMember(playlistItem => playlistItem.NextItem,
-                  //           opt => opt.MapFrom(playlistItemDto => playlistItemDao.Get(playlistItemDto.NextItemId)))
-                  //.ForMember(playlistItem => playlistItem.PreviousItem,
-                  //           opt => opt.MapFrom(playlistItemDto => playlistItemDao.Get(playlistItemDto.PreviousItemId)))
                   .ForMember(playlistItem => playlistItem.Playlist,
                              opt => opt.MapFrom(playlistItemDto => playlistDao.Get(playlistItemDto.PlaylistId)));
 
@@ -77,8 +66,6 @@ namespace Streamus
 
             Mapper.CreateMap<Folder, FolderDto>()
                   .ReverseMap()
-                  .ForMember(folder => folder.FirstPlaylist,
-                             opt => opt.MapFrom(folderDto => playlistDao.Get(folderDto.FirstPlaylistId)))
                   .ForMember(folder => folder.User,
                              opt => opt.MapFrom(folderDto => userDao.Get(folderDto.UserId)));
 

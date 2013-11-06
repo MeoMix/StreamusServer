@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Linq;
+using FluentValidation;
 using Streamus.Domain.Validators;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,6 @@ namespace Streamus.Domain
         public virtual string Title { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public virtual ICollection<Playlist> Playlists { get; set; }
-        public virtual Playlist FirstPlaylist { get; set; }
         public virtual User User { get; set; }
 
         public Folder()
@@ -50,23 +50,13 @@ namespace Streamus.Domain
                 throw new Exception(message);
             }
 
-            if (Playlists.Count == 0)
+            if (Playlists.Any())
             {
-                FirstPlaylist = playlist;
-                playlist.NextPlaylist = playlist;
-                playlist.PreviousPlaylist = playlist;
+                playlist.Sequence = Playlists.OrderBy(i => i.Sequence).Last().Sequence + 10000;
             }
             else
             {
-                Playlist firstPlayist = FirstPlaylist;
-                Playlist lastPlaylist = firstPlayist.PreviousPlaylist;
-
-                //  Adjust our linked list and add the item.
-                lastPlaylist.NextPlaylist = playlist;
-                playlist.PreviousPlaylist = lastPlaylist;
-
-                firstPlayist.PreviousPlaylist = playlist;
-                playlist.NextPlaylist = firstPlayist;
+                playlist.Sequence = 10000;
             }
 
             playlist.Folder = this;
@@ -81,18 +71,6 @@ namespace Streamus.Domain
                 const string message = "Playlist {0} is your last playlist and cannot be deleted.";
                 throw new Exception(message);
             }
-
-            if (FirstPlaylist == playlist)
-            {
-                FirstPlaylist = playlist.NextPlaylist;
-            }
-
-            Playlist previousPlaylist = playlist.PreviousPlaylist;
-            Playlist nextPlaylist = playlist.NextPlaylist;
-
-            //  Remove the list from our linked list.
-            previousPlaylist.NextPlaylist = nextPlaylist;
-            nextPlaylist.PreviousPlaylist = previousPlaylist;
 
             Playlists.Remove(playlist);
         }

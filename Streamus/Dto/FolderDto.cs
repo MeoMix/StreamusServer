@@ -16,16 +16,12 @@ namespace Streamus.Dto
         [DataMember(Name = "playlists")]
         public List<PlaylistDto> Playlists { get; set; }
 
-        [DataMember(Name = "firstPlaylistId")]
-        public Guid FirstPlaylistId { get; set; }
-
         [DataMember(Name = "userId")]
         public Guid UserId { get; set; }
 
         public FolderDto()
         {
             Id = Guid.Empty;
-            FirstPlaylistId = Guid.Empty;
             UserId = Guid.Empty;
             Title = string.Empty;
             Playlists = new List<PlaylistDto>();

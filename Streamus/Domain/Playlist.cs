@@ -13,14 +13,16 @@ namespace Streamus.Domain
         public virtual Folder Folder { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public virtual ICollection<PlaylistItem> Items { get; set; }
-        public virtual Playlist NextPlaylist { get; set; }
-        public virtual Playlist PreviousPlaylist { get; set; }
+        public virtual int Sequence { get; set; }
+        //public virtual Playlist NextPlaylist { get; set; }
+        //public virtual Playlist PreviousPlaylist { get; set; }
 
         public Playlist()
         {
             Id = Guid.Empty;
             Title = string.Empty;
             Items = new List<PlaylistItem>();
+            Sequence = -1;
         }
 
         public Playlist(string title)

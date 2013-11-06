@@ -14,8 +14,6 @@
     </set>
 
     <many-to-one name="Folder" column="FolderId" />
-    <many-to-one name="NextPlaylist" column="NextPlaylistId" />
-    <many-to-one name="PreviousPlaylist" column="PreviousPlaylistId" />
     
   </class>
   

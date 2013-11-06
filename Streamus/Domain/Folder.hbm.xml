@@ -14,7 +14,6 @@
     </set>
 
     <many-to-one name="User" column="UserId" />
-    <many-to-one name="FirstPlaylist" column="FirstPlaylistId" />
   </class>
   
 </hibernate-mapping>

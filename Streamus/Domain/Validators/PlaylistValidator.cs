@@ -9,13 +9,13 @@ namespace Streamus.Domain.Validators
         {
             RuleFor(playlist => playlist.Title).Length(0, 255);
 
-            RuleFor(playlist => playlist.NextPlaylist)
-                .NotNull()
-                .When(playlist => playlist.Folder != null);
+            //RuleFor(playlist => playlist.NextPlaylist)
+            //    .NotNull()
+            //    .When(playlist => playlist.Folder != null);
 
-            RuleFor(playlist => playlist.PreviousPlaylist)
-                .NotNull()
-                .When(playlist => playlist.Folder != null);
+            //RuleFor(playlist => playlist.PreviousPlaylist)
+            //    .NotNull()
+            //    .When(playlist => playlist.Folder != null);
 
 
 

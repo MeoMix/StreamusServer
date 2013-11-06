@@ -10,8 +10,6 @@
     <property name="Sequence" not-null="true" />
     
     <many-to-one name="Playlist" column="PlaylistId" />
-    <!--<many-to-one name="NextItem" column="NextItemId" />
-    <many-to-one name="PreviousItem" column="PreviousItemId" />-->
 
     <many-to-one name="Video" column="VideoId" not-null="true" cascade="save-update" />
 
