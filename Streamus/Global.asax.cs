@@ -55,8 +55,8 @@ namespace Streamus
 
             Mapper.CreateMap<Playlist, PlaylistDto>()
                   .ReverseMap()
-                  .ForMember(playlist => playlist.FirstItem,
-                             opt => opt.MapFrom(playlistDto => playlistItemDao.Get(playlistDto.FirstItemId)))
+                  //.ForMember(playlist => playlist.FirstItem,
+                  //           opt => opt.MapFrom(playlistDto => playlistItemDao.Get(playlistDto.FirstItemId)))
                   .ForMember(playlist => playlist.NextPlaylist,
                              opt => opt.MapFrom(playlistDto => playlistDao.Get(playlistDto.NextPlaylistId)))
                   .ForMember(playlist => playlist.PreviousPlaylist,
@@ -66,10 +66,10 @@ namespace Streamus
 
             Mapper.CreateMap<PlaylistItem, PlaylistItemDto>()
                   .ReverseMap()
-                  .ForMember(playlistItem => playlistItem.NextItem,
-                             opt => opt.MapFrom(playlistItemDto => playlistItemDao.Get(playlistItemDto.NextItemId)))
-                  .ForMember(playlistItem => playlistItem.PreviousItem,
-                             opt => opt.MapFrom(playlistItemDto => playlistItemDao.Get(playlistItemDto.PreviousItemId)))
+                  //.ForMember(playlistItem => playlistItem.NextItem,
+                  //           opt => opt.MapFrom(playlistItemDto => playlistItemDao.Get(playlistItemDto.NextItemId)))
+                  //.ForMember(playlistItem => playlistItem.PreviousItem,
+                  //           opt => opt.MapFrom(playlistItemDto => playlistItemDao.Get(playlistItemDto.PreviousItemId)))
                   .ForMember(playlistItem => playlistItem.Playlist,
                              opt => opt.MapFrom(playlistItemDto => playlistDao.Get(playlistItemDto.PlaylistId)));
 

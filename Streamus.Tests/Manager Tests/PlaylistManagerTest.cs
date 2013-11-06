@@ -47,20 +47,20 @@ namespace Streamus.Tests.Manager_Tests
         ///     Make sure that when the first PlaylistItem is added to a Playlist that the
         ///     Playlist's FirstItem field is appropriately set in the database.
         /// </summary>
-        [Test]
-        public void AddItem_NoItemsInPlaylist_FirstItemIdSet()
-        {
-            Playlist playlist = Folder.CreateAndAddPlaylist();
-            PlaylistManager.Save(playlist);
+        //[Test]
+        //public void AddItem_NoItemsInPlaylist_FirstItemIdSet()
+        //{
+        //    Playlist playlist = Folder.CreateAndAddPlaylist();
+        //    PlaylistManager.Save(playlist);
 
-            PlaylistItem playlistItem = Helpers.CreateItemInPlaylist(playlist);
+        //    PlaylistItem playlistItem = Helpers.CreateItemInPlaylist(playlist);
 
-            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Clear();
+        //    //  Remove entity from NHibernate cache to force DB query to ensure actually created.
+        //    NHibernateSessionManager.Instance.Clear();
 
-            Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
-            Assert.AreEqual(playlistFromDatabase.FirstItem, playlistItem);
-        }
+        //    Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
+        //    Assert.AreEqual(playlistFromDatabase.FirstItem, playlistItem);
+        //}
 
         [Test]
         public void Updates()

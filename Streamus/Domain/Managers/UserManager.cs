@@ -21,7 +21,7 @@ namespace Streamus.Domain.Managers
         ///     Folder (which has a new, empty Playlist) for the created User and saves it to the DB.
         /// </summary>
         /// <returns>The created user with a generated GUID</returns>
-        public User CreateUser()
+        public User CreateUser(string googlePlusId = "")
         {
             User user;
 
@@ -29,7 +29,11 @@ namespace Streamus.Domain.Managers
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
 
-                user = new User();
+                user = new User
+                    {
+                        GooglePlusId = googlePlusId
+                    };
+
                 user.ValidateAndThrow();
                 UserDao.Save(user);
 

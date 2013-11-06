@@ -7,6 +7,7 @@ namespace Streamus.Domain.Validators
         public UserValidator()
         {
             RuleFor(user => user.Name).Length(0, 255);
+            RuleFor(user => user.GooglePlusId).NotNull();
         }
     }
 }

@@ -75,6 +75,13 @@ namespace Streamus.Domain
 
         public virtual void RemovePlaylist(Playlist playlist)
         {
+            //  Don't allow removing a folder's last playlist.
+            if (Playlists.Count == 1)
+            {
+                const string message = "Playlist {0} is your last playlist and cannot be deleted.";
+                throw new Exception(message);
+            }
+
             if (FirstPlaylist == playlist)
             {
                 FirstPlaylist = playlist.NextPlaylist;

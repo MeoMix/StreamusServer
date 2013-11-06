@@ -10,8 +10,7 @@ namespace Streamus.Domain
     public class PlaylistItem : AbstractDomainEntity<Guid>
     {
         public Playlist Playlist { get; set; }
-        public PlaylistItem NextItem { get; set; }
-        public PlaylistItem PreviousItem { get; set; }
+        public int Sequence { get; set; }
         public string Title { get; set; }
         public Video Video { get; set; }
 
@@ -22,6 +21,7 @@ namespace Streamus.Domain
         {
             Id = Guid.Empty;
             Title = string.Empty;
+            Sequence = -1;
         }
 
         public PlaylistItem(string title, Video video)

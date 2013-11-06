@@ -13,7 +13,6 @@ namespace Streamus.Domain
         public virtual Folder Folder { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public virtual ICollection<PlaylistItem> Items { get; set; }
-        public virtual PlaylistItem FirstItem { get; set; }
         public virtual Playlist NextPlaylist { get; set; }
         public virtual Playlist PreviousPlaylist { get; set; }
 
@@ -60,13 +59,6 @@ namespace Streamus.Domain
             {
                 PlaylistItem shareableItemCopy = new PlaylistItem(playlistItem);
                 AddItem(shareableItemCopy);
-
-                //  If the old playlist's firstItemId was the currently old item we're iterating over,
-                //  set the current new item as the first item.
-                if (playlistItem == playlist.FirstItem)
-                {
-                    FirstItem = shareableItemCopy;
-                }
             }
         }
 
@@ -79,25 +71,15 @@ namespace Streamus.Domain
                 throw new Exception(message);
             }
 
-            if (Items.Count == 0)
+            if (Items.Any())
             {
-                FirstItem = playlistItem;
-                playlistItem.NextItem = playlistItem;
-                playlistItem.PreviousItem = playlistItem;
+                playlistItem.Sequence = Items.OrderBy(i => i.Sequence).Last().Sequence + 10000;
             }
             else
             {
-                PlaylistItem firstItem = FirstItem;
-                PlaylistItem lastItem = firstItem.PreviousItem;
-
-                //  Adjust our linked list and add the item.
-                lastItem.NextItem = playlistItem;
-                playlistItem.PreviousItem = lastItem;
-
-                firstItem.PreviousItem = playlistItem;
-                playlistItem.NextItem = firstItem;
+                playlistItem.Sequence = 10000;
             }
-
+            
             playlistItem.Playlist = this;
             Items.Add(playlistItem);
         }
@@ -109,19 +91,6 @@ namespace Streamus.Domain
 
         public virtual void RemoveItem(PlaylistItem playlistItem)
         {
-            if (FirstItem == playlistItem)
-            {
-                //  Move the firstItemId to the next item if playlist still has other items in it.
-                FirstItem = Items.Count == 1 ? null : playlistItem.NextItem;
-            }
-
-            PlaylistItem previousItem = playlistItem.PreviousItem;
-            PlaylistItem nextItem = playlistItem.NextItem;
-
-            //  Remove the item from our linked list.
-            previousItem.NextItem = nextItem;
-            nextItem.PreviousItem = previousItem;
-
             Items.Remove(playlistItem);
         }
 

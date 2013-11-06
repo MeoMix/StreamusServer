@@ -91,16 +91,16 @@ namespace Streamus.Controllers
                 });
         }
 
-        [HttpPost]
-        public JsonResult UpdateFirstItem(Guid playlistId, Guid firstItemId)
-        {
-            PlaylistManager.UpdateFirstItem(playlistId, firstItemId);
+        //[HttpPost]
+        //public JsonResult UpdateFirstItem(Guid playlistId, Guid firstItemId)
+        //{
+        //    PlaylistManager.UpdateFirstItem(playlistId, firstItemId);
 
-            return Json(new
-                {
-                    success = true
-                });
-        }
+        //    return Json(new
+        //        {
+        //            success = true
+        //        });
+        //}
 
         /// <summary>
         ///     Retrieves a ShareCode relating to a Playlist, create a copy of the Playlist referenced by the ShareCode,

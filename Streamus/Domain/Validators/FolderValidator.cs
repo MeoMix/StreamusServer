@@ -7,6 +7,7 @@ namespace Streamus.Domain.Validators
         public FolderValidator()
         {
             RuleFor(folder => folder.Title).Length(0, 255);
+            RuleFor(folder => folder.Playlists).NotEmpty();
         }
     }
 }

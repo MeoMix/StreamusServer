@@ -143,22 +143,22 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        public void UpdateFirstItem(Guid playlistId, Guid firstItemId)
-        {
-            try
-            {
-                NHibernateSessionManager.Instance.BeginTransaction();
-                Playlist playlist = PlaylistDao.Get(playlistId);
-                playlist.FirstItem = PlaylistItemDao.Get(firstItemId);
-                PlaylistDao.Update(playlist);
-                NHibernateSessionManager.Instance.CommitTransaction();
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
-            }
-        }
+        //public void UpdateFirstItem(Guid playlistId, Guid firstItemId)
+        //{
+        //    try
+        //    {
+        //        NHibernateSessionManager.Instance.BeginTransaction();
+        //        Playlist playlist = PlaylistDao.Get(playlistId);
+        //        playlist.FirstItem = PlaylistItemDao.Get(firstItemId);
+        //        PlaylistDao.Update(playlist);
+        //        NHibernateSessionManager.Instance.CommitTransaction();
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        Logger.Error(exception);
+        //        NHibernateSessionManager.Instance.RollbackTransaction();
+        //        throw;
+        //    }
+        //}
     }
 }

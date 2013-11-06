@@ -10,12 +10,14 @@ namespace Streamus.Domain
     public class User : AbstractDomainEntity<Guid>
     {
         public string Name { get; set; }
+        public string GooglePlusId { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public ICollection<Folder> Folders { get; set; }
 
         public User()
         {
             Name = string.Empty;
+            GooglePlusId = string.Empty;
             Folders = new List<Folder>();
 
             //  A user should always have at least one Folder.

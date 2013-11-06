@@ -15,6 +15,9 @@ namespace Streamus.App_Start
             routes.MapRoute("post-User", "User", new {controller = "User", action = "create"},
                             new {httpMethod = new HttpMethodConstraint("POST")});
 
+            routes.MapRoute("getByGooglePlusId", "User/GetByGooglePlusId", new { controller = "User", action = "GetByGooglePlusId" },
+                            new { httpMethod = new HttpMethodConstraint("GET") });
+
             routes.MapRoute("get-User", "User/{id}", new {controller = "User", action = "get"},
                             new {httpMethod = new HttpMethodConstraint("GET")});
 

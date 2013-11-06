@@ -73,9 +73,12 @@ namespace Streamus.Tests.Manager_Tests
             PlaylistItem itemFromDatabase = PlaylistItemDao.Get(playlistItem.Id);
             Assert.NotNull(itemFromDatabase);
 
+            //  Should have a sequence number after saving for sure.
+            Assert.GreaterOrEqual(itemFromDatabase.Sequence, 0);
+
             //  Pointers should be self-referential with only one item in the Playlist.
-            Assert.AreEqual(itemFromDatabase.NextItem, itemFromDatabase);
-            Assert.AreEqual(itemFromDatabase.PreviousItem, itemFromDatabase);
+            //Assert.AreEqual(itemFromDatabase.NextItem, itemFromDatabase);
+            //Assert.AreEqual(itemFromDatabase.PreviousItem, itemFromDatabase);
         }
 
         /// <summary>
@@ -110,9 +113,12 @@ namespace Streamus.Tests.Manager_Tests
             PlaylistItem itemFromDatabase = PlaylistItemDao.Get(playlistItem.Id);
             Assert.NotNull(itemFromDatabase);
 
+            //  Should have a sequence number after saving for sure.
+            Assert.GreaterOrEqual(itemFromDatabase.Sequence, 0);
+
             //  Pointers should be self-referential with only one item in the Playlist.
-            Assert.AreEqual(itemFromDatabase.NextItem, itemFromDatabase);
-            Assert.AreEqual(itemFromDatabase.PreviousItem, itemFromDatabase);
+            //Assert.AreEqual(itemFromDatabase.NextItem, itemFromDatabase);
+            //Assert.AreEqual(itemFromDatabase.PreviousItem, itemFromDatabase);
         }
 
         [Test]
@@ -199,8 +205,8 @@ namespace Streamus.Tests.Manager_Tests
             PlaylistItem updatedPlaylistItem = PlaylistItemDao.Get(secondItem.Id);
 
             //  The second item's pointers should be self-referencing with only 1 item in the Playlist.
-            Assert.AreEqual(updatedPlaylistItem, updatedPlaylistItem.PreviousItem);
-            Assert.AreEqual(updatedPlaylistItem, updatedPlaylistItem.NextItem);
+            //Assert.AreEqual(updatedPlaylistItem, updatedPlaylistItem.PreviousItem);
+            //Assert.AreEqual(updatedPlaylistItem, updatedPlaylistItem.NextItem);
         }
 
         //  TODO: Test case where there are 2 PlaylistItems in the Playlist before deleting.

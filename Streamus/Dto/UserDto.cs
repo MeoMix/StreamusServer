@@ -12,6 +12,9 @@ namespace Streamus.Dto
         [DataMember(Name = "id")]
         public Guid Id { get; set; }
 
+        [DataMember(Name = "googlePlusId")]
+        public string GooglePlusId { get; set; }
+
         [DataMember(Name = "name")]
         public string Name { get; set; }
 
@@ -21,6 +24,7 @@ namespace Streamus.Dto
         public UserDto()
         {
             Name = string.Empty;
+            GooglePlusId = string.Empty;
             Folders = new List<FolderDto>();
         }
 

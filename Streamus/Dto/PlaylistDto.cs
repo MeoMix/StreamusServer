@@ -21,8 +21,8 @@ namespace Streamus.Dto
         [DataMember(Name = "items")]
         public List<PlaylistItemDto> Items { get; set; }
 
-        [DataMember(Name = "firstItemId")]
-        public Guid FirstItemId { get; set; }
+        //[DataMember(Name = "firstItemId")]
+        //public Guid FirstItemId { get; set; }
 
         [DataMember(Name = "nextPlaylistId")]
         public Guid NextPlaylistId { get; set; }
@@ -34,7 +34,7 @@ namespace Streamus.Dto
         {
             Id = Guid.Empty;
             Title = string.Empty;
-            FirstItemId = Guid.Empty;
+            //FirstItemId = Guid.Empty;
             NextPlaylistId = Guid.Empty;
             PreviousPlaylistId = Guid.Empty;
             Items = new List<PlaylistItemDto>();

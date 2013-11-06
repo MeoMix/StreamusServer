@@ -54,5 +54,15 @@ namespace Streamus.Controllers
             return new JsonDataContractActionResult(userDto);
         }
 
+        [HttpGet]
+        public ActionResult GetByGooglePlusId(string googlePlusId)
+        {
+            User user = UserDao.GetByGooglePlusId(googlePlusId);
+
+            UserDto userDto = UserDto.Create(user);
+
+            return new JsonDataContractActionResult(userDto);
+        }
+
     }
 }
