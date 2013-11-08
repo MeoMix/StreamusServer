@@ -73,13 +73,17 @@ namespace Streamus.Domain
                 throw new Exception(message);
             }
 
-            if (Items.Any())
+            //  Client might set the sequence number.
+            if (playlistItem.Sequence < 0)
             {
-                playlistItem.Sequence = Items.OrderBy(i => i.Sequence).Last().Sequence + 10000;
-            }
-            else
-            {
-                playlistItem.Sequence = 10000;
+                if (Items.Any())
+                {
+                    playlistItem.Sequence = Items.OrderBy(i => i.Sequence).Last().Sequence + 10000;
+                }
+                else
+                {
+                    playlistItem.Sequence = 10000;
+                }
             }
             
             playlistItem.Playlist = this;
