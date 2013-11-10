@@ -14,8 +14,6 @@ namespace Streamus.Domain
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public virtual ICollection<PlaylistItem> Items { get; set; }
         public virtual int Sequence { get; set; }
-        //public virtual Playlist NextPlaylist { get; set; }
-        //public virtual Playlist PreviousPlaylist { get; set; }
 
         public Playlist()
         {
