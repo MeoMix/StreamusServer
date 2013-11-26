@@ -10,6 +10,7 @@ namespace Streamus.Domain.Validators
             RuleFor(error => error.LineNumber).GreaterThan(-1);
             RuleFor(error => error.ClientVersion).Length(0, 255);
             RuleFor(error => error.Url).Length(0, 255);
+            RuleFor(error => error.TimeOccurred).NotNull();
         }
     }
 }
