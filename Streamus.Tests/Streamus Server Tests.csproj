@@ -95,6 +95,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AbstractTest.cs" />
+    <Compile Include="Controller Tests\ErrorControllerTest.cs" />
     <Compile Include="Controller Tests\PlaylistControllerTest.cs" />
     <Compile Include="Controller Tests\PlaylistItemControllerTest.cs" />
     <Compile Include="Controller Tests\UserControllerTest.cs" />

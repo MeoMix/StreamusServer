@@ -27,8 +27,11 @@ namespace Streamus.Domain
         {
             Error error = Mapper.Map<ErrorDto, Error>(errorDto);
 
-            //  When receiving an error message from the client -- ensure it is a maximum of 255 characters before saving.
-            error.Message = string.Format("{0}...", error.Message.Substring(0, 252));
+            if (error.Message.Length > 255)
+            {
+                //  When receiving an error message from the client -- ensure it is a maximum of 255 characters before saving.
+                error.Message = string.Format("{0}...", error.Message.Substring(0, 252));
+            }
 
             //  When receiving an error message from the client -- set the TimeOccurred upon receiving the DTO from the client.
             error.TimeOccurred = DateTime.Now;
