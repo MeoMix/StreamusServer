@@ -20,6 +20,9 @@ namespace Streamus.Dto
         [DataMember(Name = "author")]
         public string Author { get; set; }
 
+        [DataMember(Name = "highDefinition")]
+        public bool HighDefinition { get; set; }
+
         public VideoDto()
         {
             Id = string.Empty;

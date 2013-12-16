@@ -14,6 +14,7 @@ namespace Streamus.Domain
         public string Title { get; set; }
         public int Duration { get; set; }
         public string Author { get; set; }
+        public bool HighDefinition { get; set; }
 
         public Video()
         {
