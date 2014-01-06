@@ -26,9 +26,17 @@ namespace Streamus.Dto
         [DataMember(Name = "timeOccurred")]
         public DateTime TimeOccurred { get; set; }
 
+        [DataMember(Name = "operatingSystem")]
+        public string OperatingSystem { get; set; }
+
+        [DataMember(Name = "architecture")]
+        public string Architecture { get; set; }
+
         public ErrorDto()
         {
             Message = string.Empty;
+            Architecture = string.Empty;
+            OperatingSystem = string.Empty;
             LineNumber = -1;
             Url = string.Empty;
             ClientVersion = string.Empty;

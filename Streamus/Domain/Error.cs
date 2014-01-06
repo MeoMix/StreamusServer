@@ -13,6 +13,8 @@ namespace Streamus.Domain
         public string Url { get; set; }
         public string ClientVersion { get; set; }
         public DateTime TimeOccurred { get; set; }
+        public string OperatingSystem { get; set; }
+        public string Architecture { get; set; }
 
         public Error()
         {
@@ -21,6 +23,8 @@ namespace Streamus.Domain
             Url = string.Empty;
             ClientVersion = string.Empty;
             TimeOccurred = DateTime.Now;
+            OperatingSystem = string.Empty;
+            Architecture = string.Empty;
         }
 
         public static Error Create(ErrorDto errorDto)
