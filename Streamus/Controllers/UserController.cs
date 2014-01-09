@@ -64,5 +64,16 @@ namespace Streamus.Controllers
             return new JsonDataContractActionResult(userDto);
         }
 
+        [HttpPost]
+        public JsonResult UpdateGooglePlusId(Guid userId, string googlePlusId)
+        {
+            UserManager.UpdateGooglePlusId(userId, googlePlusId);
+
+            return Json(new
+            {
+                success = true
+            });
+        }
+
     }
 }

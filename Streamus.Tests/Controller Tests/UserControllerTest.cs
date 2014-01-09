@@ -16,6 +16,7 @@ namespace Streamus.Tests.Controller_Tests
     {
         private static readonly UserManager UserManager = new UserManager();
         private static readonly PlaylistItemController PlaylistItemController = new PlaylistItemController();
+        private static readonly UserController UserController = new UserController();
         private IUserDao UserDao { get; set; }
 
         /// <summary>
@@ -53,6 +54,22 @@ namespace Streamus.Tests.Controller_Tests
             Assert.That(userFromDatabase.Folders.First().Playlists.Count == user.Folders.First().Playlists.Count);
             Assert.That(userFromDatabase.Folders.First().Playlists.First().Items.Count() == numItemsToCreate);
             Assert.That(userFromDatabase.Folders.First().Playlists.First().Items.Count() == user.Folders.First().Playlists.First().Items.Count());
+        }
+        
+        //  TODO: GooglePlusID should be immutable.
+        [Test]
+        public void UpdateUserGooglePlusId_NoGooglePlusIdSet_GooglePlusIdSetSuccessfully()
+        {
+            const string googlePlusId = "109695597859594825120";
+
+            User user = UserManager.CreateUser();
+
+            UserController.UpdateGooglePlusId(user.Id, googlePlusId);
+
+            NHibernateSessionManager.Instance.Clear();
+
+            User userFromDatabase = UserDao.Get(user.Id);
+            Assert.That(userFromDatabase.Folders.Count == user.Folders.Count);
         }
     }
 }
