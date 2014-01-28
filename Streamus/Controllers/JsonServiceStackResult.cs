@@ -29,7 +29,7 @@ namespace Streamus.Controllers
 
             var response = context.HttpContext.Response;
 
-            response.ContentType = !String.IsNullOrEmpty(ContentType) ? ContentType : "application/json; charset=utf-8";
+            response.ContentType = !string.IsNullOrEmpty(ContentType) ? ContentType : "application/json; charset=utf-8";
 
             if (ContentEncoding != null)
                 response.ContentEncoding = ContentEncoding;

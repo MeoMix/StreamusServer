@@ -232,7 +232,6 @@
     <Compile Include="Dto\FolderDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
     <Compile Include="Dto\VideoDto.cs" />
-    <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
