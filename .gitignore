@@ -1,6 +1,8 @@
 Deploy/
 Streamus *.zip
-packages/
+packages/*
+!packages/repositories.config
+!.nuget/*
 
 #################
 ## Eclipse

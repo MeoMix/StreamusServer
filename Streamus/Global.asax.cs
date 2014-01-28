@@ -46,6 +46,7 @@ namespace Streamus
             //Remove and JsonValueProviderFactory and add JsonServiceStackValueProviderFactory
             ValueProviderFactories.Factories.Remove(ValueProviderFactories.Factories.OfType<JsonValueProviderFactory>().FirstOrDefault());
             ValueProviderFactories.Factories.Add(new JsonServiceStackValueProviderFactory());
+
         }
 
         /// <summary>
