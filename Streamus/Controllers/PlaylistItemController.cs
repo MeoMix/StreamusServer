@@ -14,7 +14,7 @@ namespace Streamus.Controllers
         private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
 
         [HttpPost]
-        public JsonDataContractActionResult Create(PlaylistItemDto playlistItemDto)
+        public JsonServiceStackResult Create(PlaylistItemDto playlistItemDto)
         {
             PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
 
@@ -24,11 +24,11 @@ namespace Streamus.Controllers
             
             PlaylistItemDto savedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
 
-            return new JsonDataContractActionResult(savedPlaylistItemDto);
+            return new JsonServiceStackResult(savedPlaylistItemDto);
         }
 
         [HttpPost]
-        public JsonDataContractActionResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
+        public JsonServiceStackResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
             List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
 
@@ -45,7 +45,7 @@ namespace Streamus.Controllers
 
             List<PlaylistItemDto> savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
 
-            return new JsonDataContractActionResult(savedPlaylistItemDtos);
+            return new JsonServiceStackResult(savedPlaylistItemDtos);
         }
 
         [HttpPut]
@@ -56,7 +56,7 @@ namespace Streamus.Controllers
 
             PlaylistItemDto updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
 
-            return new JsonDataContractActionResult(updatedPlaylistItemDto);
+            return new JsonServiceStackResult(updatedPlaylistItemDto);
         }
 
         [HttpPut]
@@ -68,7 +68,7 @@ namespace Streamus.Controllers
 
             List<PlaylistItemDto> savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
 
-            return new JsonDataContractActionResult(savedPlaylistItemDtos);
+            return new JsonServiceStackResult(savedPlaylistItemDtos);
         }
 
         [HttpDelete]

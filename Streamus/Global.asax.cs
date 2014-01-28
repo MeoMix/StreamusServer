@@ -1,4 +1,10 @@
-﻿using System.Net.Http.Formatting;
+﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net.Http.Formatting;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -6,11 +12,14 @@ using System.Web.Routing;
 using AutoMapper;
 using Autofac;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using ServiceStack.Text;
 using Streamus.App_Start;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
+using Streamus.Extensions;
 
 namespace Streamus
 {
@@ -33,6 +42,10 @@ namespace Streamus
             AutofacRegistrations.RegisterDaoFactory();
 
             CreateAutoMapperMaps();
+
+            //Remove and JsonValueProviderFactory and add JsonServiceStackValueProviderFactory
+            ValueProviderFactories.Factories.Remove(ValueProviderFactories.Factories.OfType<JsonValueProviderFactory>().FirstOrDefault());
+            ValueProviderFactories.Factories.Add(new JsonServiceStackValueProviderFactory());
         }
 
         /// <summary>
@@ -89,6 +102,24 @@ namespace Streamus
                 };
 
             return base.BindModel(controllerContext, bindingContext);
+        }
+    }
+
+    public sealed class JsonServiceStackValueProviderFactory : ValueProviderFactory
+    {
+        public override IValueProvider GetValueProvider(ControllerContext controllerContext)
+        {
+            if (controllerContext == null)
+                throw new ArgumentNullException("controllerContext");
+
+            if (!controllerContext.HttpContext.Request.ContentType.StartsWith("application/json", StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            var reader = new StreamReader(controllerContext.HttpContext.Request.InputStream).BaseStream;
+
+            return new DictionaryValueProvider<object>(
+                    ServiceStack.Text.JsonSerializer.DeserializeFromStream<Dictionary<string, object>>(reader).AsExpandoObject(),
+                    CultureInfo.CurrentCulture);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Streamus.Controllers
             ShareCode shareCode = ShareCodeManager.GetShareCode(entityType, entityId);
             ShareCodeDto shareCodeDto = ShareCodeDto.Create(shareCode);
 
-            return new JsonDataContractActionResult(shareCodeDto);
+            return new JsonServiceStackResult(shareCodeDto);
         }
     }
 }

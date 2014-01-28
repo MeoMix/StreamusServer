@@ -43,7 +43,7 @@ namespace Streamus.Tests.Controller_Tests
             Guid firstPlaylistId = folder.Playlists.First().Id;
 
             PlaylistDto playlistDto = Helpers.CreatePlaylistDto(folder.Id);
-            JsonDataContractActionResult result = (JsonDataContractActionResult)PlaylistController.Create(playlistDto);
+            JsonServiceStackResult result = (JsonServiceStackResult)PlaylistController.Create(playlistDto);
             PlaylistDto createdPlaylistDto = (PlaylistDto)result.Data;
 
             const int numItemsToCreate = 150;
@@ -74,7 +74,7 @@ namespace Streamus.Tests.Controller_Tests
         {
             PlaylistDto playlistDto = Helpers.CreatePlaylistDto();
 
-            JsonDataContractActionResult result = (JsonDataContractActionResult)PlaylistController.Create(playlistDto);
+            JsonServiceStackResult result = (JsonServiceStackResult)PlaylistController.Create(playlistDto);
 
             PlaylistDto createdPlaylistDto = (PlaylistDto) result.Data;
 
@@ -96,7 +96,7 @@ namespace Streamus.Tests.Controller_Tests
 
             ShareCode shareCode = ShareCodeManager.GetShareCode(ShareableEntityType.Playlist, folder.Playlists.First().Id);
 
-            JsonDataContractActionResult result = (JsonDataContractActionResult)PlaylistController.CreateCopyByShareCode(shareCode.ShortId, shareCode.UrlFriendlyEntityTitle, folder.Id);
+            JsonServiceStackResult result = (JsonServiceStackResult)PlaylistController.CreateCopyByShareCode(shareCode.ShortId, shareCode.UrlFriendlyEntityTitle, folder.Id);
             PlaylistDto playlistDto = (PlaylistDto) result.Data;
 
             //  Make sure we actually get a Playlist DTO back from the Controller.

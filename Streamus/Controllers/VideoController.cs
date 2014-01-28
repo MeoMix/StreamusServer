@@ -45,7 +45,7 @@ namespace Streamus.Controllers
 
             VideoDto savedVideoDto = VideoDto.Create(video);
 
-            return new JsonDataContractActionResult(savedVideoDto);
+            return new JsonServiceStackResult(savedVideoDto);
         }
 
         [HttpGet]
@@ -54,7 +54,7 @@ namespace Streamus.Controllers
             Video video = VideoDao.Get(id);
             VideoDto videoDto = VideoDto.Create(video);
 
-            return new JsonDataContractActionResult(videoDto);
+            return new JsonServiceStackResult(videoDto);
         }
 
         [HttpPost]
@@ -63,7 +63,7 @@ namespace Streamus.Controllers
             List<Video> videos = Video.Create(videoDtos);
 
             VideoManager.Save(videos);
-            return new JsonDataContractActionResult(videos);
+            return new JsonServiceStackResult(videos);
         }
 
         [HttpGet]
@@ -78,7 +78,7 @@ namespace Streamus.Controllers
                 videoDtos = VideoDto.Create(videos);
             }
 
-            return new JsonDataContractActionResult(videoDtos);
+            return new JsonServiceStackResult(videoDtos);
         }
     }
 }

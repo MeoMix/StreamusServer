@@ -17,7 +17,7 @@ namespace Streamus.Controllers
 
             ErrorDto savedErrorDto = ErrorDto.Create(error);
 
-            return new JsonDataContractActionResult(savedErrorDto);
+            return new JsonServiceStackResult(savedErrorDto);
         }
     }
 }

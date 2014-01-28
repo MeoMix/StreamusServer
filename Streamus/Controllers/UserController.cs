@@ -42,7 +42,7 @@ namespace Streamus.Controllers
             User user = UserManager.CreateUser();
             UserDto userDto = UserDto.Create(user);
 
-            return new JsonDataContractActionResult(userDto);
+            return new JsonServiceStackResult(userDto);
         }
 
         [HttpGet]
@@ -51,7 +51,7 @@ namespace Streamus.Controllers
             User user = UserDao.Get(id);
             UserDto userDto = UserDto.Create(user);
 
-            return new JsonDataContractActionResult(userDto);
+            return new JsonServiceStackResult(userDto);
         }
 
         [HttpGet]
@@ -61,7 +61,7 @@ namespace Streamus.Controllers
 
             UserDto userDto = UserDto.Create(user);
 
-            return new JsonDataContractActionResult(userDto);
+            return new JsonServiceStackResult(userDto);
         }
 
         [HttpPost]
