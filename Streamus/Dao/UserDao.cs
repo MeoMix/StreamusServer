@@ -35,5 +35,14 @@ namespace Streamus.Dao
 
             return user;
         }
+
+        //  http://stackoverflow.com/questions/3390561/nhibernate-update-single-field-without-loading-entity
+        public void UpdateGooglePlusId(Guid id, string googlePlusId)
+        {
+            NHibernateSession.CreateQuery("update User set GooglePlusId = :googlePlusId where id = :id")
+               .SetParameter("googlePlusId", googlePlusId)
+               .SetParameter("id", id)
+               .ExecuteUpdate();
+        }
     }
 }
