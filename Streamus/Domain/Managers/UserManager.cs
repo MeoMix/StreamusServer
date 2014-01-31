@@ -68,15 +68,12 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        //  TODO: Should be able to just Save a user rather than have to update one property explicitly.
         public void UpdateGooglePlusId(Guid userId, string googlePlusId)
         {
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
-                User user = UserDao.Get(userId);
-                user.GooglePlusId = googlePlusId;
-                UserDao.Update(user);
+                UserDao.UpdateGooglePlusId(userId, googlePlusId);
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)

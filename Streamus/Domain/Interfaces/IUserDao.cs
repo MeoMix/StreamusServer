@@ -6,5 +6,6 @@ namespace Streamus.Domain.Interfaces
     {
         User Get(Guid id);
         User GetByGooglePlusId(string googlePlusId);
+        void UpdateGooglePlusId(Guid id, string googlePlusId);
     }
 }

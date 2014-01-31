@@ -27,7 +27,7 @@ namespace Streamus.Tests.Controller_Tests
                     LineNumber = 2
                 };
 
-            JsonDataContractActionResult result = (JsonDataContractActionResult)ErrorController.Create(errorDto);
+            JsonServiceStackResult result = (JsonServiceStackResult)ErrorController.Create(errorDto);
             ErrorDto createdErrorDto = (ErrorDto)result.Data;
 
             Assert.NotNull(createdErrorDto);
@@ -43,7 +43,7 @@ namespace Streamus.Tests.Controller_Tests
                 LineNumber = 2
             };
 
-            JsonDataContractActionResult result = (JsonDataContractActionResult)ErrorController.Create(errorDto);
+            JsonServiceStackResult result = (JsonServiceStackResult)ErrorController.Create(errorDto);
             ErrorDto createdErrorDto = (ErrorDto)result.Data;
 
             Assert.NotNull(createdErrorDto);

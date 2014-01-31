@@ -47,7 +47,7 @@ namespace Streamus.Controllers
 
             PlaylistDto savedPlaylistDto = PlaylistDto.Create(playlist);
 
-            return new JsonDataContractActionResult(savedPlaylistDto);
+            return new JsonServiceStackResult(savedPlaylistDto);
         }
 
         [HttpPut]
@@ -57,7 +57,7 @@ namespace Streamus.Controllers
             PlaylistManager.Update(playlist);
 
             PlaylistDto updatedPlaylistDto = PlaylistDto.Create(playlist);
-            return new JsonDataContractActionResult(updatedPlaylistDto);
+            return new JsonServiceStackResult(updatedPlaylistDto);
         }
 
         [HttpGet]
@@ -66,7 +66,7 @@ namespace Streamus.Controllers
             Playlist playlist = PlaylistDao.Get(id);
             PlaylistDto playlistDto = PlaylistDto.Create(playlist);
 
-            return new JsonDataContractActionResult(playlistDto);
+            return new JsonServiceStackResult(playlistDto);
         }
 
         [HttpDelete]
@@ -121,7 +121,7 @@ namespace Streamus.Controllers
             PlaylistManager.Save(playlistCopy);
 
             PlaylistDto playlistDto = PlaylistDto.Create(playlistCopy);
-            return new JsonDataContractActionResult(playlistDto);
+            return new JsonServiceStackResult(playlistDto);
         }
     }
 }
