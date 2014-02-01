@@ -78,7 +78,7 @@ namespace Streamus.Dao
 #if DEBUG
             configuration.SetProperty("default_schema", "[Streamus].[dbo]");
 #else
-            configuration.SetProperty("default_schema", "[db896d0fe754cd4f46b3d0a2c301552bd6].[dbo]")
+            configuration.SetProperty("default_schema", "[db896d0fe754cd4f46b3d0a2c301552bd6].[dbo]");
 #endif
 
             SessionFactory = configuration.BuildSessionFactory();
