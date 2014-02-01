@@ -70,7 +70,18 @@ namespace Streamus.Dao
 
         private void InitSessionFactory()
         {
-            SessionFactory = new Configuration().Configure().BuildSessionFactory();
+            var configuration = new Configuration().Configure();
+
+            configuration.SetProperty("connection.isolation", "ReadUncommitted");
+
+            //  TODO: Is it possible to determine this dynamically?
+#if DEBUG
+            configuration.SetProperty("default_schema", "[Streamus].[dbo]");
+#else
+            configuration.SetProperty("default_schema", "[db896d0fe754cd4f46b3d0a2c301552bd6].[dbo]")
+#endif
+
+            SessionFactory = configuration.BuildSessionFactory();
         }
 
         public ISession GetSession()
