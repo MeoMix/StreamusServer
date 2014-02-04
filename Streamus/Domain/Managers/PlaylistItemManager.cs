@@ -45,21 +45,17 @@ namespace Streamus.Domain.Managers
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
 
-                foreach (PlaylistItem playlistItem in playlistItems)
+                var playlistItemList = playlistItems.ToList();
+
+                if (playlistItemList.Count > 1000)
                 {
-                    playlistItem.ValidateAndThrow();
-                    playlistItem.Video.ValidateAndThrow();
-
-                    PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
-
-                    if (knownPlaylistItem == null)
-                    {
-                        PlaylistItemDao.Update(playlistItem);
-                    }
-                    else
-                    {
-                        PlaylistItemDao.Merge(playlistItem);
-                    }
+                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(200);
+                    playlistItemList.ForEach(DoUpdate);
+                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(50);
+                }
+                else
+                {
+                    playlistItemList.ForEach(DoUpdate);
                 }
 
                 NHibernateSessionManager.Instance.CommitTransaction();
@@ -77,19 +73,8 @@ namespace Streamus.Domain.Managers
             try
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
-                playlistItem.ValidateAndThrow();
-                playlistItem.Video.ValidateAndThrow();
 
-                PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
-
-                if (knownPlaylistItem == null)
-                {
-                    PlaylistItemDao.Update(playlistItem);
-                }
-                else
-                {
-                    PlaylistItemDao.Merge(playlistItem);
-                }
+                DoUpdate(playlistItem);
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -125,7 +110,18 @@ namespace Streamus.Domain.Managers
             {
                 NHibernateSessionManager.Instance.BeginTransaction();
 
-                playlistItems.ToList().ForEach(DoSave);
+                var playlistItemList = playlistItems.ToList();
+
+                if (playlistItemList.Count > 1000)
+                {
+                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(200);
+                    playlistItemList.ForEach(DoSave);
+                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(50);
+                }
+                else
+                {
+                    playlistItemList.ForEach(DoSave);
+                }
 
                 NHibernateSessionManager.Instance.CommitTransaction();
             }
@@ -153,21 +149,20 @@ namespace Streamus.Domain.Managers
             PlaylistItemDao.Save(playlistItem);
         }
 
-        public void Create(IEnumerable<PlaylistItem> playlistItems)
+        private void DoUpdate(PlaylistItem playlistItem)
         {
-            try
+            playlistItem.ValidateAndThrow();
+            playlistItem.Video.ValidateAndThrow();
+
+            PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
+
+            if (knownPlaylistItem == null)
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
-                playlistItems.ToList().ForEach(DoSave);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
+                PlaylistItemDao.Update(playlistItem);
             }
-            catch (Exception exception)
+            else
             {
-                Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
-                throw;
+                PlaylistItemDao.Merge(playlistItem);
             }
         }
     }
