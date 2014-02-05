@@ -49,9 +49,10 @@ namespace Streamus.Domain.Managers
 
                 if (playlistItemList.Count > 1000)
                 {
-                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(200);
-                    playlistItemList.ForEach(DoUpdate);
-                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(50);
+                    Logger.ErrorFormat("ERROR: ATTEMPTED TO SAVE LARGE PLAYLISTS. Count: {0}", playlistItemList.Count);
+                    //NHibernateSessionManager.Instance.GetSession().SetBatchSize(200);
+                    //playlistItemList.ForEach(DoUpdate);
+                    //NHibernateSessionManager.Instance.GetSession().SetBatchSize(50);
                 }
                 else
                 {
@@ -114,9 +115,10 @@ namespace Streamus.Domain.Managers
 
                 if (playlistItemList.Count > 1000)
                 {
-                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(200);
-                    playlistItemList.ForEach(DoSave);
-                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(50);
+                    Logger.ErrorFormat("ERROR: ATTEMPTED TO SAVE LARGE PLAYLISTS. Count: {0}", playlistItemList.Count);
+                    //NHibernateSessionManager.Instance.GetSession().SetBatchSize(200);
+                    //playlistItemList.ForEach(DoSave);
+                    //NHibernateSessionManager.Instance.GetSession().SetBatchSize(50);
                 }
                 else
                 {
