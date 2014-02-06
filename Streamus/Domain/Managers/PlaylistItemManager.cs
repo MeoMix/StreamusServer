@@ -56,7 +56,9 @@ namespace Streamus.Domain.Managers
                 }
                 else
                 {
+                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(playlistItemList.Count / 5);
                     playlistItemList.ForEach(DoUpdate);
+                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(1);
                 }
 
                 NHibernateSessionManager.Instance.CommitTransaction();
@@ -122,7 +124,9 @@ namespace Streamus.Domain.Managers
                 }
                 else
                 {
+                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(playlistItemList.Count / 5);
                     playlistItemList.ForEach(DoSave);
+                    NHibernateSessionManager.Instance.GetSession().SetBatchSize(1);
                 }
 
                 NHibernateSessionManager.Instance.CommitTransaction();
