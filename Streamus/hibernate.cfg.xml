@@ -10,8 +10,7 @@
       <property name="connection.connection_string_name">default</property>
       <property name="dialect">NHibernate.Dialect.MsSql2008Dialect</property>
       <property name="proxyfactory.factory_class">NHibernate.Bytecode.DefaultProxyFactoryFactory, NHibernate</property>
-      <property name="command_timeout">5</property>
-      <property name="adonet.batch_size">10</property>
+      <property name="command_timeout">15</property>
       <mapping assembly="Streamus"/>
     </session-factory>
   </hibernate-configuration>
