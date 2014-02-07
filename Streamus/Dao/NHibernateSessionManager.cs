@@ -57,6 +57,7 @@ namespace Streamus.Dao
 
             //  TODO: is this doing anything
             configuration.SetProperty("connection.isolation", "ReadUncommitted");
+            configuration.SetProperty("max_fetch_depth", "3");
 
             //  TODO: Is it possible to determine this dynamically?
 #if DEBUG
