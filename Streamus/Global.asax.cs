@@ -1,18 +1,13 @@
 ﻿using Autofac;
 using AutoMapper;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using ServiceStack.Text;
+using NHibernate;
+using NHibernate.Cfg;
 using Streamus.App_Start;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
-using System;
-using System.Dynamic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Net.Http.Formatting;
 using System.Web;
 using System.Web.Http;
@@ -21,18 +16,23 @@ using System.Web.Routing;
 
 namespace Streamus
 {
-    public class WebApiApplication : HttpApplication
+    public class Streamus : HttpApplication
     {
         protected void Application_Start()
         {
-            JsonMediaTypeFormatter json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
-            json.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
-
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+
+            InitializeApplication();
+        }
+
+        public static void InitializeApplication()
+        {
+            JsonMediaTypeFormatter json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
+            json.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
 
             //  Register your new model binder
             ModelBinders.Binders.DefaultBinder = new JsonEmptyStringNotNullModelBinder();

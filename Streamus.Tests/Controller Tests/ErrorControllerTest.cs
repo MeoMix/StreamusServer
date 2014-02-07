@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Streamus.Controllers;
+using Streamus.Dao;
 using Streamus.Dto;
 
 namespace Streamus.Tests.Controller_Tests
@@ -8,14 +9,6 @@ namespace Streamus.Tests.Controller_Tests
     public class ErrorControllerTest : AbstractTest
     {
         private static readonly ErrorController ErrorController = new ErrorController();
-
-        /// <summary>
-        ///     This code is only ran once for the given TestFixture.
-        /// </summary>
-        [TestFixtureSetUp]
-        public new void TestFixtureSetUp()
-        {
-        }
 
         [Test]
         public void CreateError_ShortMessage_ErrorCreated()
@@ -27,7 +20,10 @@ namespace Streamus.Tests.Controller_Tests
                     LineNumber = 2
                 };
 
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             JsonServiceStackResult result = (JsonServiceStackResult)ErrorController.Create(errorDto);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
             ErrorDto createdErrorDto = (ErrorDto)result.Data;
 
             Assert.NotNull(createdErrorDto);
@@ -43,7 +39,10 @@ namespace Streamus.Tests.Controller_Tests
                 LineNumber = 2
             };
 
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             JsonServiceStackResult result = (JsonServiceStackResult)ErrorController.Create(errorDto);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
             ErrorDto createdErrorDto = (ErrorDto)result.Data;
 
             Assert.NotNull(createdErrorDto);

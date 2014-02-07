@@ -2,7 +2,6 @@
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using System;
 
 namespace Streamus.Tests.Manager_Tests
@@ -11,7 +10,6 @@ namespace Streamus.Tests.Manager_Tests
     public class UserManagerTest : AbstractTest
     {
         private IUserDao UserDao { get; set; }
-        private static readonly UserManager UserManager = new UserManager();
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -32,10 +30,9 @@ namespace Streamus.Tests.Manager_Tests
         [Test]
         public void CreateUser_UserDoesntExist_UserCreated()
         {
-            User user = UserManager.CreateUser();
+            User user = Helpers.CreateUser();
 
-            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Clear();
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
 
             User userFromDatabase = UserDao.Get(user.Id);
             //  Test that the product was successfully inserted
@@ -43,6 +40,8 @@ namespace Streamus.Tests.Manager_Tests
 
             Assert.IsNotNull(userFromDatabase);
             Assert.IsNotEmpty(userFromDatabase.Folders);
+
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
     }
 }

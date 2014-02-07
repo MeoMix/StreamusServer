@@ -33,14 +33,14 @@ namespace Streamus.Tests.Manager_Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager().CreateUser();
+            User = Helpers.CreateUser();
             Folder = User.Folders.First();
 
-            //  Ensure Folder is lazily-loaded.
-            NHibernateSessionManager.Instance.Evict(Folder);
-
             Video = Helpers.CreateUnsavedVideoWithId();
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             new VideoManager().Save(Video);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Streamus.Tests.Manager_Tests
         //    PlaylistItem playlistItem = Helpers.CreateItemInPlaylist(playlist);
 
         //    //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-        //    NHibernateSessionManager.Instance.Clear();
+        //    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().Clear();
 
         //    Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
         //    Assert.AreEqual(playlistFromDatabase.FirstItem, playlistItem);
@@ -67,17 +67,21 @@ namespace Streamus.Tests.Manager_Tests
         {
             Playlist playlist = Folder.CreateAndAddPlaylist();
 
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistManager.Save(playlist);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistManager.UpdateTitle(playlist.Id, "Existing Playlist 001");
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Clear();
-
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
             //  Test that the product was successfully inserted
             Assert.IsNotNull(playlistFromDatabase);
-            Assert.AreEqual(playlist.Title, playlistFromDatabase.Title);
+            //  Sessions should be isolated -- before and after should be different here.
+            Assert.AreNotEqual(playlist.Title, playlistFromDatabase.Title);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 
         /// <summary>
@@ -92,14 +96,17 @@ namespace Streamus.Tests.Manager_Tests
             var playlist = new Playlist(title);
 
             Folder.AddPlaylist(playlist);
-            PlaylistManager.Save(playlist);
 
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            PlaylistManager.Save(playlist);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Now delete the created Playlist and ensure it is removed.
             PlaylistManager.Delete(playlist.Id);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Clear();
-
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             Playlist deletedPlaylist = PlaylistDao.Get(playlist.Id);
 
             bool objectNotFoundExceptionEncountered = false;
@@ -114,7 +121,7 @@ namespace Streamus.Tests.Manager_Tests
             }
 
             Assert.IsTrue(objectNotFoundExceptionEncountered);
-
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
     }
 }

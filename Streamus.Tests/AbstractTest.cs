@@ -19,7 +19,7 @@ namespace Streamus.Tests
             DaoFactory = Scope.Resolve<IDaoFactory>();
 
             //  Initialize AutoMapper with Streamus' server mappings.
-            WebApiApplication.CreateAutoMapperMaps();
+            Streamus.InitializeApplication();
         }
     }
 }

@@ -30,30 +30,23 @@ namespace Streamus.Tests.Manager_Tests
                 throw exception.InnerException;
             }
 
-            User = new UserManager().CreateUser();
-        }
-
-        /// <summary>
-        ///     This code runs before every test.
-        /// </summary>
-        [SetUp]
-        public void SetupContext()
-        {
-
+            User = Helpers.CreateUser();
         }
 
         [Test]
         public void SaveFolder_FolderDoesNotExist_FolderCreated()
         {
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             Folder folder = new Folder();
             FolderManager.Save(folder);
 
-            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Clear();
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             Folder folderFromDatabase = FolderDao.Get(folder.Id);
 
             Assert.IsNotNull(folderFromDatabase);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 
         /// <summary>
@@ -65,14 +58,17 @@ namespace Streamus.Tests.Manager_Tests
         {
             //  Create a new Folder and write it to the database.
             Folder folder = User.CreateAndAddFolder();
-            FolderManager.Save(folder);
 
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            FolderManager.Save(folder);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Now delete the created Playlist and ensure it is removed.
             FolderManager.Delete(folder.Id);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Clear();
-
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             Folder deletedFolder = FolderDao.Get(folder.Id);
 
             bool objectNotFoundExceptionEncountered = false;
@@ -87,7 +83,7 @@ namespace Streamus.Tests.Manager_Tests
             }
 
             Assert.IsTrue(objectNotFoundExceptionEncountered);
-
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
     }
 }

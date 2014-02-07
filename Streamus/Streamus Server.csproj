@@ -169,9 +169,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\JsonServiceStackResult.cs" />
+    <Compile Include="Controllers\SessionManagementAttribute.cs" />
     <Compile Include="Controllers\ShareCodeController.cs" />
     <Compile Include="Dao\AutofacRegistrations.cs" />
     <Compile Include="Dao\NHibernateDaoFactory.cs" />
+    <Compile Include="Dao\NHibernateSessionManager.cs" />
     <Compile Include="Dao\ShareCodeDao.cs" />
     <Compile Include="Dao\ErrorDao.cs" />
     <Compile Include="Dao\FolderDao.cs" />
@@ -213,7 +215,6 @@
     <Compile Include="Domain\Video.cs" />
     <Compile Include="Domain\User.cs" />
     <Compile Include="Dao\AbstractNHibernateDao.cs" />
-    <Compile Include="Dao\NHibernateSessionManager.cs" />
     <Compile Include="Dao\PlaylistDao.cs" />
     <Compile Include="Dao\VideoDao.cs" />
     <Compile Include="Dao\UserDao.cs" />

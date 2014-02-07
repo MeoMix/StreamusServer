@@ -14,7 +14,10 @@ namespace Streamus.Dao
         /// </summary>
         protected ISession NHibernateSession
         {
-            get { return NHibernateSessionManager.Instance.GetSession(); }
+            get
+            {
+                return NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession();
+            }
         }
 
         /// <summary>

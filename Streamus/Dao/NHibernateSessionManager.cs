@@ -4,6 +4,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Web;
 using NHibernate;
 using NHibernate.Cfg;
+using NHibernate.Context;
 using log4net;
 
 namespace Streamus.Dao
@@ -16,61 +17,40 @@ namespace Streamus.Dao
     /// </summary>
     public class NHibernateSessionManager
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private const string TransactionKey = "CONTEXT_TRANSACTION";
-        private const string SessionKey = "CONTEXT_SESSION";
-        private ISessionFactory SessionFactory;
-
-        #region Thread-safe, lazy Singleton
-
-        /// <summary>
-        ///     This is a thread-safe, lazy singleton.  See http://www.yoda.arachsys.com/csharp/singleton.html
-        ///     for more details about its implementation.
-        /// </summary>
-        public static NHibernateSessionManager Instance
+        public ISessionFactory SessionFactory
         {
-            get
-            {
-                try
-                {
-                    return Nested.NHibernateSessionManager;
-                }
-                catch (TypeInitializationException exception)
-                {
-                    Logger.Error(exception.InnerException.Message);
-                    throw exception.InnerException;
-                }
-            }
+            get;
+            private set;
         }
+
+        //  http://csharpindepth.com/Articles/General/Singleton.aspx
+        private static readonly Lazy<NHibernateSessionManager> Lazy = new Lazy<NHibernateSessionManager>(() => new NHibernateSessionManager());
+
+        public static NHibernateSessionManager Instance { get { return Lazy.Value; } }
 
         /// <summary>
         ///     Initializes the NHibernate session factory upon instantiation.
         /// </summary>
         private NHibernateSessionManager()
         {
-            InitSessionFactory();
+            InitializeSessionFactory();
         }
 
-        /// <summary>
-        ///     Assists with ensuring thread-safe, lazy singleton
-        /// </summary>
-        // ReSharper disable ClassNeverInstantiated.Local
-        private class Nested
-            // ReSharper restore ClassNeverInstantiated.Local
-        {
-            static Nested()
-            {
-            }
-
-            internal static readonly NHibernateSessionManager NHibernateSessionManager =
-                new NHibernateSessionManager();
-        }
-
-        #endregion
-
-        private void InitSessionFactory()
+        //  http://www.piotrwalat.net/nhibernate-session-management-in-asp-net-web-api/
+        private void InitializeSessionFactory()
         {
             var configuration = new Configuration().Configure();
+
+            if (HttpContext.Current != null)
+            {            
+                //  NHibernate.Context.WebSessionContext - analogous to ManagedWebSessionContext above, stores the current session in HttpContext. 
+                //  You are responsible to bind and unbind an ISession instance with static methods of class CurrentSessionContext.
+                configuration.SetProperty("current_session_context_class", "web");
+            }
+            else
+            {
+                configuration.SetProperty("current_session_context_class", "call");
+            }
 
             configuration.SetProperty("connection.isolation", "ReadUncommitted");
 
@@ -84,153 +64,26 @@ namespace Streamus.Dao
             SessionFactory = configuration.BuildSessionFactory();
         }
 
-        public ISession GetSession()
+        public void OpenSessionAndBeginTransaction()
         {
-            return ContextSession ?? (ContextSession = SessionFactory.OpenSession());
+            var session = SessionFactory.OpenSession();
+            CurrentSessionContext.Bind(session);
+            session.BeginTransaction();
         }
 
-        /// <summary>
-        ///     Flushes anything left in the session and closes the connection.
-        /// </summary>
-        public void CloseSession()
+        public void CommitTransactionAndCloseSession()
         {
-            ISession session = ContextSession;
+            var session = SessionFactory.GetCurrentSession();
 
-            if (session != null && session.IsOpen)
+            var transaction = session.Transaction;
+            if (transaction != null && transaction.IsActive)
             {
-                if (session.Transaction.IsActive)
-                {
-                    session.Flush();
-                }
-
-                session.Close();
+                transaction.Commit();
             }
 
-            ContextSession = null;
+            session = CurrentSessionContext.Unbind(Instance.SessionFactory);
+            session.Close();
         }
 
-        public void Clear()
-        {
-            GetSession().Clear();
-        }
-
-        public void Evict(object obj)
-        {
-            GetSession().Evict(obj);
-        }
-
-        public void BeginTransaction()
-        {
-            ITransaction transaction = ContextTransaction;
-
-            if (transaction == null)
-            {
-                transaction = GetSession().BeginTransaction();
-                ContextTransaction = transaction;
-            }
-        }
-
-        public void CommitTransaction()
-        {
-            ITransaction transaction = ContextTransaction;
-
-            try
-            {
-                if (HasOpenTransaction())
-                {
-                    transaction.Commit();
-                    ContextTransaction = null;
-                }
-            }
-            catch (HibernateException exception)
-            {
-                Logger.Error(exception);
-                RollbackTransaction();
-                throw;
-            }
-        }
-
-        public bool HasOpenTransaction()
-        {
-            ITransaction transaction = ContextTransaction;
-
-            return transaction != null && !transaction.WasCommitted && !transaction.WasRolledBack;
-        }
-
-        public void RollbackTransaction()
-        {
-            ITransaction transaction = ContextTransaction;
-
-            try
-            {
-                if (HasOpenTransaction())
-                {
-                    transaction.Rollback();
-                }
-
-                ContextTransaction = null;
-            }
-            finally
-            {
-                CloseSession();
-            }
-        }
-
-        /// <summary>
-        ///     Use an HttpContext during normal operations and a CallContext to emulate this during test.
-        /// </summary>
-        private static ITransaction ContextTransaction
-        {
-            get
-            {
-                if (IsInWebContext())
-                {
-                    return (ITransaction) HttpContext.Current.Items[TransactionKey];
-                }
-                return (ITransaction) CallContext.GetData(TransactionKey);
-            }
-            set
-            {
-                if (IsInWebContext())
-                {
-                    HttpContext.Current.Items[TransactionKey] = value;
-                }
-                else
-                {
-                    CallContext.SetData(TransactionKey, value);
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Use an HttpContext during normal operations and a CallContext to emulate this during test.
-        /// </summary>
-        private static ISession ContextSession
-        {
-            get
-            {
-                if (IsInWebContext())
-                {
-                    return (ISession) HttpContext.Current.Items[SessionKey];
-                }
-                return (ISession) CallContext.GetData(SessionKey);
-            }
-            set
-            {
-                if (IsInWebContext())
-                {
-                    HttpContext.Current.Items[SessionKey] = value;
-                }
-                else
-                {
-                    CallContext.SetData(SessionKey, value);
-                }
-            }
-        }
-
-        private static bool IsInWebContext()
-        {
-            return HttpContext.Current != null;
-        }
     }
 }
