@@ -53,7 +53,7 @@ namespace Streamus.Dao
             }
 
             //  15 seconds should be MORE than enough for any reasonably query at the moment. Maybe be more fine-grained on playlist items/playlists save if I see it time out.
-            configuration.SetProperty("command_timeout", "15");
+            configuration.SetProperty("command_timeout", "3");
 
             //  TODO: is this doing anything
             configuration.SetProperty("connection.isolation", "ReadUncommitted");
