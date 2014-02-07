@@ -9,7 +9,7 @@
     <property name="Title" not-null="true" />
     <property name="Sequence" not-null="true" />
     
-    <set name="Items" inverse="true" cascade="all-delete-orphan" >
+    <set name="Items" inverse="true" fetch="join" cascade="all-delete-orphan" >
       <key column="PlaylistId" />
       <one-to-many class="PlaylistItem" />
     </set>
