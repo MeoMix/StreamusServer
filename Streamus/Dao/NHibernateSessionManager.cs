@@ -52,11 +52,15 @@ namespace Streamus.Dao
                 configuration.SetProperty("current_session_context_class", "call");
             }
 
+            //configuration.SetProperty("adonet.batch_size", "250");
+
+            //  TODO: is this doing anything
             configuration.SetProperty("connection.isolation", "ReadUncommitted");
 
             //  TODO: Is it possible to determine this dynamically?
 #if DEBUG
             configuration.SetProperty("default_schema", "[Streamus].[dbo]");
+            configuration.SetProperty("generate_statistics", "true");
 #else
             configuration.SetProperty("default_schema", "[db896d0fe754cd4f46b3d0a2c301552bd6].[dbo]");
 #endif

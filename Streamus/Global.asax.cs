@@ -31,6 +31,8 @@ namespace Streamus
 
         public static void InitializeApplication()
         {
+            HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
+
             JsonMediaTypeFormatter json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
             json.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
 

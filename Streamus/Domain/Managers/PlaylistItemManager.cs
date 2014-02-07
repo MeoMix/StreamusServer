@@ -1,4 +1,5 @@
-﻿using Streamus.Domain.Interfaces;
+﻿using Streamus.Dao;
+using Streamus.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,17 +42,14 @@ namespace Streamus.Domain.Managers
 
                 if (playlistItemList.Count > 1000)
                 {
-                    Logger.ErrorFormat("ERROR: ATTEMPTED TO SAVE LARGE PLAYLISTS. Count: {0}", playlistItemList.Count);
-                    //NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().GetSession().SetBatchSize(200);
-                    //playlistItemList.ForEach(DoUpdate);
-                    //NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().GetSession().SetBatchSize(50);
+                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistItemList.Count / 10);
                 }
                 else
                 {
-                    //NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().GetSession().SetBatchSize(playlistItemList.Count / 5);
-                    playlistItemList.ForEach(DoUpdate);
-                    //NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().GetSession().SetBatchSize(1);
+                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistItemList.Count / 5);
                 }
+
+                playlistItemList.ForEach(DoUpdate);
             }
             catch (Exception exception)
             {
@@ -94,17 +92,14 @@ namespace Streamus.Domain.Managers
 
                 if (playlistItemList.Count > 1000)
                 {
-                    Logger.ErrorFormat("ERROR: ATTEMPTED TO SAVE LARGE PLAYLISTS. Count: {0}", playlistItemList.Count);
-                    //NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().GetSession().SetBatchSize(200);
-                    //playlistItemList.ForEach(DoSave);
-                    //NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().GetSession().SetBatchSize(50);
+                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistItemList.Count / 10);
                 }
                 else
                 {
-                    //NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().GetSession().SetBatchSize(playlistItemList.Count / 5);
-                    playlistItemList.ForEach(DoSave);
-                    //NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().GetSession().SetBatchSize(1);
+                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistItemList.Count / 5);
                 }
+
+                playlistItemList.ForEach(DoSave);
             }
             catch (Exception exception)
             {
