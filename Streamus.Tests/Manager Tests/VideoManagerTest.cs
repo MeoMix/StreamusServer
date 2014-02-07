@@ -30,7 +30,7 @@ namespace Streamus.Tests.Manager_Tests
                 throw exception.InnerException;
             }
 
-            new UserManager().CreateUser();
+            Helpers.CreateUser();
         }
 
         /// <summary>
@@ -40,16 +40,17 @@ namespace Streamus.Tests.Manager_Tests
         public void SaveVideo_NotInDatabase_VideoSaved()
         {
             Video video = Helpers.CreateUnsavedVideoWithId();
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             VideoManager.Save(video);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Clear();
-
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             Video videoFromDatabase = VideoDao.Get(video.Id);
 
             //  Test that the video was successfully inserted
             Assert.IsNotNull(videoFromDatabase);
             Assert.AreEqual(video.Title, videoFromDatabase.Title);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 
         /// <summary>
@@ -60,20 +61,23 @@ namespace Streamus.Tests.Manager_Tests
         {
             //  Save the first video.
             Video video = Helpers.CreateUnsavedVideoWithId();
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             VideoManager.Save(video);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             string originalVideoTitle = video.Title;
             video.Title = "Video's new title";
 
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             VideoManager.Save(video);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Clear();
-
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             Video videoFromDatabase = VideoDao.Get(video.Id);
 
             //  Ensure video title hasn't changed.
             Assert.AreEqual(videoFromDatabase.Title, originalVideoTitle);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 
         /// <summary>
@@ -88,13 +92,14 @@ namespace Streamus.Tests.Manager_Tests
                     Helpers.CreateUnsavedVideoWithId()
                 };
 
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             VideoManager.Save(videos);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Clear();
-
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Make sure multiple videos were able to be saved.
             videos.Select(v => VideoDao.Get(v.Id)).ToList().ForEach(Assert.IsNotNull);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 
         /// <summary>
@@ -112,13 +117,14 @@ namespace Streamus.Tests.Manager_Tests
                     Helpers.CreateUnsavedVideoWithId(video.Id)
                 };
 
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             VideoManager.Save(videos);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-            NHibernateSessionManager.Instance.Clear();
-
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Make sure multiple videos were able to be saved.
             videos.Select(v => VideoDao.Get(v.Id)).ToList().ForEach(Assert.IsNotNull);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
+    [SessionManagement]
     public class ErrorController : Controller
     {
         private static readonly ErrorManager ErrorManager = new ErrorManager();
@@ -12,14 +13,12 @@ namespace Streamus.Controllers
         [HttpPost, Throttle(Name = "ClientErrorThrottle", Message = "You must wait {n} seconds before accessing logging another error.", Seconds = 60)]
         public ActionResult Create(ErrorDto errorDto)
         {
-            //  TODO: I have disabled saving of errors to the DB for now in an effort to minimize stress on DB.
-            //Error error = Error.Create(errorDto);
-            //ErrorManager.Save(error);
+            Error error = Error.Create(errorDto);
+            ErrorManager.Save(error);
 
-            //ErrorDto savedErrorDto = ErrorDto.Create(error);
+            ErrorDto savedErrorDto = ErrorDto.Create(error);
 
-            //return new JsonServiceStackResult(savedErrorDto);
-            return null;
+            return new JsonServiceStackResult(savedErrorDto);
         }
     }
 }

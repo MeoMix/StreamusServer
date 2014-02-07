@@ -12,6 +12,7 @@ using log4net;
 
 namespace Streamus.Controllers
 {
+    [SessionManagement]
     public class UserController : Controller
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);

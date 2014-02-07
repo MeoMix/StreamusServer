@@ -1,5 +1,4 @@
 ﻿using System;
-using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 
 namespace Streamus.Domain.Managers
@@ -27,8 +26,6 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
                 Playlist playlistToCopy = PlaylistDao.Get(entityId);
 
                 if (playlistToCopy == null)
@@ -42,13 +39,10 @@ namespace Streamus.Domain.Managers
 
                 shareCode = new ShareCode(shareablePlaylistCopy);
                 Save(shareCode);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
 
@@ -59,16 +53,11 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
                 DoSave(shareCode);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }

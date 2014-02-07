@@ -11,6 +11,7 @@ using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
+    [SessionManagement]
     public class VideoController : Controller
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);

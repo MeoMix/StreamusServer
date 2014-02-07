@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 
 namespace Streamus.Domain.Managers
@@ -9,32 +8,23 @@ namespace Streamus.Domain.Managers
     public class PlaylistManager : AbstractManager
     {
         private IPlaylistDao PlaylistDao { get; set; }
-        private IPlaylistItemDao PlaylistItemDao { get; set; }
         private IVideoDao VideoDao { get; set; }
-        private IShareCodeDao ShareCodeDao { get; set; }
 
         public PlaylistManager()
         {
             PlaylistDao = DaoFactory.GetPlaylistDao();
-            PlaylistItemDao = DaoFactory.GetPlaylistItemDao();
             VideoDao = DaoFactory.GetVideoDao();
-            ShareCodeDao = DaoFactory.GetShareCodeDao();
         }
 
         public void Save(Playlist playlist)
         {
             try
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
                 DoSave(playlist);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -43,16 +33,11 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
                 playlists.ToList().ForEach(DoSave);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -81,7 +66,6 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
                 playlist.ValidateAndThrow();
 
                 Playlist knownPlaylist = PlaylistDao.Get(playlist.Id);
@@ -94,13 +78,10 @@ namespace Streamus.Domain.Managers
                 {
                     PlaylistDao.Merge(playlist);
                 }
-
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -109,18 +90,13 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
                 Playlist playlist = PlaylistDao.Get(id);
                 playlist.Folder.RemovePlaylist(playlist);
                 PlaylistDao.Delete(playlist);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -129,16 +105,13 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
                 Playlist playlist = PlaylistDao.Get(playlistId);
                 playlist.Title = title;
                 PlaylistDao.Update(playlist);
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -147,16 +120,16 @@ namespace Streamus.Domain.Managers
         //{
         //    try
         //    {
-        //        NHibernateSessionManager.Instance.BeginTransaction();
+        //        NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().BeginTransaction();
         //        Playlist playlist = PlaylistDao.Get(playlistId);
         //        playlist.FirstItem = PlaylistItemDao.Get(firstItemId);
         //        PlaylistDao.Update(playlist);
-        //        NHibernateSessionManager.Instance.CommitTransaction();
+        //        NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().CommitTransaction();
         //    }
         //    catch (Exception exception)
         //    {
         //        Logger.Error(exception);
-        //        NHibernateSessionManager.Instance.RollbackTransaction();
+        //        NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().RollbackTransaction();
         //        throw;
         //    }
         //}

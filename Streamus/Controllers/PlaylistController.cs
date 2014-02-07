@@ -10,6 +10,7 @@ using log4net;
 
 namespace Streamus.Controllers
 {
+    [SessionManagement]
     public class PlaylistController : Controller
     {
         private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);

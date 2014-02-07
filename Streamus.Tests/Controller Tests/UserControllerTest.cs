@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Streamus.Controllers;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using Streamus.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Streamus.Tests.Controller_Tests
 {
     [TestFixture]
     public class UserControllerTest : AbstractTest
     {
-        private static readonly UserManager UserManager = new UserManager();
         private static readonly PlaylistItemController PlaylistItemController = new PlaylistItemController();
         private static readonly UserController UserController = new UserController();
         private IUserDao UserDao { get; set; }
@@ -36,24 +34,49 @@ namespace Streamus.Tests.Controller_Tests
         }
 
         [Test]
+        public void CreateUser_UserDoesNotExist_UserCreated()
+        {
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            JsonServiceStackResult result = (JsonServiceStackResult)UserController.Create();
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+            UserDto createdUserDto = (UserDto)result.Data;
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            User userFromDatabase = UserDao.Get(createdUserDto.Id);
+            Assert.That(userFromDatabase != null);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+        }
+
+        //  TODO: Test the response time of this and make sure it isn't a long running query for big playlists.
+        [Test]
         public void GetUserWithBulkPlaylistItemsInFolder_UserCreatedWithLotsOfItems_UserHasOneFolderOnePlaylist()
         {
-            User user = UserManager.CreateUser();
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            JsonServiceStackResult result = (JsonServiceStackResult)UserController.Create();
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+            UserDto createdUserDto = (UserDto)result.Data;
 
             const int numItemsToCreate = 2000;
 
-            Guid playlistId = user.Folders.First().Playlists.First().Id;
+            Guid playlistId = createdUserDto.Folders.First().Playlists.First().Id;
             List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, playlistId);
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistItemController.CreateMultiple(playlistItemDtos);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            NHibernateSessionManager.Instance.Clear();
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
 
-            User userFromDatabase = UserDao.Get(user.Id);
+            User userFromDatabase = UserDao.Get(createdUserDto.Id);
 
-            Assert.That(userFromDatabase.Folders.Count == user.Folders.Count);
-            Assert.That(userFromDatabase.Folders.First().Playlists.Count == user.Folders.First().Playlists.Count);
+            Assert.That(userFromDatabase.Folders.Count == createdUserDto.Folders.Count);
+            Assert.That(userFromDatabase.Folders.First().Playlists.Count == createdUserDto.Folders.First().Playlists.Count);
             Assert.That(userFromDatabase.Folders.First().Playlists.First().Items.Count() == numItemsToCreate);
-            Assert.That(userFromDatabase.Folders.First().Playlists.First().Items.Count() == user.Folders.First().Playlists.First().Items.Count());
+
+            //  Different sessions -- first should be de-synced from the second.
+            Assert.That(userFromDatabase.Folders.First().Playlists.First().Items.Count() != createdUserDto.Folders.First().Playlists.First().Items.Count());
         }
         
         //  TODO: GooglePlusID should be immutable.
@@ -62,14 +85,21 @@ namespace Streamus.Tests.Controller_Tests
         {
             const string googlePlusId = "109695597859594825120";
 
-            User user = UserManager.CreateUser();
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            JsonServiceStackResult result = (JsonServiceStackResult)UserController.Create();
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            UserController.UpdateGooglePlusId(user.Id, googlePlusId);
+            UserDto createdUserDto = (UserDto)result.Data;
 
-            NHibernateSessionManager.Instance.Clear();
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            UserController.UpdateGooglePlusId(createdUserDto.Id, googlePlusId);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            User userFromDatabase = UserDao.Get(user.Id);
-            Assert.That(userFromDatabase.Folders.Count == user.Folders.Count);
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            User userFromDatabase = UserDao.Get(createdUserDto.Id);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+            Assert.That(userFromDatabase.Folders.Count == createdUserDto.Folders.Count);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Streamus.Dao;
-using Streamus.Domain.Interfaces;
+﻿using Streamus.Domain.Interfaces;
 using System;
 
 namespace Streamus.Domain.Managers
@@ -20,17 +19,12 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
                 error.ValidateAndThrow();
                 ErrorDao.Save(error);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }

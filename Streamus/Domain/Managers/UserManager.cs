@@ -1,5 +1,4 @@
-﻿using Streamus.Dao;
-using Streamus.Domain.Interfaces;
+﻿using Streamus.Domain.Interfaces;
 using System;
 
 namespace Streamus.Domain.Managers
@@ -27,8 +26,6 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
                 user = new User
                     {
                         GooglePlusId = googlePlusId
@@ -36,13 +33,10 @@ namespace Streamus.Domain.Managers
 
                 user.ValidateAndThrow();
                 UserDao.Save(user);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
 
@@ -53,17 +47,12 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
-
                 user.ValidateAndThrow();
                 UserDao.Save(user);
-
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
@@ -72,14 +61,11 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                NHibernateSessionManager.Instance.BeginTransaction();
                 UserDao.UpdateGooglePlusId(userId, googlePlusId);
-                NHibernateSessionManager.Instance.CommitTransaction();
             }
             catch (Exception exception)
             {
                 Logger.Error(exception);
-                NHibernateSessionManager.Instance.RollbackTransaction();
                 throw;
             }
         }
