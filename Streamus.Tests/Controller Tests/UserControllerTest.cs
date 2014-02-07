@@ -97,9 +97,9 @@ namespace Streamus.Tests.Controller_Tests
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             User userFromDatabase = UserDao.Get(createdUserDto.Id);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             Assert.That(userFromDatabase.Folders.Count == createdUserDto.Folders.Count);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
     }
 }
