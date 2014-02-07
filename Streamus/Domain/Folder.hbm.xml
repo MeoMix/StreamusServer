@@ -8,7 +8,7 @@
 
     <property name="Title" not-null="true" />
 
-    <set name="Playlists" inverse="true" fetch="join" cascade="all-delete-orphan" >
+    <set name="Playlists" inverse="true" lazy="false" fetch="select" cascade="all-delete-orphan" >
       <key column="FolderId" />
       <one-to-many class="Playlist" />
     </set>

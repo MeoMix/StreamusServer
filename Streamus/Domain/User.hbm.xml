@@ -9,7 +9,7 @@
     <property name="Name" not-null="true" />
     <property name="GooglePlusId" not-null="true" />
 
-    <set name="Folders" inverse="true" fetch="join" cascade="all-delete-orphan" >
+    <set name="Folders" inverse="true" lazy="false" fetch="select" cascade="all-delete-orphan" >
       <key column="UserId" />
       <one-to-many class="Folder" />
     </set>
