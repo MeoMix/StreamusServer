@@ -52,7 +52,8 @@ namespace Streamus.Dao
                 configuration.SetProperty("current_session_context_class", "call");
             }
 
-            //configuration.SetProperty("adonet.batch_size", "250");
+            //  5 seconds should be MORE than enough for any reasonably query at the moment. Maybe be more fine-grained on playlist items/playlists save if I see it time out.
+            configuration.SetProperty("command_timeout", "5");
 
             //  TODO: is this doing anything
             configuration.SetProperty("connection.isolation", "ReadUncommitted");
