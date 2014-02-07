@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 
 namespace Streamus.Domain.Managers
@@ -31,7 +32,18 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                videos.ToList().ForEach(DoSave);
+                List<Video> videosList = videos.ToList();
+
+                if (videosList.Count > 1000)
+                {
+                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(videosList.Count / 10);
+                }
+                else
+                {
+                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(videosList.Count / 5);
+                }
+
+                videosList.ForEach(DoSave);
             }
             catch (Exception exception)
             {

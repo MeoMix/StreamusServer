@@ -32,6 +32,7 @@ namespace Streamus.Dto
         {
             Id = Guid.Empty;
             Title = string.Empty;
+            Sequence = -1;
         }
 
         public static PlaylistItemDto Create(PlaylistItem playlistItem)
