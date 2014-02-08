@@ -1,11 +1,8 @@
-﻿using System;
-using System.Reflection;
-using System.Runtime.Remoting.Messaging;
-using System.Web;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Context;
-using log4net;
+using System;
+using System.Web;
 
 namespace Streamus.Dao
 {
@@ -52,14 +49,9 @@ namespace Streamus.Dao
                 configuration.SetProperty("current_session_context_class", "call");
             }
 
-            //  15 seconds should be MORE than enough for any reasonably query at the moment. Maybe be more fine-grained on playlist items/playlists save if I see it time out.
-            configuration.SetProperty("command_timeout", "3");
-
-            //  TODO: is this doing anything
             configuration.SetProperty("connection.isolation", "ReadUncommitted");
             //configuration.SetProperty("max_fetch_depth", "3");
 
-            //  TODO: Is it possible to determine this dynamically?
 #if DEBUG
             configuration.SetProperty("default_schema", "[Streamus].[dbo]");
             configuration.SetProperty("generate_statistics", "true");
