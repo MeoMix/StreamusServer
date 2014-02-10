@@ -17,7 +17,7 @@ namespace Streamus.Controllers
         private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
         private readonly IPlaylistDao PlaylistDao;
-        private readonly IFolderDao FolderDao;
+        private readonly IUserDao UserDao;
         private readonly IShareCodeDao ShareCodeDao;
 
         public PlaylistController()
@@ -25,7 +25,7 @@ namespace Streamus.Controllers
             try
             {
                 PlaylistDao = new PlaylistDao();
-                FolderDao = new FolderDao();
+                UserDao = new UserDao();
                 ShareCodeDao = new ShareCodeDao();
             }
             catch (TypeInitializationException exception)
@@ -39,9 +39,9 @@ namespace Streamus.Controllers
         public ActionResult Create(PlaylistDto playlistDto)
         {
             Playlist playlist = Playlist.Create(playlistDto);
-            playlist.Folder.AddPlaylist(playlist);
+            playlist.User.AddPlaylist(playlist);
 
-            //  Make sure the playlist has been setup properly before it is cascade-saved through the Folder.
+            //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
             playlist.ValidateAndThrow();
 
             PlaylistManager.Save(playlist);
@@ -97,7 +97,7 @@ namespace Streamus.Controllers
         ///     and return the copied Playlist.
         /// </summary>
         [HttpGet]
-        public JsonResult CreateCopyByShareCode(string shareCodeShortId, string urlFriendlyEntityTitle, Guid folderId)
+        public JsonResult CreateCopyByShareCode(string shareCodeShortId, string urlFriendlyEntityTitle, Guid userId)
         {
             ShareCode shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
 
@@ -114,10 +114,10 @@ namespace Streamus.Controllers
             //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
             Playlist playlistToCopy = PlaylistDao.Get(shareCode.EntityId);
 
-            Folder folder = FolderDao.Get(folderId);
+            User user = UserDao.Get(userId);
 
             var playlistCopy = new Playlist(playlistToCopy);
-            folder.AddPlaylist(playlistCopy);
+            user.AddPlaylist(playlistCopy);
 
             PlaylistManager.Save(playlistCopy);
 

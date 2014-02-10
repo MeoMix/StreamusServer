@@ -9,7 +9,6 @@
         IPlaylistDao GetPlaylistDao();
         IPlaylistItemDao GetPlaylistItemDao();
         IShareCodeDao GetShareCodeDao();
-        IFolderDao GetFolderDao();
         IUserDao GetUserDao();
         IVideoDao GetVideoDao();
     }

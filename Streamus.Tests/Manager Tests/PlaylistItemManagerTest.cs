@@ -48,10 +48,9 @@ namespace Streamus.Tests.Manager_Tests
         public void SetupContext()
         {
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            Folder folder = User.Folders.First();
 
             //  Make a new Playlist object each time to ensure no side-effects from previous test case.
-            Playlist = folder.CreateAndAddPlaylist();
+            Playlist = User.CreateAndAddPlaylist();
             PlaylistManager.Save(Playlist);
 
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();

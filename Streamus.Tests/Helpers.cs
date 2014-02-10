@@ -15,7 +15,6 @@ namespace Streamus.Tests
     {
         private static readonly UserManager UserManager = new UserManager();
         private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
-        private static readonly FolderManager FolderManager = new FolderManager();
 
         /// <summary>
         ///     Creates a new Video and PlaylistItem, puts item in the database and then returns
@@ -63,24 +62,16 @@ namespace Streamus.Tests
         }
 
         /// <summary>
-        ///     Create a new Folder, save it to the DB, then generate a PlaylistDto which has the
-        ///     Folder as its parent. Creates a folder for the Playlist if no folderId provided.
+        ///     Generate a PlaylistDto which has the User as its parent.
         /// </summary>
         /// <returns></returns>
-        public static PlaylistDto CreatePlaylistDto(Guid folderIdOverride = default(Guid))
+        public static PlaylistDto CreatePlaylistDto(Guid userIdOverride)
         {
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
 
-            if (folderIdOverride == default(Guid))
-            {
-                Folder folder = new Folder();
-                FolderManager.Save(folder);
-                folderIdOverride = folder.Id;
-            }
-
             var playlistDto = new PlaylistDto
                 {
-                    FolderId = folderIdOverride
+                    UserId = userIdOverride
                 };
 
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
@@ -89,14 +80,14 @@ namespace Streamus.Tests
         }
 
         /// <summary>
-        ///     Create a new Folder and Playlist, save them to the DB, then generate a PlaylistItemDto
-        ///     which has those entities as its parents.
+        ///     Create a new Playlist, save it to the DB, then generate a PlaylistItemDto
+        ///     which has the Playlist as its parent.
         /// </summary>
         public static PlaylistItemDto CreatePlaylistItemDto()
         {
             User user = CreateUser();
 
-            Guid playlistId = user.Folders.First().Playlists.First().Id;
+            Guid playlistId = user.Playlists.First().Id;
 
             Video video = CreateUnsavedVideoWithId();
             VideoDto videoDto = VideoDto.Create(video);
@@ -111,16 +102,15 @@ namespace Streamus.Tests
         }
 
         /// <summary>
-        ///     Create a new Folder and Playlist, save them to the DB, then generate N PlaylistItemDtos
-        ///     which have those entities as their parents.
+        ///     Create a new Playlist, save it to the DB, then generate N PlaylistItemDtos
+        ///     which have the Playlist as their parent.
         /// </summary>
         public static List<PlaylistItemDto> CreatePlaylistItemsDto(int itemsToCreate, Guid playlistId = default(Guid))
         {
             if (playlistId == default(Guid))
             {
                 User user = CreateUser();
-                Folder folder = user.Folders.First();
-                playlistId = folder.Playlists.First().Id;
+                playlistId = user.Playlists.First().Id;
             }
 
             Video video = CreateUnsavedVideoWithId();

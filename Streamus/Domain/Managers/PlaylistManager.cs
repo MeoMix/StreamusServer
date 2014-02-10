@@ -103,7 +103,7 @@ namespace Streamus.Domain.Managers
             try
             {
                 Playlist playlist = PlaylistDao.Get(id);
-                playlist.Folder.RemovePlaylist(playlist);
+                playlist.User.RemovePlaylist(playlist);
                 PlaylistDao.Delete(playlist);
             }
             catch (Exception exception)

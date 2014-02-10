@@ -1,8 +1,8 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using System;
 
 namespace Streamus.Tests.Manager_Tests
 {
@@ -39,7 +39,7 @@ namespace Streamus.Tests.Manager_Tests
             Assert.AreNotSame(user, userFromDatabase);
 
             Assert.IsNotNull(userFromDatabase);
-            Assert.IsNotEmpty(userFromDatabase.Folders);
+            Assert.IsNotEmpty(userFromDatabase.Playlists);
 
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }

@@ -62,6 +62,10 @@
     <Reference Include="FluentValidation">
       <HintPath>..\packages\FluentValidation.5.0.0.1\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
+    <Reference Include="HibernatingRhinos.Profiler.Appender, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0774796e73ebf640, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Downloads\NHibernate.Profiler-v2.0-Build-2232\HibernatingRhinos.Profiler.Appender.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections">
       <HintPath>..\packages\Iesi.Collections.3.2.0.1001\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
@@ -176,7 +180,6 @@
     <Compile Include="Dao\NHibernateSessionManager.cs" />
     <Compile Include="Dao\ShareCodeDao.cs" />
     <Compile Include="Dao\ErrorDao.cs" />
-    <Compile Include="Dao\FolderDao.cs" />
     <Compile Include="Dao\PlaylistItemDao.cs" />
     <Compile Include="Domain\AbstractDomainEntity.cs" />
     <Compile Include="Domain\AbstractShareableEntity.cs" />
@@ -187,14 +190,11 @@
     <Compile Include="Domain\Managers\AbstractManager.cs" />
     <Compile Include="Domain\Managers\PlaylistItemManager.cs" />
     <Compile Include="Domain\Managers\ShareCodeManager.cs" />
-    <Compile Include="Domain\Managers\FolderManager.cs" />
     <Compile Include="Domain\ShareCode.cs" />
     <Compile Include="Domain\Error.cs" />
     <Compile Include="Domain\Interfaces\IErrorDao.cs" />
-    <Compile Include="Domain\Interfaces\IFolderDao.cs" />
     <Compile Include="Domain\Interfaces\IPlaylistItemDao.cs" />
     <Compile Include="Domain\Managers\ErrorManager.cs" />
-    <Compile Include="Domain\Folder.cs" />
     <Compile Include="Domain\PlaylistItem.cs" />
     <Compile Include="Domain\Interfaces\IUserDao.cs" />
     <Compile Include="Domain\Interfaces\IPlaylistDao.cs" />
@@ -207,7 +207,6 @@
     <Compile Include="Domain\UserChannel.cs" />
     <Compile Include="Domain\Validators\ShareCodeValidator.cs" />
     <Compile Include="Domain\Validators\ErrorValidator.cs" />
-    <Compile Include="Domain\Validators\FolderValidator.cs" />
     <Compile Include="Domain\Validators\PlaylistItemValidator.cs" />
     <Compile Include="Domain\Validators\PlaylistValidator.cs" />
     <Compile Include="Domain\Validators\UserValidator.cs" />
@@ -229,7 +228,6 @@
     <Compile Include="Dto\PlaylistDto.cs" />
     <Compile Include="Dto\PlaylistItemDto.cs" />
     <Compile Include="Dto\ShareCodeDto.cs" />
-    <Compile Include="Dto\FolderDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
     <Compile Include="Dto\VideoDto.cs" />
     <Compile Include="Global.asax.cs">
@@ -252,9 +250,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Domain\Playlist.hbm.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Domain\Folder.hbm.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Domain\Error.hbm.xml">

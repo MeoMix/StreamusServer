@@ -31,7 +31,7 @@ namespace Streamus
 
         public static void InitializeApplication()
         {
-            //HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
+            HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
 
             JsonMediaTypeFormatter json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
             json.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
@@ -64,22 +64,17 @@ namespace Streamus
                   .ReverseMap();
 
             IPlaylistDao playlistDao = daoFactory.GetPlaylistDao();
-            IFolderDao folderDao = daoFactory.GetFolderDao();
             IUserDao userDao = daoFactory.GetUserDao();
 
             Mapper.CreateMap<Playlist, PlaylistDto>();
             Mapper.CreateMap<PlaylistDto, Playlist>()
-                .ForMember(playlist => playlist.Folder,opt => opt.MapFrom(playlistDto => folderDao.Get(playlistDto.FolderId)));
+                .ForMember(playlist => playlist.User, opt => opt.MapFrom(playlistDto => userDao.Get(playlistDto.UserId)));
 
             Mapper.CreateMap<PlaylistItem, PlaylistItemDto>();
             Mapper.CreateMap<PlaylistItemDto, PlaylistItem>()
                 .ForMember(playlistItem => playlistItem.Playlist, opt => opt.MapFrom(playlistItemDto => playlistDao.Get(playlistItemDto.PlaylistId)));
 
             Mapper.CreateMap<ShareCode, ShareCodeDto>().ReverseMap();
-
-            Mapper.CreateMap<Folder, FolderDto>();
-            Mapper.CreateMap<FolderDto, Folder>()
-                  .ForMember(folder => folder.User, opt => opt.MapFrom(folderDto => userDao.Get(folderDto.UserId)));
 
             Mapper.CreateMap<User, UserDto>().ReverseMap();
             Mapper.CreateMap<Video, VideoDto>().ReverseMap();
