@@ -50,7 +50,7 @@ namespace Streamus.Tests.Controller_Tests
 
         //  TODO: Test the response time of this and make sure it isn't a long running query for big playlists.
         [Test]
-        public void GetUserWithBulkPlaylistItemsInFolder_UserCreatedWithLotsOfItems_UserHasOneFolderOnePlaylist()
+        public void GetUserWithBulkPlaylistItems_UserCreatedWithLotsOfItems_UserHasOnePlaylist()
         {
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             JsonServiceStackResult result = (JsonServiceStackResult)UserController.Create();
@@ -60,7 +60,7 @@ namespace Streamus.Tests.Controller_Tests
 
             const int numItemsToCreate = 2000;
 
-            Guid playlistId = createdUserDto.Folders.First().Playlists.First().Id;
+            Guid playlistId = createdUserDto.Playlists.First().Id;
             List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, playlistId);
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
@@ -71,12 +71,11 @@ namespace Streamus.Tests.Controller_Tests
 
             User userFromDatabase = UserDao.Get(createdUserDto.Id);
 
-            Assert.That(userFromDatabase.Folders.Count == createdUserDto.Folders.Count);
-            Assert.That(userFromDatabase.Folders.First().Playlists.Count == createdUserDto.Folders.First().Playlists.Count);
-            Assert.That(userFromDatabase.Folders.First().Playlists.First().Items.Count() == numItemsToCreate);
+            Assert.That(userFromDatabase.Playlists.Count == createdUserDto.Playlists.Count);
+            Assert.That(userFromDatabase.Playlists.First().Items.Count() == numItemsToCreate);
 
             //  Different sessions -- first should be de-synced from the second.
-            Assert.That(userFromDatabase.Folders.First().Playlists.First().Items.Count() != createdUserDto.Folders.First().Playlists.First().Items.Count());
+            Assert.That(userFromDatabase.Playlists.First().Items.Count() != createdUserDto.Playlists.First().Items.Count());
         }
         
         //  TODO: GooglePlusID should be immutable.
@@ -98,7 +97,7 @@ namespace Streamus.Tests.Controller_Tests
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             User userFromDatabase = UserDao.Get(createdUserDto.Id);
 
-            Assert.That(userFromDatabase.Folders.Count == createdUserDto.Folders.Count);
+            Assert.That(userFromDatabase.Playlists.Count == createdUserDto.Playlists.Count);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
     }

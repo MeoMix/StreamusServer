@@ -28,11 +28,6 @@ namespace Streamus.Dao
             return new ShareCodeDao();
         }
 
-        public IFolderDao GetFolderDao()
-        {
-            return new FolderDao();
-        }
-
         public IUserDao GetUserDao()
         {
             return new UserDao();

@@ -9,9 +9,9 @@
     <property name="Name" not-null="true" />
     <property name="GooglePlusId" not-null="true" />
 
-    <set name="Folders" inverse="true" lazy="false" fetch="select" cascade="all-delete-orphan" >
+    <set name="Playlists" inverse="true" lazy="false" fetch="select" cascade="all-delete-orphan" >
       <key column="UserId" />
-      <one-to-many class="Folder" />
+      <one-to-many class="Playlist" />
     </set>
   </class>
   

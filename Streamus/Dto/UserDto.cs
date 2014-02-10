@@ -18,14 +18,14 @@ namespace Streamus.Dto
         [DataMember(Name = "name")]
         public string Name { get; set; }
 
-        [DataMember(Name = "folders")]
-        public List<FolderDto> Folders { get; set; }
+        [DataMember(Name = "playlists")]
+        public List<PlaylistDto> Playlists { get; set; }
 
         public UserDto()
         {
             Name = string.Empty;
             GooglePlusId = string.Empty;
-            Folders = new List<FolderDto>();
+            Playlists = new List<PlaylistDto>();
         }
 
         public static UserDto Create(User user)
@@ -33,6 +33,5 @@ namespace Streamus.Dto
             UserDto userDto = Mapper.Map<User, UserDto>(user);
             return userDto;
         }
-
     }
 }

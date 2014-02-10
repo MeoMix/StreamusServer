@@ -130,7 +130,7 @@ namespace Streamus.Tests.Controller_Tests
         public void CreateMaxPlaylistItems_PlaylistEmpty_DoesntTakeForFuckingEver()
         {
             const int iterations = 1;
-            const int numItemsToCreate = 4000;
+            const int numItemsToCreate = 1;
             Guid playlistId = default(Guid);
 
             //  Starting at 1 because I want to use currentIteration to be used in math and makes more sense as 1.

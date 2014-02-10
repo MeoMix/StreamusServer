@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using NHibernate;
 using NUnit.Framework;
 using Streamus.Dao;
@@ -14,7 +13,6 @@ namespace Streamus.Tests.Manager_Tests
     {
         private IPlaylistDao PlaylistDao { get; set; }
         private User User { get; set; }
-        private Folder Folder { get; set; }
         private Video Video { get; set; }
         private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
@@ -34,7 +32,6 @@ namespace Streamus.Tests.Manager_Tests
             }
 
             User = Helpers.CreateUser();
-            Folder = User.Folders.First();
 
             Video = Helpers.CreateUnsavedVideoWithId();
 
@@ -43,29 +40,10 @@ namespace Streamus.Tests.Manager_Tests
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 
-        /// <summary>
-        ///     Make sure that when the first PlaylistItem is added to a Playlist that the
-        ///     Playlist's FirstItem field is appropriately set in the database.
-        /// </summary>
-        //[Test]
-        //public void AddItem_NoItemsInPlaylist_FirstItemIdSet()
-        //{
-        //    Playlist playlist = Folder.CreateAndAddPlaylist();
-        //    PlaylistManager.Save(playlist);
-
-        //    PlaylistItem playlistItem = Helpers.CreateItemInPlaylist(playlist);
-
-        //    //  Remove entity from NHibernate cache to force DB query to ensure actually created.
-        //    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().Clear();
-
-        //    Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
-        //    Assert.AreEqual(playlistFromDatabase.FirstItem, playlistItem);
-        //}
-
         [Test]
         public void Updates()
         {
-            Playlist playlist = Folder.CreateAndAddPlaylist();
+            Playlist playlist = User.CreateAndAddPlaylist();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistManager.Save(playlist);
@@ -85,17 +63,16 @@ namespace Streamus.Tests.Manager_Tests
         }
 
         /// <summary>
-        ///     Verifies that a Playlist can be deleted properly. The Playlist
-        ///     has no items underneath it and the Folder is assumed to not have any additional Playlists.
+        ///     Verifies that a Playlist can be deleted properly.
         /// </summary>
         [Test]
         public void DeletePlaylist()
         {
             //  Create a new Playlist and write it to the database.
-            string title = string.Format("New Playlist {0:D4}", Folder.Playlists.Count);
+            string title = string.Format("New Playlist {0:D4}", User.Playlists.Count);
             var playlist = new Playlist(title);
 
-            Folder.AddPlaylist(playlist);
+            User.AddPlaylist(playlist);
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistManager.Save(playlist);

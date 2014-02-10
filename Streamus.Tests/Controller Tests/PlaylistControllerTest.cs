@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Streamus.Controllers;
 using Streamus.Dao;
@@ -6,19 +8,16 @@ using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
 using Streamus.Dto;
-using System;
-using System.Linq;
 
 namespace Streamus.Tests.Controller_Tests
 {
     [TestFixture]
     public class PlaylistControllerTest : AbstractTest
     {
-        private static readonly UserManager UserManager = new UserManager();
         private static readonly PlaylistItemController PlaylistItemController = new PlaylistItemController();
         private static readonly ShareCodeManager ShareCodeManager = new ShareCodeManager();
         private static readonly PlaylistController PlaylistController = new PlaylistController();
-        private IFolderDao FolderDao { get; set; }
+        private IUserDao UserDao { get; set; }
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -28,7 +27,7 @@ namespace Streamus.Tests.Controller_Tests
         {
             try
             {
-                FolderDao = DaoFactory.GetFolderDao();
+                UserDao = DaoFactory.GetUserDao();
             }
             catch (TypeInitializationException exception)
             {
@@ -41,21 +40,21 @@ namespace Streamus.Tests.Controller_Tests
         {
             User user = Helpers.CreateUser();
 
-            Folder folder = user.Folders.First();
-            Guid firstPlaylistId = folder.Playlists.First().Id;
+            Guid firstPlaylistId = user.Playlists.First().Id;
 
-            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(folder.Id);
+            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonServiceStackResult result = (JsonServiceStackResult)PlaylistController.Create(playlistDto);
+            var result = (JsonServiceStackResult) PlaylistController.Create(playlistDto);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            PlaylistDto createdPlaylistDto = (PlaylistDto)result.Data;
+            var createdPlaylistDto = (PlaylistDto) result.Data;
 
             const int numItemsToCreate = 150;
-            List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, createdPlaylistDto.Id);
+            List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate,
+                                                                                    createdPlaylistDto.Id);
 
-            foreach (List<PlaylistItemDto> splitPlaylistItemDtos in Split(playlistItemDtos, 50))
+            foreach (var splitPlaylistItemDtos in Split(playlistItemDtos, 50))
             {
                 NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
                 PlaylistItemController.CreateMultiple(splitPlaylistItemDtos);
@@ -71,8 +70,8 @@ namespace Streamus.Tests.Controller_Tests
         public static List<List<PlaylistItemDto>> Split(List<PlaylistItemDto> source, int splitSize)
         {
             return source
-                .Select((x, i) => new { Index = i, Value = x })
-                .GroupBy(x => x.Index / splitSize)
+                .Select((x, i) => new {Index = i, Value = x})
+                .GroupBy(x => x.Index/splitSize)
                 .Select(x => x.Select(v => v.Value).ToList())
                 .ToList();
         }
@@ -80,22 +79,23 @@ namespace Streamus.Tests.Controller_Tests
         [Test]
         public void CreatePlaylist_PlaylistDoesntExist_PlaylistCreated()
         {
-            PlaylistDto playlistDto = Helpers.CreatePlaylistDto();
+            User user = Helpers.CreateUser();
+            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonServiceStackResult result = (JsonServiceStackResult)PlaylistController.Create(playlistDto);
+            var result = (JsonServiceStackResult) PlaylistController.Create(playlistDto);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            PlaylistDto createdPlaylistDto = (PlaylistDto) result.Data;
+            var createdPlaylistDto = (PlaylistDto) result.Data;
 
             //  Make sure we actually get a Playlist DTO back from the Controller.
             Assert.NotNull(createdPlaylistDto);
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            Folder folder = FolderDao.Get(createdPlaylistDto.FolderId);
+            User userFromDatabase = UserDao.Get(createdPlaylistDto.UserId);
 
-            //  Make sure that the created playlist was cascade added to the Folder
-            Assert.That(folder.Playlists.Count(p => p.Id == createdPlaylistDto.Id) == 1);
+            //  Make sure that the created playlist was cascade added to the User
+            Assert.That(userFromDatabase.Playlists.Count(p => p.Id == createdPlaylistDto.Id) == 1);
 
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
@@ -105,29 +105,27 @@ namespace Streamus.Tests.Controller_Tests
         {
             User user = Helpers.CreateUser();
 
-            Folder folder = user.Folders.First();
-
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            ShareCode shareCode = ShareCodeManager.GetShareCode(ShareableEntityType.Playlist, folder.Playlists.First().Id);
+            ShareCode shareCode = ShareCodeManager.GetShareCode(ShareableEntityType.Playlist, user.Playlists.First().Id);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonServiceStackResult result = (JsonServiceStackResult)PlaylistController.CreateCopyByShareCode(shareCode.ShortId, shareCode.UrlFriendlyEntityTitle, folder.Id);
+            //  Create a new playlist for the given user by loading up the playlist via sharecode.
+            var result = (JsonServiceStackResult)PlaylistController.CreateCopyByShareCode(shareCode.ShortId, shareCode.UrlFriendlyEntityTitle, user.Id);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
-            
-            PlaylistDto playlistDto = (PlaylistDto) result.Data;
+
+            var playlistDto = (PlaylistDto) result.Data;
 
             //  Make sure we actually get a Playlist DTO back from the Controller.
             Assert.NotNull(playlistDto);
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            Folder folderFromDatabase = FolderDao.Get(playlistDto.FolderId);
+            User userFromDatabase = UserDao.Get(playlistDto.UserId);
 
-            //  Make sure that the created playlist was cascade added to the Folder
-            Assert.That(folderFromDatabase.Playlists.Count(p => p.Id == playlistDto.Id) == 1);
+            //  Make sure that the created playlist was cascade added to the User
+            Assert.That(userFromDatabase.Playlists.Count(p => p.Id == playlistDto.Id) == 1);
 
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
-
     }
 }

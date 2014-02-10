@@ -14,7 +14,7 @@
       <one-to-many class="PlaylistItem" />
     </set>
 
-    <many-to-one name="Folder" column="FolderId" />
+    <many-to-one name="User" column="UserId" />
     
   </class>
   
