@@ -10,15 +10,12 @@ namespace Streamus.Tests.Manager_Tests
     [TestFixture]
     public class PlaylistItemManagerTest : AbstractTest
     {
-        private IPlaylistItemDao PlaylistItemDao { get; set; }
-        private IVideoDao VideoDao { get; set; }
         private User User { get; set; }
         private Playlist Playlist { get; set; }
 
         private IPlaylistItemManager PlaylistItemManager;
         private IPlaylistManager PlaylistManager;
         private IVideoManager VideoManager;
-        private Helpers Helpers;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -28,15 +25,9 @@ namespace Streamus.Tests.Manager_Tests
         {
             try
             {
-                PlaylistItemDao = DaoFactory.GetPlaylistItemDao();
-                VideoDao = DaoFactory.GetVideoDao();
-
-                PlaylistItemManager = ManagerFactory.GetPlaylistItemManager(PlaylistItemDao, VideoDao);
-                IPlaylistDao playlistDao = DaoFactory.GetPlaylistDao();
-                PlaylistManager = ManagerFactory.GetPlaylistManager(playlistDao, VideoDao);
-                VideoManager = ManagerFactory.GetVideoManager(VideoDao);
-
-                Helpers = new Helpers(DaoFactory, ManagerFactory);
+                PlaylistItemManager = ManagerFactory.GetPlaylistItemManager();
+                PlaylistManager = ManagerFactory.GetPlaylistManager();
+                VideoManager = ManagerFactory.GetVideoManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -73,11 +64,11 @@ namespace Streamus.Tests.Manager_Tests
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
 
             //  Ensure that the Video was created.
-            Video videoFromDatabase = VideoDao.Get(playlistItem.Video.Id);
+            Video videoFromDatabase = VideoManager.Get(playlistItem.Video.Id);
             Assert.NotNull(videoFromDatabase);
 
             //  Ensure that the PlaylistItem was created.
-            PlaylistItem itemFromDatabase = PlaylistItemDao.Get(playlistItem.Id);
+            PlaylistItem itemFromDatabase = PlaylistItemManager.Get(playlistItem.Id);
             Assert.NotNull(itemFromDatabase);
 
             //  Should have a sequence number after saving for sure.
@@ -119,11 +110,11 @@ namespace Streamus.Tests.Manager_Tests
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
 
             //  Ensure that the Video was NOT updated by comparing the new title to the old one.
-            Video videoFromDatabase = VideoDao.Get(videoNotInDatabase.Id);
+            Video videoFromDatabase = VideoManager.Get(videoNotInDatabase.Id);
             Assert.AreNotEqual(videoFromDatabase.Title, videoTitle);
 
             //  Ensure that the PlaylistItem was created.
-            PlaylistItem itemFromDatabase = PlaylistItemDao.Get(playlistItem.Id);
+            PlaylistItem itemFromDatabase = PlaylistItemManager.Get(playlistItem.Id);
             Assert.NotNull(itemFromDatabase);
 
             //  Should have a sequence number after saving for sure.
@@ -177,7 +168,7 @@ namespace Streamus.Tests.Manager_Tests
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Check the title of the item from the database -- make sure it updated.
-            PlaylistItem itemFromDatabase = PlaylistItemDao.Get(playlistItem.Id);
+            PlaylistItem itemFromDatabase = PlaylistItemManager.Get(playlistItem.Id);
             Assert.AreEqual(itemFromDatabase.Title, updatedItemTitle);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
@@ -196,7 +187,7 @@ namespace Streamus.Tests.Manager_Tests
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            PlaylistItem deletedPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
+            PlaylistItem deletedPlaylistItem = PlaylistItemManager.Get(playlistItem.Id);
             Assert.IsNull(deletedPlaylistItem);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
@@ -221,7 +212,7 @@ namespace Streamus.Tests.Manager_Tests
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
 
-            PlaylistItem deletedPlaylistItem = PlaylistItemDao.Get(firstItem.Id);
+            PlaylistItem deletedPlaylistItem = PlaylistItemManager.Get(firstItem.Id);
             Assert.IsNull(deletedPlaylistItem);
 
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();

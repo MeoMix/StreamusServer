@@ -4,7 +4,6 @@ using System.Linq;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using Streamus.Dto;
 
 namespace Streamus.Tests
@@ -17,14 +16,10 @@ namespace Streamus.Tests
         private readonly IUserManager UserManager;
         private readonly IPlaylistItemManager PlaylistItemManager;
 
-        public Helpers(IDaoFactory daoFactory, IManagerFactory managerFactory)
+        public Helpers(IManagerFactory managerFactory)
         {
-            IUserDao userDao = daoFactory.GetUserDao();
-            UserManager = managerFactory.GetUserManager(userDao);
-
-            IPlaylistItemDao playlistItemDao = daoFactory.GetPlaylistItemDao();
-            IVideoDao videoDao = daoFactory.GetVideoDao();
-            PlaylistItemManager = managerFactory.GetPlaylistItemManager(playlistItemDao, videoDao);
+            UserManager = managerFactory.GetUserManager();
+            PlaylistItemManager = managerFactory.GetPlaylistItemManager();
         }
 
         /// <summary>

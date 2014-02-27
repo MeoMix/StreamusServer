@@ -17,6 +17,40 @@ namespace Streamus.Domain.Managers
             UserDao = userDao;
         }
 
+        public User Get(Guid id)
+        {
+            User user;
+
+            try
+            {
+                user = UserDao.Get(id);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return user;
+        }
+
+        public User GetByGooglePlusId(string googlePlusId)
+        {
+            User user;
+
+            try
+            {
+                user = UserDao.GetByGooglePlusId(googlePlusId);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return user;
+        }
+
         /// <summary>
         ///     Creates a new User and saves it to the DB. As a side effect, also creates a new, empty
         ///     Playlist and also saves it to the DB.
@@ -71,5 +105,6 @@ namespace Streamus.Domain.Managers
                 throw;
             }
         }
+
     }
 }

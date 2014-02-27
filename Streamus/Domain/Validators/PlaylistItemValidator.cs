@@ -9,8 +9,6 @@ namespace Streamus.Domain.Validators
             RuleFor(playlistItem => playlistItem.Playlist).NotNull();
             RuleFor(playlistItem => playlistItem.Video).NotNull();
             RuleFor(playlistItem => playlistItem.Sequence).GreaterThanOrEqualTo(0);
-            //RuleFor(playlistItem => playlistItem.NextItem).NotNull();
-            //RuleFor(playlistItem => playlistItem.PreviousItem).NotNull();
         }
     }
 }

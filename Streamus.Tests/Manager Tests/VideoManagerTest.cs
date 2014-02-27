@@ -11,9 +11,7 @@ namespace Streamus.Tests.Manager_Tests
     [TestFixture]
     public class VideoManagerTest : AbstractTest
     {
-        private IVideoDao VideoDao { get; set; }
         private IVideoManager VideoManager;
-        private Helpers Helpers;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -23,9 +21,7 @@ namespace Streamus.Tests.Manager_Tests
         {
             try
             {
-                VideoDao = DaoFactory.GetVideoDao();
-                VideoManager = ManagerFactory.GetVideoManager(VideoDao);
-                Helpers = new Helpers(DaoFactory, ManagerFactory);
+                VideoManager = ManagerFactory.GetVideoManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -47,7 +43,7 @@ namespace Streamus.Tests.Manager_Tests
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            Video videoFromDatabase = VideoDao.Get(video.Id);
+            Video videoFromDatabase = VideoManager.Get(video.Id);
 
             //  Test that the video was successfully inserted
             Assert.IsNotNull(videoFromDatabase);
@@ -75,7 +71,7 @@ namespace Streamus.Tests.Manager_Tests
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            Video videoFromDatabase = VideoDao.Get(video.Id);
+            Video videoFromDatabase = VideoManager.Get(video.Id);
 
             //  Ensure video title hasn't changed.
             Assert.AreEqual(videoFromDatabase.Title, originalVideoTitle);
@@ -100,7 +96,7 @@ namespace Streamus.Tests.Manager_Tests
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Make sure multiple videos were able to be saved.
-            videos.Select(v => VideoDao.Get(v.Id)).ToList().ForEach(Assert.IsNotNull);
+            videos.Select(v => VideoManager.Get(v.Id)).ToList().ForEach(Assert.IsNotNull);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 
@@ -125,7 +121,7 @@ namespace Streamus.Tests.Manager_Tests
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Make sure multiple videos were able to be saved.
-            videos.Select(v => VideoDao.Get(v.Id)).ToList().ForEach(Assert.IsNotNull);
+            videos.Select(v => VideoManager.Get(v.Id)).ToList().ForEach(Assert.IsNotNull);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
     }

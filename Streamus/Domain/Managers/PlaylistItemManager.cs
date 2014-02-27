@@ -19,6 +19,23 @@ namespace Streamus.Domain.Managers
             VideoDao = videoDao;
         }
 
+        public PlaylistItem Get(Guid id)
+        {
+            PlaylistItem playlistItem;
+
+            try
+            {
+                playlistItem = PlaylistItemDao.Get(id);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return playlistItem;
+        }
+
         public void Delete(Guid itemId)
         {
             try

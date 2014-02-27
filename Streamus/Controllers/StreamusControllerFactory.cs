@@ -17,9 +17,8 @@ namespace Streamus.Controllers
 
             using (ILifetimeScope scope = AutofacRegistrations.Container.BeginLifetimeScope())
             {
-                IDaoFactory daoFactory = scope.Resolve<IDaoFactory>();
                 IManagerFactory managerFactory = scope.Resolve<IManagerFactory>();
-                IController controller = Activator.CreateInstance(controllerType, new object[] {logger, daoFactory, managerFactory}) as Controller;
+                IController controller = Activator.CreateInstance(controllerType, new object[] {logger, managerFactory}) as Controller;
 
                 return controller;
             }

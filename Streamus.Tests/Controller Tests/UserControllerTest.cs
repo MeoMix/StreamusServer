@@ -15,8 +15,7 @@ namespace Streamus.Tests.Controller_Tests
     {
         private PlaylistItemController PlaylistItemController;
         private UserController UserController;
-        private IUserDao UserDao { get; set; }
-        private Helpers Helpers;
+        private IUserManager UserManager;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -26,11 +25,9 @@ namespace Streamus.Tests.Controller_Tests
         {
             try
             {
-                PlaylistItemController = new PlaylistItemController(Logger, DaoFactory, ManagerFactory);
-                UserController = new UserController(Logger, DaoFactory, ManagerFactory);
-
-                UserDao = DaoFactory.GetUserDao();
-                Helpers = new Helpers(DaoFactory, ManagerFactory);
+                PlaylistItemController = new PlaylistItemController(Logger, ManagerFactory);
+                UserController = new UserController(Logger, ManagerFactory);
+                UserManager = ManagerFactory.GetUserManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -48,7 +45,7 @@ namespace Streamus.Tests.Controller_Tests
             UserDto createdUserDto = (UserDto)result.Data;
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            User userFromDatabase = UserDao.Get(createdUserDto.Id);
+            User userFromDatabase = UserManager.Get(createdUserDto.Id);
             Assert.That(userFromDatabase != null);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
@@ -74,7 +71,7 @@ namespace Streamus.Tests.Controller_Tests
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
 
-            User userFromDatabase = UserDao.Get(createdUserDto.Id);
+            User userFromDatabase = UserManager.Get(createdUserDto.Id);
 
             Assert.That(userFromDatabase.Playlists.Count == createdUserDto.Playlists.Count);
             Assert.That(userFromDatabase.Playlists.First().Items.Count() == numItemsToCreate);
@@ -100,7 +97,7 @@ namespace Streamus.Tests.Controller_Tests
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            User userFromDatabase = UserDao.Get(createdUserDto.Id);
+            User userFromDatabase = UserManager.Get(createdUserDto.Id);
 
             Assert.That(userFromDatabase.Playlists.Count == createdUserDto.Playlists.Count);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();

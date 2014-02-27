@@ -10,7 +10,6 @@ namespace Streamus.Tests.Manager_Tests
     public class UserManagerTest : AbstractTest
     {
         private IUserDao UserDao { get; set; }
-        private Helpers Helpers { get; set; }
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -21,7 +20,6 @@ namespace Streamus.Tests.Manager_Tests
             try
             {
                 UserDao = DaoFactory.GetUserDao();
-                Helpers = new Helpers(DaoFactory, ManagerFactory);
             }
             catch (TypeInitializationException exception)
             {

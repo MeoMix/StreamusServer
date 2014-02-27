@@ -9,20 +9,16 @@ using System.Web.Mvc;
 namespace Streamus.Controllers
 {
     [SessionManagement]
-    public class VideoController : Controller
+    public class VideoController : AbstractController
     {
-        private readonly ILog Logger;
         private readonly IVideoManager VideoManager;
-        private readonly IVideoDao VideoDao;
 
-        public VideoController(ILog logger, IDaoFactory daoFactory, IManagerFactory managerFactory)
+        public VideoController(ILog logger, IManagerFactory managerFactory)
+            : base(logger)
         {
-            Logger = logger;
-
             try
             {
-                VideoDao = daoFactory.GetVideoDao();
-                VideoManager = managerFactory.GetVideoManager(VideoDao);
+                VideoManager = managerFactory.GetVideoManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -51,7 +47,7 @@ namespace Streamus.Controllers
         [HttpGet]
         public ActionResult Get(string id)
         {
-            Video video = VideoDao.Get(id);
+            Video video = VideoManager.Get(id);
             VideoDto videoDto = VideoDto.Create(video);
 
             return new JsonServiceStackResult(videoDto);
@@ -74,7 +70,7 @@ namespace Streamus.Controllers
             //  The default model binder doesn't support passing an empty array as JSON to MVC controller, so check null.
             if (ids != null)
             {
-                IList<Video> videos = VideoDao.Get(ids);
+                IList<Video> videos = VideoManager.Get(ids);
                 videoDtos = VideoDto.Create(videos);
             }
 

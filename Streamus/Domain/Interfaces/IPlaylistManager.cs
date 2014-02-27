@@ -6,6 +6,7 @@ namespace Streamus.Domain.Interfaces
 {
     public interface IPlaylistManager
     {
+        Playlist Get(Guid id);
         void Save(Playlist playlist);
         void Save(IEnumerable<Playlist> playlists);
         void Update(Playlist playlist);

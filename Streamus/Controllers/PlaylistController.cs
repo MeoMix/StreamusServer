@@ -8,26 +8,20 @@ using System.Web.Mvc;
 namespace Streamus.Controllers
 {
     [SessionManagement]
-    public class PlaylistController : Controller
+    public class PlaylistController : AbstractController
     {
-        private readonly ILog Logger;
         private readonly IPlaylistManager PlaylistManager;
-        private readonly IPlaylistDao PlaylistDao;
-        private readonly IUserDao UserDao;
-        private readonly IShareCodeDao ShareCodeDao;
+        private readonly IUserManager UserManager;
+        private readonly IShareCodeManager ShareCodeManager;
 
-        public PlaylistController(ILog logger, IDaoFactory daoFactory, IManagerFactory managerFactory)
+        public PlaylistController(ILog logger, IManagerFactory managerFactory)
+            :base(logger)
         {
-            Logger = logger;
-
             try
             {
-                PlaylistDao = daoFactory.GetPlaylistDao();
-                UserDao = daoFactory.GetUserDao();
-                ShareCodeDao = daoFactory.GetShareCodeDao();
-
-                IVideoDao videoDao = daoFactory.GetVideoDao();
-                PlaylistManager = managerFactory.GetPlaylistManager(PlaylistDao, videoDao);
+                PlaylistManager = managerFactory.GetPlaylistManager();
+                UserManager = managerFactory.GetUserManager();
+                ShareCodeManager = managerFactory.GetShareCodeManager(PlaylistManager);
             }
             catch (TypeInitializationException exception)
             {
@@ -65,7 +59,7 @@ namespace Streamus.Controllers
         [HttpGet]
         public ActionResult Get(Guid id)
         {
-            Playlist playlist = PlaylistDao.Get(id);
+            Playlist playlist = PlaylistManager.Get(id);
             PlaylistDto playlistDto = PlaylistDto.Create(playlist);
 
             return new JsonServiceStackResult(playlistDto);
@@ -100,22 +94,13 @@ namespace Streamus.Controllers
         [HttpGet]
         public JsonResult CreateCopyByShareCode(string shareCodeShortId, string urlFriendlyEntityTitle, Guid userId)
         {
-            ShareCode shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
+            ShareCode shareCode = ShareCodeManager.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
 
-            if (shareCode == null)
-            {
-                throw new ApplicationException("Unable to locate shareCode in database.");
-            }
-
-            if (shareCode.EntityType != ShareableEntityType.Playlist)
-            {
-                throw new ApplicationException("Expected shareCode to have entityType of Playlist");
-            }
 
             //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
-            Playlist playlistToCopy = PlaylistDao.Get(shareCode.EntityId);
+            Playlist playlistToCopy = PlaylistManager.Get(shareCode.EntityId);
 
-            User user = UserDao.Get(userId);
+            User user = UserManager.Get(userId);
 
             var playlistCopy = new Playlist(playlistToCopy);
             user.AddPlaylist(playlistCopy);

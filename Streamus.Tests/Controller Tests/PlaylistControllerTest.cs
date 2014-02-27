@@ -16,8 +16,7 @@ namespace Streamus.Tests.Controller_Tests
         private PlaylistController PlaylistController;
         private PlaylistItemController PlaylistItemController;
         private IShareCodeManager ShareCodeManager;
-        private IUserDao UserDao;
-        private Helpers Helpers;
+        private IUserManager UserManager;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -27,18 +26,12 @@ namespace Streamus.Tests.Controller_Tests
         {
             try
             {
-                PlaylistController = new PlaylistController(Logger, DaoFactory, ManagerFactory);
-                PlaylistItemController = new PlaylistItemController(Logger, DaoFactory, ManagerFactory);
+                PlaylistController = new PlaylistController(Logger, ManagerFactory);
+                PlaylistItemController = new PlaylistItemController(Logger, ManagerFactory);
 
-                UserDao = DaoFactory.GetUserDao();
-
-                IPlaylistDao playlistDao = DaoFactory.GetPlaylistDao();
-                IShareCodeDao shareCodeDao = DaoFactory.GetShareCodeDao();
-                IVideoDao videoDao = DaoFactory.GetVideoDao();
-                IPlaylistManager playlistManager = ManagerFactory.GetPlaylistManager(playlistDao, videoDao);
-                ShareCodeManager = ManagerFactory.GetShareCodeManager(playlistDao, shareCodeDao, playlistManager);
-
-                Helpers = new Helpers(DaoFactory, ManagerFactory);
+                IPlaylistManager playlistManager = ManagerFactory.GetPlaylistManager();
+                ShareCodeManager = ManagerFactory.GetShareCodeManager(playlistManager);
+                UserManager = ManagerFactory.GetUserManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -102,7 +95,7 @@ namespace Streamus.Tests.Controller_Tests
             Assert.NotNull(createdPlaylistDto);
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            User userFromDatabase = UserDao.Get(createdPlaylistDto.UserId);
+            User userFromDatabase = UserManager.Get(createdPlaylistDto.UserId);
 
             //  Make sure that the created playlist was cascade added to the User
             Assert.That(userFromDatabase.Playlists.Count(p => p.Id == createdPlaylistDto.Id) == 1);
@@ -130,7 +123,7 @@ namespace Streamus.Tests.Controller_Tests
             Assert.NotNull(playlistDto);
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            User userFromDatabase = UserDao.Get(playlistDto.UserId);
+            User userFromDatabase = UserManager.Get(playlistDto.UserId);
 
             //  Make sure that the created playlist was cascade added to the User
             Assert.That(userFromDatabase.Playlists.Count(p => p.Id == playlistDto.Id) == 1);

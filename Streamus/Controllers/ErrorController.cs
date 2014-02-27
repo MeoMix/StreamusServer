@@ -7,17 +7,14 @@ using System.Web.Mvc;
 namespace Streamus.Controllers
 {
     [SessionManagement]
-    public class ErrorController : Controller
+    public class ErrorController : AbstractController
     {
-        private readonly ILog Logger;
         private readonly IErrorManager ErrorManager;
 
-        public ErrorController(ILog logger, IDaoFactory daoFactory, IManagerFactory managerFactory)
+        public ErrorController(ILog logger, IManagerFactory managerFactory)
+            : base(logger)
         {
-            Logger = logger;
-            IErrorDao errorDao = daoFactory.GetErrorDao();
-
-            ErrorManager = managerFactory.GetErrorManager(errorDao);
+            ErrorManager = managerFactory.GetErrorManager();
         }
 
         [HttpPost, Throttle(Name = "ClientErrorThrottle", Message = "You must wait {n} seconds before accessing logging another error.", Seconds = 60)]

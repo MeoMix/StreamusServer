@@ -8,20 +8,15 @@ using System.Web.Mvc;
 namespace Streamus.Controllers
 {
     [SessionManagement]
-    public class UserController : Controller
+    public class UserController : AbstractController
     {
-        private readonly ILog Logger;
         private readonly IUserManager UserManager;
-        private readonly IUserDao UserDao;
-
-        public UserController(ILog logger, IDaoFactory daoFactory, IManagerFactory managerFactory)
+        public UserController(ILog logger, IManagerFactory managerFactory)
+            : base(logger)
         {
-            Logger = logger;
-
             try
             {
-                UserDao = daoFactory.GetUserDao();
-                UserManager = managerFactory.GetUserManager(UserDao);
+                UserManager = managerFactory.GetUserManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -46,7 +41,7 @@ namespace Streamus.Controllers
         [HttpGet]
         public ActionResult Get(Guid id)
         {
-            User user = UserDao.Get(id);
+            User user = UserManager.Get(id);
             UserDto userDto = UserDto.Create(user);
 
             return new JsonServiceStackResult(userDto);
@@ -55,7 +50,7 @@ namespace Streamus.Controllers
         [HttpGet]
         public ActionResult GetByGooglePlusId(string googlePlusId)
         {
-            User user = UserDao.GetByGooglePlusId(googlePlusId);
+            User user = UserManager.GetByGooglePlusId(googlePlusId);
 
             UserDto userDto = UserDto.Create(user);
 

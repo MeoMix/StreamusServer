@@ -20,6 +20,29 @@ namespace Streamus.Domain.Managers
             PlaylistManager = playlistManager;
         }
 
+        public ShareCode GetByShortIdAndEntityTitle(string shareCodeShortId, string urlFriendlyEntityTitle)
+        {
+            ShareCode shareCode;
+
+            try
+            {
+                shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
+
+                if (shareCode == null)
+                    throw new ApplicationException("Unable to locate shareCode in database.");
+
+                if (shareCode.EntityType != ShareableEntityType.Playlist)
+                    throw new ApplicationException("Expected shareCode to have entityType of Playlist");
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return shareCode;
+        }
+
         public ShareCode GetShareCode(ShareableEntityType entityType, Guid entityId)
         {
             //  TODO: Support sharing other entities.

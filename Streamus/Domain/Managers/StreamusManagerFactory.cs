@@ -6,6 +6,8 @@ namespace Streamus.Domain.Managers
     public class StreamusManagerFactory : IManagerFactory
     {
         private readonly ILog Logger;
+        private readonly IDaoFactory DaoFactory;
+
         private IErrorManager ErrorManager;
         private IPlaylistItemManager PlaylistItemManager;
         private IPlaylistManager PlaylistManager;
@@ -13,39 +15,41 @@ namespace Streamus.Domain.Managers
         private IUserManager UserManager;
         private IVideoManager VideoManager;
 
-        public StreamusManagerFactory(ILog logger)
+        public StreamusManagerFactory(ILog logger, IDaoFactory daoFactory)
         {
             Logger = logger;
+            DaoFactory = daoFactory;
         }
 
-        public IErrorManager GetErrorManager(IErrorDao errorDao)
+        public IErrorManager GetErrorManager()
         {
-            return ErrorManager ?? (ErrorManager = new ErrorManager(Logger, errorDao));
+            return ErrorManager ?? (ErrorManager = new ErrorManager(Logger, DaoFactory.GetErrorDao()));
         }
 
-        public IPlaylistItemManager GetPlaylistItemManager(IPlaylistItemDao playlistItemDao, IVideoDao videoDao)
+        public IPlaylistItemManager GetPlaylistItemManager()
         {
-            return PlaylistItemManager ?? (PlaylistItemManager = new PlaylistItemManager(Logger, playlistItemDao, videoDao));
+            return PlaylistItemManager ?? (PlaylistItemManager = new PlaylistItemManager(Logger, DaoFactory.GetPlaylistItemDao(), DaoFactory.GetVideoDao()));
         }
 
-        public IPlaylistManager GetPlaylistManager(IPlaylistDao playlistDao, IVideoDao videoDao)
+        public IPlaylistManager GetPlaylistManager()
         {
-            return PlaylistManager ?? (PlaylistManager = new PlaylistManager(Logger, playlistDao, videoDao));
+            return PlaylistManager ?? (PlaylistManager = new PlaylistManager(Logger, DaoFactory.GetPlaylistDao(), DaoFactory.GetVideoDao()));
         }
 
-        public IShareCodeManager GetShareCodeManager(IPlaylistDao playlistDao, IShareCodeDao shareCodeDao, IPlaylistManager playlistManager)
+        //  TODO: Fix coupling w/ other manager.
+        public IShareCodeManager GetShareCodeManager(IPlaylistManager playlistManager)
         {
-            return ShareCodeManager ?? (ShareCodeManager = new ShareCodeManager(Logger, playlistDao, shareCodeDao, playlistManager));
+            return ShareCodeManager ?? (ShareCodeManager = new ShareCodeManager(Logger, DaoFactory.GetPlaylistDao(), DaoFactory.GetShareCodeDao(), playlistManager));
         }
 
-        public IUserManager GetUserManager(IUserDao userDao)
+        public IUserManager GetUserManager()
         {
-            return UserManager ?? (UserManager = new UserManager(Logger, userDao));
+            return UserManager ?? (UserManager = new UserManager(Logger, DaoFactory.GetUserDao()));
         }
 
-        public IVideoManager GetVideoManager(IVideoDao videoDao)
+        public IVideoManager GetVideoManager()
         {
-            return VideoManager ?? (VideoManager = new VideoManager(Logger, videoDao));
+            return VideoManager ?? (VideoManager = new VideoManager(Logger, DaoFactory.GetVideoDao()));
         }
     }
 }

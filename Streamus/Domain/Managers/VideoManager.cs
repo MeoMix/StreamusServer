@@ -17,6 +17,40 @@ namespace Streamus.Domain.Managers
             VideoDao = videoDao;
         }
 
+        public Video Get(string id)
+        {
+            Video video;
+
+            try
+            {
+                video = VideoDao.Get(id);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return video;
+        }
+
+        public IList<Video> Get(List<string> ids)
+        {
+            IList<Video> videos;
+
+            try
+            {
+                videos = VideoDao.Get(ids);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return videos;
+        }
+
         public void Save(Video video)
         {
             try

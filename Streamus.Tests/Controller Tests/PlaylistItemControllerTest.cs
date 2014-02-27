@@ -14,8 +14,7 @@ namespace Streamus.Tests.Controller_Tests
     public class PlaylistItemControllerTest : AbstractTest
     {
         private PlaylistItemController PlaylistItemController;
-        private IPlaylistDao PlaylistDao { get; set; }
-        private Helpers Helpers;
+        private IPlaylistManager PlaylistManager;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -25,10 +24,8 @@ namespace Streamus.Tests.Controller_Tests
         {
             try
             {
-                PlaylistItemController = new PlaylistItemController(Logger, DaoFactory, ManagerFactory);
-                PlaylistDao = DaoFactory.GetPlaylistDao();
-
-                Helpers = new Helpers(DaoFactory, ManagerFactory);
+                PlaylistItemController = new PlaylistItemController(Logger, ManagerFactory);
+                PlaylistManager = ManagerFactory.GetPlaylistManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -52,7 +49,7 @@ namespace Streamus.Tests.Controller_Tests
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
 
-            Playlist playlist = PlaylistDao.Get(createdPlaylistItemDto.PlaylistId);
+            Playlist playlist = PlaylistManager.Get(createdPlaylistItemDto.PlaylistId);
 
             //  Make sure that the created playlistItem was cascade added to the Playlist
             Assert.That(playlist.Items.Count(i => i.Id == createdPlaylistItemDto.Id) == 1);
@@ -82,7 +79,7 @@ namespace Streamus.Tests.Controller_Tests
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
 
-            Playlist playlist = PlaylistDao.Get(playlistItemDtos.First().PlaylistId);
+            Playlist playlist = PlaylistManager.Get(playlistItemDtos.First().PlaylistId);
 
             //  Make sure that the created playlistItem was cascade added to the Playlist
             Assert.That(playlist.Items.Count == numItemsToCreate);
@@ -119,7 +116,7 @@ namespace Streamus.Tests.Controller_Tests
 
                 NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
 
-                Playlist playlist = PlaylistDao.Get(playlistItemDtos.First().PlaylistId);
+                Playlist playlist = PlaylistManager.Get(playlistItemDtos.First().PlaylistId);
                 playlistId = playlist.Id;
 
                 //  Make sure that the created playlistItem was cascade added to the Playlist
@@ -155,7 +152,7 @@ namespace Streamus.Tests.Controller_Tests
 
                 NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
 
-                Playlist playlist = PlaylistDao.Get(playlistItemDtos.First().PlaylistId);
+                Playlist playlist = PlaylistManager.Get(playlistItemDtos.First().PlaylistId);
                 playlistId = playlist.Id;
 
                 //  Make sure that the created playlistItem was cascade added to the Playlist

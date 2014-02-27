@@ -8,23 +8,17 @@ using System.Web.Mvc;
 namespace Streamus.Controllers
 {
     [SessionManagement]
-    public class ShareCodeController : Controller
+    public class ShareCodeController : AbstractController
     {
-        private readonly ILog Logger;
         private readonly IShareCodeManager ShareCodeManager;
-        private readonly IShareCodeDao ShareCodeDao;
 
-        public ShareCodeController(ILog logger, IDaoFactory daoFactory, IManagerFactory managerFactory)
+        public ShareCodeController(ILog logger, IManagerFactory managerFactory)
+            : base(logger)
         {
-            Logger = logger;
-
             try
             {
-                ShareCodeDao = daoFactory.GetShareCodeDao();
-                IPlaylistDao playlistDao = daoFactory.GetPlaylistDao();
-                IVideoDao videoDao = daoFactory.GetVideoDao();
-                IPlaylistManager playlistManager = managerFactory.GetPlaylistManager(playlistDao, videoDao);
-                ShareCodeManager = managerFactory.GetShareCodeManager(playlistDao, ShareCodeDao, playlistManager);
+                IPlaylistManager playlistManager = managerFactory.GetPlaylistManager();
+                ShareCodeManager = managerFactory.GetShareCodeManager(playlistManager);
             }
             catch (TypeInitializationException exception)
             {

@@ -1,7 +1,6 @@
 ﻿using log4net;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using Streamus.Dto;
 using System;
 using System.Collections.Generic;
@@ -11,18 +10,14 @@ using System.Web.Mvc;
 namespace Streamus.Controllers
 {
     [SessionManagement]
-    public class PlaylistItemController : Controller
+    public class PlaylistItemController : AbstractController
     {
-        private readonly ILog Logger;
         private readonly IPlaylistItemManager PlaylistItemManager;
 
-        public PlaylistItemController(ILog logger, IDaoFactory daoFactory, IManagerFactory managerFactory)
+        public PlaylistItemController(ILog logger, IManagerFactory managerFactory)
+            : base(logger)
         {
-            Logger = logger;
-            IPlaylistItemDao playlistItemDao = daoFactory.GetPlaylistItemDao();
-            IVideoDao videoDao = daoFactory.GetVideoDao();
-
-            PlaylistItemManager = managerFactory.GetPlaylistItemManager(playlistItemDao, videoDao);
+            PlaylistItemManager = managerFactory.GetPlaylistItemManager();
         }
 
         [HttpPost]

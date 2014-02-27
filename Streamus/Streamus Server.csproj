@@ -168,6 +168,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AbstractController.cs" />
     <Compile Include="Controllers\StreamusControllerFactory.cs" />
     <Compile Include="Controllers\JsonServiceStackResult.cs" />
     <Compile Include="Controllers\SessionManagementAttribute.cs" />

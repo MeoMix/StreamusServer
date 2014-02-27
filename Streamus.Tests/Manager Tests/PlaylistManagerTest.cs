@@ -10,12 +10,10 @@ namespace Streamus.Tests.Manager_Tests
     [TestFixture]
     public class PlaylistManagerTest : AbstractTest
     {
-        private IPlaylistDao PlaylistDao { get; set; }
         private IPlaylistManager PlaylistManager;
 
         private User User { get; set; }
         private Video Video { get; set; }
-        private Helpers Helpers;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -27,13 +25,8 @@ namespace Streamus.Tests.Manager_Tests
 
             try
             {
-                PlaylistDao = DaoFactory.GetPlaylistDao();
-
-                IVideoDao videoDao = DaoFactory.GetVideoDao();
-                PlaylistManager = ManagerFactory.GetPlaylistManager(PlaylistDao, videoDao);
-                videoManager = ManagerFactory.GetVideoManager(videoDao);
-
-                Helpers = new Helpers(DaoFactory, ManagerFactory);
+                PlaylistManager = ManagerFactory.GetPlaylistManager();
+                videoManager = ManagerFactory.GetVideoManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -62,7 +55,7 @@ namespace Streamus.Tests.Manager_Tests
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
+            Playlist playlistFromDatabase = PlaylistManager.Get(playlist.Id);
             //  Test that the product was successfully inserted
             Assert.IsNotNull(playlistFromDatabase);
             //  Sessions should be isolated -- before and after should be different here.
@@ -92,7 +85,7 @@ namespace Streamus.Tests.Manager_Tests
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            Playlist deletedPlaylist = PlaylistDao.Get(playlist.Id);
+            Playlist deletedPlaylist = PlaylistManager.Get(playlist.Id);
 
             bool objectNotFoundExceptionEncountered = false;
             try

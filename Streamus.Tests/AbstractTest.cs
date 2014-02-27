@@ -12,12 +12,14 @@ namespace Streamus.Tests
         protected ILog Logger;
         protected IDaoFactory DaoFactory;
         protected IManagerFactory ManagerFactory;
+        protected Helpers Helpers;
 
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            //  Initialize Autofac for dependency injection.
-            AutofacRegistrations.RegisterDaoFactory();
+            //  Initialize AutoMapper and AutoFac.
+            Streamus.InitializeApplication();
+            Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
             using (ILifetimeScope scope = AutofacRegistrations.Container.BeginLifetimeScope())
             {
@@ -25,10 +27,7 @@ namespace Streamus.Tests
                 ManagerFactory = scope.Resolve<IManagerFactory>(new NamedParameter("logger", Logger));
             }
 
-            Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-            //  Initialize AutoMapper with Streamus' server mappings.
-            Streamus.InitializeApplication();
+            Helpers = new Helpers(ManagerFactory);
         }
     }
 }
