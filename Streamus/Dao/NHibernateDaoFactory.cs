@@ -8,34 +8,41 @@ namespace Streamus.Dao
     /// </summary>
     public class NHibernateDaoFactory : IDaoFactory
     {
+        private IErrorDao ErrorDao;
+        private IPlaylistDao PlaylistDao;
+        private IPlaylistItemDao PlaylistItemDao;
+        private IShareCodeDao ShareCodeDao;
+        private IUserDao UserDao;
+        private IVideoDao VideoDao;
+
         public IErrorDao GetErrorDao()
         {
-            return new ErrorDao();
+            return ErrorDao ?? (ErrorDao = new ErrorDao());
         }
 
         public IPlaylistDao GetPlaylistDao()
         {
-            return new PlaylistDao();
+            return PlaylistDao ?? (PlaylistDao = new PlaylistDao());
         }
 
         public IPlaylistItemDao GetPlaylistItemDao()
         {
-            return new PlaylistItemDao();
+            return PlaylistItemDao ?? (PlaylistItemDao = new PlaylistItemDao());
         }
 
         public IShareCodeDao GetShareCodeDao()
         {
-            return new ShareCodeDao();
+            return ShareCodeDao ?? (ShareCodeDao = new ShareCodeDao());
         }
 
         public IUserDao GetUserDao()
         {
-            return new UserDao();
+            return UserDao ?? (UserDao = new UserDao());
         }
 
         public IVideoDao GetVideoDao()
         {
-            return new VideoDao();
+            return VideoDao ?? (VideoDao = new VideoDao());
         }
     }
 }

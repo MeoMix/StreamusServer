@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Streamus.Controllers;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Streamus.Tests.Controller_Tests
 {
     [TestFixture]
     public class PlaylistItemControllerTest : AbstractTest
     {
-        private static readonly PlaylistItemController PlaylistItemController = new PlaylistItemController();
+        private PlaylistItemController PlaylistItemController;
         private IPlaylistDao PlaylistDao { get; set; }
+        private Helpers Helpers;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -25,7 +25,10 @@ namespace Streamus.Tests.Controller_Tests
         {
             try
             {
+                PlaylistItemController = new PlaylistItemController(Logger, DaoFactory, ManagerFactory);
                 PlaylistDao = DaoFactory.GetPlaylistDao();
+
+                Helpers = new Helpers(DaoFactory, ManagerFactory);
             }
             catch (TypeInitializationException exception)
             {

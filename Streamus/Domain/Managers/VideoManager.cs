@@ -1,18 +1,20 @@
-﻿using System;
+﻿using Streamus.Dao;
+using Streamus.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Streamus.Dao;
-using Streamus.Domain.Interfaces;
+using log4net;
 
 namespace Streamus.Domain.Managers
 {
-    public class VideoManager : AbstractManager
+    public class VideoManager : AbstractManager, IVideoManager
     {
         private IVideoDao VideoDao { get; set; }
 
-        public VideoManager()
+        public VideoManager(ILog logger, IVideoDao videoDao)
+            : base(logger) 
         {
-            VideoDao = DaoFactory.GetVideoDao();
+            VideoDao = videoDao;
         }
 
         public void Save(Video video)
@@ -52,7 +54,7 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        public void DoSave(Video video)
+        private void DoSave(Video video)
         {
             video.ValidateAndThrow();
 

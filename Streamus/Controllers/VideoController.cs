@@ -1,12 +1,9 @@
 ﻿using log4net;
-using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using Streamus.Dto;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Web.Mvc;
 
 namespace Streamus.Controllers
@@ -14,16 +11,18 @@ namespace Streamus.Controllers
     [SessionManagement]
     public class VideoController : Controller
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        private static readonly VideoManager VideoManager = new VideoManager();
+        private readonly ILog Logger;
+        private readonly IVideoManager VideoManager;
         private readonly IVideoDao VideoDao;
 
-        public VideoController()
+        public VideoController(ILog logger, IDaoFactory daoFactory, IManagerFactory managerFactory)
         {
+            Logger = logger;
+
             try
             {
-                VideoDao = new VideoDao();
+                VideoDao = daoFactory.GetVideoDao();
+                VideoManager = managerFactory.GetVideoManager(VideoDao);
             }
             catch (TypeInitializationException exception)
             {

@@ -1,20 +1,22 @@
-﻿using System;
+﻿using Streamus.Dao;
+using Streamus.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Streamus.Dao;
-using Streamus.Domain.Interfaces;
+using log4net;
 
 namespace Streamus.Domain.Managers
 {
-    public class PlaylistManager : AbstractManager
+    public class PlaylistManager : AbstractManager, IPlaylistManager
     {
         private IPlaylistDao PlaylistDao { get; set; }
         private IVideoDao VideoDao { get; set; }
 
-        public PlaylistManager()
+        public PlaylistManager(ILog logger, IPlaylistDao playlistDao, IVideoDao videoDao)
+            : base(logger)
         {
-            PlaylistDao = DaoFactory.GetPlaylistDao();
-            VideoDao = DaoFactory.GetVideoDao();
+            PlaylistDao = playlistDao;
+            VideoDao = videoDao;
         }
 
         public void Save(Playlist playlist)
@@ -52,26 +54,6 @@ namespace Streamus.Domain.Managers
                 Logger.Error(exception);
                 throw;
             }
-        }
-
-        /// <summary>
-        ///     This is the work for saving a PlaylistItem without the Transaction wrapper.
-        /// </summary>
-        private void DoSave(Playlist playlist)
-        {
-            foreach (PlaylistItem playlistItem in playlist.Items)
-            {
-                //  This is a bit of a hack, but NHibernate pays attention to the "dirtyness" of immutable entities.
-                //  As such, if two PlaylistItems reference the same Video object -- NonUniqueObjectException is thrown even though no changes
-                //  can be persisted to the database.
-                playlistItem.Video = VideoDao.Merge(playlistItem.Video);
-
-                playlistItem.ValidateAndThrow();
-                playlistItem.Video.ValidateAndThrow();
-            }
-
-            playlist.ValidateAndThrow();
-            PlaylistDao.Save(playlist);
         }
 
         public void Update(Playlist playlist)
@@ -128,22 +110,24 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        //public void UpdateFirstItem(Guid playlistId, Guid firstItemId)
-        //{
-        //    try
-        //    {
-        //        NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().BeginTransaction();
-        //        Playlist playlist = PlaylistDao.Get(playlistId);
-        //        playlist.FirstItem = PlaylistItemDao.Get(firstItemId);
-        //        PlaylistDao.Update(playlist);
-        //        NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().CommitTransaction();
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        Logger.Error(exception);
-        //        NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().RollbackTransaction();
-        //        throw;
-        //    }
-        //}
+        /// <summary>
+        ///     This is the work for saving a PlaylistItem without the Transaction wrapper.
+        /// </summary>
+        private void DoSave(Playlist playlist)
+        {
+            foreach (PlaylistItem playlistItem in playlist.Items)
+            {
+                //  This is a bit of a hack, but NHibernate pays attention to the "dirtyness" of immutable entities.
+                //  As such, if two PlaylistItems reference the same Video object -- NonUniqueObjectException is thrown even though no changes
+                //  can be persisted to the database.
+                playlistItem.Video = VideoDao.Merge(playlistItem.Video);
+
+                playlistItem.ValidateAndThrow();
+                playlistItem.Video.ValidateAndThrow();
+            }
+
+            playlist.ValidateAndThrow();
+            PlaylistDao.Save(playlist);
+        }
     }
 }

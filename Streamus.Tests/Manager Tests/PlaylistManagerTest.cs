@@ -4,7 +4,6 @@ using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 
 namespace Streamus.Tests.Manager_Tests
 {
@@ -12,9 +11,11 @@ namespace Streamus.Tests.Manager_Tests
     public class PlaylistManagerTest : AbstractTest
     {
         private IPlaylistDao PlaylistDao { get; set; }
+        private IPlaylistManager PlaylistManager;
+
         private User User { get; set; }
         private Video Video { get; set; }
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
+        private Helpers Helpers;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -22,9 +23,17 @@ namespace Streamus.Tests.Manager_Tests
         [TestFixtureSetUp]
         public new void TestFixtureSetUp()
         {
+            IVideoManager videoManager;
+
             try
             {
                 PlaylistDao = DaoFactory.GetPlaylistDao();
+
+                IVideoDao videoDao = DaoFactory.GetVideoDao();
+                PlaylistManager = ManagerFactory.GetPlaylistManager(PlaylistDao, videoDao);
+                videoManager = ManagerFactory.GetVideoManager(videoDao);
+
+                Helpers = new Helpers(DaoFactory, ManagerFactory);
             }
             catch (TypeInitializationException exception)
             {
@@ -32,11 +41,10 @@ namespace Streamus.Tests.Manager_Tests
             }
 
             User = Helpers.CreateUser();
-
             Video = Helpers.CreateUnsavedVideoWithId();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            new VideoManager().Save(Video);
+            videoManager.Save(Video);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 

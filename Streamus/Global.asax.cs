@@ -1,9 +1,8 @@
 ﻿using Autofac;
 using AutoMapper;
 using Newtonsoft.Json;
-using NHibernate;
-using NHibernate.Cfg;
 using Streamus.App_Start;
+using Streamus.Controllers;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
@@ -39,6 +38,7 @@ namespace Streamus
             //  Register your new model binder
             ModelBinders.Binders.DefaultBinder = new JsonEmptyStringNotNullModelBinder();
 
+            RegisterControllerFactory();
             AutofacRegistrations.RegisterDaoFactory();
 
             CreateAutoMapperMaps();
@@ -50,6 +50,12 @@ namespace Streamus
             //ValueProviderFactories.Factories.Add(new JsonServiceStackValueProviderFactory());
         }
 
+        private static void RegisterControllerFactory()
+        {
+            IControllerFactory factory = new StreamusControllerFactory();
+            ControllerBuilder.Current.SetControllerFactory(factory);
+        } 
+
         /// <summary>
         ///     Initialize the AutoMapper mappings for the solution.
         ///     http://automapper.codeplex.com/
@@ -57,29 +63,33 @@ namespace Streamus
         public static void CreateAutoMapperMaps()
         {
             AutofacRegistrations.RegisterDaoFactory();
-            ILifetimeScope scope = AutofacRegistrations.Container.BeginLifetimeScope();
-            var daoFactory = scope.Resolve<IDaoFactory>();
 
-            Mapper.CreateMap<Error, ErrorDto>()
-                  .ReverseMap();
+            using (ILifetimeScope scope = AutofacRegistrations.Container.BeginLifetimeScope())
+            {
+                var daoFactory = scope.Resolve<IDaoFactory>();
 
-            IPlaylistDao playlistDao = daoFactory.GetPlaylistDao();
-            IUserDao userDao = daoFactory.GetUserDao();
+                Mapper.CreateMap<Error, ErrorDto>()
+                      .ReverseMap();
 
-            Mapper.CreateMap<Playlist, PlaylistDto>();
-            Mapper.CreateMap<PlaylistDto, Playlist>()
-                .ForMember(playlist => playlist.User, opt => opt.MapFrom(playlistDto => userDao.Get(playlistDto.UserId)));
+                IPlaylistDao playlistDao = daoFactory.GetPlaylistDao();
+                IUserDao userDao = daoFactory.GetUserDao();
 
-            Mapper.CreateMap<PlaylistItem, PlaylistItemDto>();
-            Mapper.CreateMap<PlaylistItemDto, PlaylistItem>()
-                .ForMember(playlistItem => playlistItem.Playlist, opt => opt.MapFrom(playlistItemDto => playlistDao.Get(playlistItemDto.PlaylistId)));
+                Mapper.CreateMap<Playlist, PlaylistDto>();
+                Mapper.CreateMap<PlaylistDto, Playlist>()
+                    .ForMember(playlist => playlist.User, opt => opt.MapFrom(playlistDto => userDao.Get(playlistDto.UserId)));
 
-            Mapper.CreateMap<ShareCode, ShareCodeDto>().ReverseMap();
+                Mapper.CreateMap<PlaylistItem, PlaylistItemDto>();
+                Mapper.CreateMap<PlaylistItemDto, PlaylistItem>()
+                    .ForMember(playlistItem => playlistItem.Playlist, opt => opt.MapFrom(playlistItemDto => playlistDao.Get(playlistItemDto.PlaylistId)));
 
-            Mapper.CreateMap<User, UserDto>().ReverseMap();
-            Mapper.CreateMap<Video, VideoDto>().ReverseMap();
+                Mapper.CreateMap<ShareCode, ShareCodeDto>().ReverseMap();
 
-            Mapper.AssertConfigurationIsValid();
+                Mapper.CreateMap<User, UserDto>().ReverseMap();
+                Mapper.CreateMap<Video, VideoDto>().ReverseMap();
+
+                Mapper.AssertConfigurationIsValid();
+            }
+
         }
     }
 

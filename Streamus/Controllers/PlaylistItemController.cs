@@ -1,4 +1,6 @@
-﻿using Streamus.Domain;
+﻿using log4net;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
 using Streamus.Domain.Managers;
 using Streamus.Dto;
 using System;
@@ -11,7 +13,17 @@ namespace Streamus.Controllers
     [SessionManagement]
     public class PlaylistItemController : Controller
     {
-        private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
+        private readonly ILog Logger;
+        private readonly IPlaylistItemManager PlaylistItemManager;
+
+        public PlaylistItemController(ILog logger, IDaoFactory daoFactory, IManagerFactory managerFactory)
+        {
+            Logger = logger;
+            IPlaylistItemDao playlistItemDao = daoFactory.GetPlaylistItemDao();
+            IVideoDao videoDao = daoFactory.GetVideoDao();
+
+            PlaylistItemManager = managerFactory.GetPlaylistItemManager(playlistItemDao, videoDao);
+        }
 
         [HttpPost]
         public JsonServiceStackResult Create(PlaylistItemDto playlistItemDto)

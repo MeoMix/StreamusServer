@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using Streamus.Controllers;
 using Streamus.Dao;
 using Streamus.Dto;
@@ -8,7 +9,23 @@ namespace Streamus.Tests.Controller_Tests
     [TestFixture]
     public class ErrorControllerTest : AbstractTest
     {
-        private static readonly ErrorController ErrorController = new ErrorController();
+        private ErrorController ErrorController;
+
+        /// <summary>
+        ///     This code is only ran once for the given TestFixture.
+        /// </summary>
+        [TestFixtureSetUp]
+        public new void TestFixtureSetUp()
+        {
+            try
+            {
+                ErrorController = new ErrorController(Logger, DaoFactory, ManagerFactory);
+            }
+            catch (TypeInitializationException exception)
+            {
+                throw exception.InnerException;
+            }
+        }
 
         [Test]
         public void CreateError_ShortMessage_ErrorCreated()

@@ -1,32 +1,33 @@
-﻿using System;
-using System.Reflection;
-using System.Web.Mvc;
-using Streamus.Dao;
+﻿using log4net;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using Streamus.Dto;
-using log4net;
+using System;
+using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
     [SessionManagement]
     public class PlaylistController : Controller
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
-
+        private readonly ILog Logger;
+        private readonly IPlaylistManager PlaylistManager;
         private readonly IPlaylistDao PlaylistDao;
         private readonly IUserDao UserDao;
         private readonly IShareCodeDao ShareCodeDao;
 
-        public PlaylistController()
+        public PlaylistController(ILog logger, IDaoFactory daoFactory, IManagerFactory managerFactory)
         {
+            Logger = logger;
+
             try
             {
-                PlaylistDao = new PlaylistDao();
-                UserDao = new UserDao();
-                ShareCodeDao = new ShareCodeDao();
+                PlaylistDao = daoFactory.GetPlaylistDao();
+                UserDao = daoFactory.GetUserDao();
+                ShareCodeDao = daoFactory.GetShareCodeDao();
+
+                IVideoDao videoDao = daoFactory.GetVideoDao();
+                PlaylistManager = managerFactory.GetPlaylistManager(PlaylistDao, videoDao);
             }
             catch (TypeInitializationException exception)
             {

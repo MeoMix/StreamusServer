@@ -13,9 +13,10 @@ namespace Streamus.Tests.Controller_Tests
     [TestFixture]
     public class UserControllerTest : AbstractTest
     {
-        private static readonly PlaylistItemController PlaylistItemController = new PlaylistItemController();
-        private static readonly UserController UserController = new UserController();
+        private PlaylistItemController PlaylistItemController;
+        private UserController UserController;
         private IUserDao UserDao { get; set; }
+        private Helpers Helpers;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -25,7 +26,11 @@ namespace Streamus.Tests.Controller_Tests
         {
             try
             {
+                PlaylistItemController = new PlaylistItemController(Logger, DaoFactory, ManagerFactory);
+                UserController = new UserController(Logger, DaoFactory, ManagerFactory);
+
                 UserDao = DaoFactory.GetUserDao();
+                Helpers = new Helpers(DaoFactory, ManagerFactory);
             }
             catch (TypeInitializationException exception)
             {

@@ -1,18 +1,20 @@
 ﻿using Streamus.Domain.Interfaces;
 using System;
+using log4net;
 
 namespace Streamus.Domain.Managers
 {
     /// <summary>
     ///     Provides a common spot for methods against Users which require transactions (Creating, Updating, Deleting)
     /// </summary>
-    public class UserManager : AbstractManager
+    public class UserManager : AbstractManager, IUserManager
     {
         private IUserDao UserDao { get; set; }
 
-        public UserManager()
+        public UserManager(ILog logger, IUserDao userDao) 
+            : base(logger) 
         {
-            UserDao = DaoFactory.GetUserDao();
+            UserDao = userDao;
         }
 
         /// <summary>

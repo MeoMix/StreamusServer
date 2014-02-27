@@ -1,19 +1,23 @@
-﻿using System;
+﻿using Streamus.Dao;
 using Streamus.Domain.Interfaces;
+using System;
+using log4net;
 
 namespace Streamus.Domain.Managers
 {
-    public class ShareCodeManager : AbstractManager
+    public class ShareCodeManager : AbstractManager, IShareCodeManager
     {
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
+        private readonly IPlaylistManager PlaylistManager;
 
         private IPlaylistDao PlaylistDao { get; set; }
         private IShareCodeDao ShareCodeDao { get; set; }
 
-        public ShareCodeManager()
+        public ShareCodeManager(ILog logger, IPlaylistDao playlistDao, IShareCodeDao shareCodeDao, IPlaylistManager playlistManager)
+            : base(logger)
         {
-            PlaylistDao = DaoFactory.GetPlaylistDao();
-            ShareCodeDao = DaoFactory.GetShareCodeDao();
+            PlaylistDao = playlistDao;
+            ShareCodeDao = shareCodeDao;
+            PlaylistManager = playlistManager;
         }
 
         public ShareCode GetShareCode(ShareableEntityType entityType, Guid entityId)

@@ -6,7 +6,6 @@ using Streamus.Controllers;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using Streamus.Dto;
 
 namespace Streamus.Tests.Controller_Tests
@@ -14,10 +13,11 @@ namespace Streamus.Tests.Controller_Tests
     [TestFixture]
     public class PlaylistControllerTest : AbstractTest
     {
-        private static readonly PlaylistItemController PlaylistItemController = new PlaylistItemController();
-        private static readonly ShareCodeManager ShareCodeManager = new ShareCodeManager();
-        private static readonly PlaylistController PlaylistController = new PlaylistController();
-        private IUserDao UserDao { get; set; }
+        private PlaylistController PlaylistController;
+        private PlaylistItemController PlaylistItemController;
+        private IShareCodeManager ShareCodeManager;
+        private IUserDao UserDao;
+        private Helpers Helpers;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -27,7 +27,18 @@ namespace Streamus.Tests.Controller_Tests
         {
             try
             {
+                PlaylistController = new PlaylistController(Logger, DaoFactory, ManagerFactory);
+                PlaylistItemController = new PlaylistItemController(Logger, DaoFactory, ManagerFactory);
+
                 UserDao = DaoFactory.GetUserDao();
+
+                IPlaylistDao playlistDao = DaoFactory.GetPlaylistDao();
+                IShareCodeDao shareCodeDao = DaoFactory.GetShareCodeDao();
+                IVideoDao videoDao = DaoFactory.GetVideoDao();
+                IPlaylistManager playlistManager = ManagerFactory.GetPlaylistManager(playlistDao, videoDao);
+                ShareCodeManager = ManagerFactory.GetShareCodeManager(playlistDao, shareCodeDao, playlistManager);
+
+                Helpers = new Helpers(DaoFactory, ManagerFactory);
             }
             catch (TypeInitializationException exception)
             {
@@ -51,8 +62,7 @@ namespace Streamus.Tests.Controller_Tests
             var createdPlaylistDto = (PlaylistDto) result.Data;
 
             const int numItemsToCreate = 150;
-            List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate,
-                                                                                    createdPlaylistDto.Id);
+            List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, createdPlaylistDto.Id);
 
             foreach (var splitPlaylistItemDtos in Split(playlistItemDtos, 50))
             {

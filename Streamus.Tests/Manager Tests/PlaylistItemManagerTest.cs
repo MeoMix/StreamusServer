@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Linq;
 using FluentValidation;
 using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 
 namespace Streamus.Tests.Manager_Tests
 {
@@ -17,9 +15,10 @@ namespace Streamus.Tests.Manager_Tests
         private User User { get; set; }
         private Playlist Playlist { get; set; }
 
-        private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
-        private static readonly VideoManager VideoManager = new VideoManager();
+        private IPlaylistItemManager PlaylistItemManager;
+        private IPlaylistManager PlaylistManager;
+        private IVideoManager VideoManager;
+        private Helpers Helpers;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -31,6 +30,13 @@ namespace Streamus.Tests.Manager_Tests
             {
                 PlaylistItemDao = DaoFactory.GetPlaylistItemDao();
                 VideoDao = DaoFactory.GetVideoDao();
+
+                PlaylistItemManager = ManagerFactory.GetPlaylistItemManager(PlaylistItemDao, VideoDao);
+                IPlaylistDao playlistDao = DaoFactory.GetPlaylistDao();
+                PlaylistManager = ManagerFactory.GetPlaylistManager(playlistDao, VideoDao);
+                VideoManager = ManagerFactory.GetVideoManager(VideoDao);
+
+                Helpers = new Helpers(DaoFactory, ManagerFactory);
             }
             catch (TypeInitializationException exception)
             {
@@ -91,7 +97,7 @@ namespace Streamus.Tests.Manager_Tests
         [Test]
         public void CreateItem_VideoAlreadyExists_ItemCreatedVideoNotUpdated()
         {
-            var videoNotInDatabase = Helpers.CreateUnsavedVideoWithId();
+            Video videoNotInDatabase = Helpers.CreateUnsavedVideoWithId();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             VideoManager.Save(videoNotInDatabase);
@@ -99,7 +105,7 @@ namespace Streamus.Tests.Manager_Tests
 
             //  Change the title for videoInDatabase to check that cascade-update does not affect title. Videos are immutable.
             const string videoTitle = "A video title";
-            var videoInDatabase = Helpers.CreateUnsavedVideoWithId(titleOverride: videoTitle);
+            Video videoInDatabase = Helpers.CreateUnsavedVideoWithId(titleOverride: videoTitle);
 
             //  Create a new PlaylistItem and write it to the database.
             string title = videoInDatabase.Title;
@@ -129,7 +135,7 @@ namespace Streamus.Tests.Manager_Tests
         [Test]
         public void CreateItem_NotAddedToPlaylistBeforeSave_ItemNotAdded()
         {
-            var videoNotInDatabase = Helpers.CreateUnsavedVideoWithId();
+            Video videoNotInDatabase = Helpers.CreateUnsavedVideoWithId();
 
             //  Create a new PlaylistItem and write it to the database.
             string title = videoNotInDatabase.Title;

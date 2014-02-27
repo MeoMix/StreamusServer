@@ -1,11 +1,8 @@
 ﻿using log4net;
-using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using Streamus.Dto;
 using System;
-using System.Reflection;
 using System.Web.Mvc;
 
 namespace Streamus.Controllers
@@ -13,16 +10,21 @@ namespace Streamus.Controllers
     [SessionManagement]
     public class ShareCodeController : Controller
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static readonly ShareCodeManager ShareCodeManager = new ShareCodeManager();
-
+        private readonly ILog Logger;
+        private readonly IShareCodeManager ShareCodeManager;
         private readonly IShareCodeDao ShareCodeDao;
 
-        public ShareCodeController()
+        public ShareCodeController(ILog logger, IDaoFactory daoFactory, IManagerFactory managerFactory)
         {
+            Logger = logger;
+
             try
             {
-                ShareCodeDao = new ShareCodeDao();
+                ShareCodeDao = daoFactory.GetShareCodeDao();
+                IPlaylistDao playlistDao = daoFactory.GetPlaylistDao();
+                IVideoDao videoDao = daoFactory.GetVideoDao();
+                IPlaylistManager playlistManager = managerFactory.GetPlaylistManager(playlistDao, videoDao);
+                ShareCodeManager = managerFactory.GetShareCodeManager(playlistDao, ShareCodeDao, playlistManager);
             }
             catch (TypeInitializationException exception)
             {

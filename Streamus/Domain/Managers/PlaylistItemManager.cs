@@ -3,18 +3,20 @@ using Streamus.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using log4net;
 
 namespace Streamus.Domain.Managers
 {
-    public class PlaylistItemManager : AbstractManager
+    public class PlaylistItemManager : AbstractManager, IPlaylistItemManager
     {
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private IVideoDao VideoDao { get; set; }
 
-        public PlaylistItemManager()
+        public PlaylistItemManager(ILog logger, IPlaylistItemDao playlistItemDao, IVideoDao videoDao)
+            : base(logger)
         {
-            PlaylistItemDao = DaoFactory.GetPlaylistItemDao();
-            VideoDao = DaoFactory.GetVideoDao();
+            PlaylistItemDao = playlistItemDao;
+            VideoDao = videoDao;
         }
 
         public void Delete(Guid itemId)

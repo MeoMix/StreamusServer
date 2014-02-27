@@ -1,30 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Web.Mvc;
-using Streamus.Dao;
+﻿using log4net;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using Streamus.Dto;
-using log4net;
+using System;
+using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
     [SessionManagement]
     public class UserController : Controller
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static readonly UserManager UserManager = new UserManager();
-
+        private readonly ILog Logger;
+        private readonly IUserManager UserManager;
         private readonly IUserDao UserDao;
 
-        public UserController()
+        public UserController(ILog logger, IDaoFactory daoFactory, IManagerFactory managerFactory)
         {
+            Logger = logger;
+
             try
             {
-                UserDao = new UserDao();
+                UserDao = daoFactory.GetUserDao();
+                UserManager = managerFactory.GetUserManager(UserDao);
             }
             catch (TypeInitializationException exception)
             {

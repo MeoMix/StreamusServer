@@ -5,7 +5,6 @@ using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 
 namespace Streamus.Tests.Manager_Tests
 {
@@ -13,7 +12,8 @@ namespace Streamus.Tests.Manager_Tests
     public class VideoManagerTest : AbstractTest
     {
         private IVideoDao VideoDao { get; set; }
-        private static readonly VideoManager VideoManager = new VideoManager();
+        private IVideoManager VideoManager;
+        private Helpers Helpers;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -24,6 +24,8 @@ namespace Streamus.Tests.Manager_Tests
             try
             {
                 VideoDao = DaoFactory.GetVideoDao();
+                VideoManager = ManagerFactory.GetVideoManager(VideoDao);
+                Helpers = new Helpers(DaoFactory, ManagerFactory);
             }
             catch (TypeInitializationException exception)
             {

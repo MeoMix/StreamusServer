@@ -1,23 +1,20 @@
-﻿using System.Reflection;
-using Autofac;
-using Streamus.Dao;
-using Streamus.Domain.Interfaces;
+﻿using Autofac;
 using log4net;
+using Streamus.Dao;
 
 namespace Streamus.Domain.Managers
 {
     public abstract class AbstractManager
     {
-        protected static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
+        protected readonly ILog Logger;
         protected readonly ILifetimeScope Scope;
-        protected readonly IDaoFactory DaoFactory;
 
-        protected AbstractManager()
+        protected AbstractManager(ILog logger)
         {
             AutofacRegistrations.RegisterDaoFactory();
             Scope = AutofacRegistrations.Container.BeginLifetimeScope();
-            DaoFactory = Scope.Resolve<IDaoFactory>();
+
+            Logger = logger;
         }
 
     }
