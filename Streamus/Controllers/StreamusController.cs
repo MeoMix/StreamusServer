@@ -4,11 +4,11 @@ using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    public abstract class AbstractController : Controller
+    public abstract class StreamusController : Controller
     {
         protected readonly ILog Logger;
 
-        protected AbstractController(ILog logger)
+        protected StreamusController(ILog logger)
         {
             Logger = logger;
         }

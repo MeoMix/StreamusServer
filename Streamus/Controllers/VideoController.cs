@@ -16,15 +16,7 @@ namespace Streamus.Controllers
         public VideoController(ILog logger, IManagerFactory managerFactory)
             : base(logger)
         {
-            try
-            {
-                VideoManager = managerFactory.GetVideoManager();
-            }
-            catch (TypeInitializationException exception)
-            {
-                Logger.Error(exception.InnerException);
-                throw exception.InnerException;
-            }
+            VideoManager = managerFactory.GetVideoManager();
         }
 
         /// <summary>

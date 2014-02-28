@@ -16,16 +16,8 @@ namespace Streamus.Controllers
         public ShareCodeController(ILog logger, IManagerFactory managerFactory)
             : base(logger)
         {
-            try
-            {
-                ShareCodeManager = managerFactory.GetShareCodeManager();
-                PlaylistManager = managerFactory.GetPlaylistManager();
-            }
-            catch (TypeInitializationException exception)
-            {
-                Logger.Error(exception.InnerException);
-                throw exception.InnerException;
-            }
+            ShareCodeManager = managerFactory.GetShareCodeManager();
+            PlaylistManager = managerFactory.GetPlaylistManager();
         }
 
         [HttpGet]

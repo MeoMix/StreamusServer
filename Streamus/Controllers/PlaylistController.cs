@@ -8,7 +8,7 @@ using System.Web.Mvc;
 namespace Streamus.Controllers
 {
     [SessionManagement]
-    public class PlaylistController : AbstractController
+    public class PlaylistController : StreamusController
     {
         private readonly IPlaylistManager PlaylistManager;
         private readonly IUserManager UserManager;
@@ -17,17 +17,9 @@ namespace Streamus.Controllers
         public PlaylistController(ILog logger, IManagerFactory managerFactory)
             :base(logger)
         {
-            try
-            {
-                PlaylistManager = managerFactory.GetPlaylistManager();
-                UserManager = managerFactory.GetUserManager();
-                ShareCodeManager = managerFactory.GetShareCodeManager();
-            }
-            catch (TypeInitializationException exception)
-            {
-                Logger.Error(exception.InnerException);
-                throw exception.InnerException;
-            }
+            PlaylistManager = managerFactory.GetPlaylistManager();
+            UserManager = managerFactory.GetUserManager();
+            ShareCodeManager = managerFactory.GetShareCodeManager();
         }
 
         [HttpPost]

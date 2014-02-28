@@ -14,15 +14,7 @@ namespace Streamus.Controllers
         public UserController(ILog logger, IManagerFactory managerFactory)
             : base(logger)
         {
-            try
-            {
-                UserManager = managerFactory.GetUserManager();
-            }
-            catch (TypeInitializationException exception)
-            {
-                Logger.Error(exception.InnerException);
-                throw exception.InnerException;
-            }
+            UserManager = managerFactory.GetUserManager();
         }
 
         /// <summary>

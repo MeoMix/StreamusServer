@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using System;
+using log4net;
 using Streamus.Domain.Interfaces;
 
 namespace Streamus.Domain.Managers
