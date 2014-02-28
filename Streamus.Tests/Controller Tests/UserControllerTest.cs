@@ -1,12 +1,13 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using NUnit.Framework;
 using Streamus.Controllers;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Streamus.Tests.Controller_Tests
 {
@@ -39,10 +40,10 @@ namespace Streamus.Tests.Controller_Tests
         public void CreateUser_UserDoesNotExist_UserCreated()
         {
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonServiceStackResult result = (JsonServiceStackResult)UserController.Create();
+            JsonResult result = UserController.Create();
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            UserDto createdUserDto = (UserDto)result.Data;
+            var createdUserDto = (UserDto) result.Data;
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             User userFromDatabase = UserManager.Get(createdUserDto.Id);
@@ -55,10 +56,10 @@ namespace Streamus.Tests.Controller_Tests
         public void GetUserWithBulkPlaylistItems_UserCreatedWithLotsOfItems_UserHasOnePlaylist()
         {
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonServiceStackResult result = (JsonServiceStackResult)UserController.Create();
+            JsonResult result = UserController.Create();
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            UserDto createdUserDto = (UserDto)result.Data;
+            var createdUserDto = (UserDto) result.Data;
 
             const int numItemsToCreate = 2000;
 
@@ -77,9 +78,10 @@ namespace Streamus.Tests.Controller_Tests
             Assert.That(userFromDatabase.Playlists.First().Items.Count() == numItemsToCreate);
 
             //  Different sessions -- first should be de-synced from the second.
-            Assert.That(userFromDatabase.Playlists.First().Items.Count() != createdUserDto.Playlists.First().Items.Count());
+            Assert.That(userFromDatabase.Playlists.First().Items.Count() !=
+                        createdUserDto.Playlists.First().Items.Count());
         }
-        
+
         //  TODO: GooglePlusID should be immutable.
         [Test]
         public void UpdateUserGooglePlusId_NoGooglePlusIdSet_GooglePlusIdSetSuccessfully()
@@ -87,10 +89,10 @@ namespace Streamus.Tests.Controller_Tests
             const string googlePlusId = "109695597859594825120";
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonServiceStackResult result = (JsonServiceStackResult)UserController.Create();
+            JsonResult result = UserController.Create();
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            UserDto createdUserDto = (UserDto)result.Data;
+            var createdUserDto = (UserDto) result.Data;
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             UserController.UpdateGooglePlusId(createdUserDto.Id, googlePlusId);

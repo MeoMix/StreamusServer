@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using NUnit.Framework;
 using Streamus.Controllers;
 using Streamus.Dao;
@@ -50,7 +51,7 @@ namespace Streamus.Tests.Controller_Tests
             PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            var result = (JsonServiceStackResult) PlaylistController.Create(playlistDto);
+            JsonResult result = PlaylistController.Create(playlistDto);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             var createdPlaylistDto = (PlaylistDto) result.Data;
@@ -87,7 +88,7 @@ namespace Streamus.Tests.Controller_Tests
             PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            var result = (JsonServiceStackResult) PlaylistController.Create(playlistDto);
+            JsonResult result = PlaylistController.Create(playlistDto);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             var createdPlaylistDto = (PlaylistDto) result.Data;
@@ -116,7 +117,7 @@ namespace Streamus.Tests.Controller_Tests
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Create a new playlist for the given user by loading up the playlist via sharecode.
-            var result = (JsonServiceStackResult)PlaylistController.CreateCopyByShareCode(shareCode.ShortId, shareCode.UrlFriendlyEntityTitle, user.Id);
+            JsonResult result = PlaylistController.CreateCopyByShareCode(shareCode.ShortId, shareCode.UrlFriendlyEntityTitle, user.Id);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             var playlistDto = (PlaylistDto) result.Data;

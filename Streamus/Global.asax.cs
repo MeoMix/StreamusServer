@@ -1,5 +1,10 @@
-﻿using Autofac;
+﻿using System.Net.Http.Formatting;
+using System.Web;
+using System.Web.Http;
+using System.Web.Mvc;
+using System.Web.Routing;
 using AutoMapper;
+using Autofac;
 using Newtonsoft.Json;
 using Streamus.App_Start;
 using Streamus.Controllers;
@@ -7,11 +12,6 @@ using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
-using System.Net.Http.Formatting;
-using System.Web;
-using System.Web.Http;
-using System.Web.Mvc;
-using System.Web.Routing;
 
 namespace Streamus
 {
@@ -42,19 +42,13 @@ namespace Streamus
             AutofacRegistrations.RegisterDaoFactory();
 
             CreateAutoMapperMaps();
-
-            //  TODO: It would be nice to use ServiceStack JSON deserializing as it is faster than the default, but I can't get it
-            //  to properly deserialize child entities in the JSON object.
-            //Remove and JsonValueProviderFactory and add JsonServiceStackValueProviderFactory
-            //ValueProviderFactories.Factories.Remove(ValueProviderFactories.Factories.OfType<JsonValueProviderFactory>().FirstOrDefault());
-            //ValueProviderFactories.Factories.Add(new JsonServiceStackValueProviderFactory());
         }
 
         private static void RegisterControllerFactory()
         {
             IControllerFactory factory = new StreamusControllerFactory();
             ControllerBuilder.Current.SetControllerFactory(factory);
-        } 
+        }
 
         /// <summary>
         ///     Initialize the AutoMapper mappings for the solution.
@@ -74,11 +68,13 @@ namespace Streamus
 
                 Mapper.CreateMap<Playlist, PlaylistDto>();
                 Mapper.CreateMap<PlaylistDto, Playlist>()
-                    .ForMember(playlist => playlist.User, opt => opt.MapFrom(playlistDto => userDao.Get(playlistDto.UserId)));
+                      .ForMember(playlist => playlist.User,
+                                 opt => opt.MapFrom(playlistDto => userDao.Get(playlistDto.UserId)));
 
                 Mapper.CreateMap<PlaylistItem, PlaylistItemDto>();
                 Mapper.CreateMap<PlaylistItemDto, PlaylistItem>()
-                    .ForMember(playlistItem => playlistItem.Playlist, opt => opt.MapFrom(playlistItemDto => playlistDao.Get(playlistItemDto.PlaylistId)));
+                      .ForMember(playlistItem => playlistItem.Playlist,
+                                 opt => opt.MapFrom(playlistItemDto => playlistDao.Get(playlistItemDto.PlaylistId)));
 
                 Mapper.CreateMap<ShareCode, ShareCodeDto>().ReverseMap();
 
@@ -87,7 +83,6 @@ namespace Streamus
 
                 Mapper.AssertConfigurationIsValid();
             }
-
         }
     }
 
@@ -106,23 +101,4 @@ namespace Streamus
             return base.BindModel(controllerContext, bindingContext);
         }
     }
-
-    //public sealed class JsonServiceStackValueProviderFactory : ValueProviderFactory
-    //{
-    //    public override IValueProvider GetValueProvider(ControllerContext controllerContext)
-    //    {
-    //        if (controllerContext == null)
-    //            throw new ArgumentNullException("controllerContext");
-
-    //        if (!controllerContext.HttpContext.Request.ContentType.StartsWith("application/json", StringComparison.OrdinalIgnoreCase))
-    //            return null;
-
-    //        var streamReader = new StreamReader(controllerContext.HttpContext.Request.InputStream);
-    //        string body = streamReader.ReadToEnd();
-
-              //  Neither ServiceStack nor JsonDotNet work:
-    //        return string.IsNullOrEmpty(body) ? null : new DictionaryValueProvider<object>(JsonConvert.DeserializeObject<ExpandoObject>(body, new ExpandoObjectConverter()), CultureInfo.CurrentCulture);
-    //        return new DictionaryValueProvider<object>(ServiceStack.Text.JsonSerializer.DeserializeFromString<ExpandoObject>(body), CultureInfo.CurrentCulture);
-    //    }
-    //}
 }

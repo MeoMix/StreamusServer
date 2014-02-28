@@ -38,7 +38,7 @@ namespace Streamus.Controllers
             ShareCode shareCode = ShareCodeManager.GetShareCode(playlist);
             ShareCodeDto shareCodeDto = ShareCodeDto.Create(shareCode);
 
-            return new JsonServiceStackResult(shareCodeDto);
+            return Json(shareCodeDto);
         }
     }
 }

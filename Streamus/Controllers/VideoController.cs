@@ -33,7 +33,7 @@ namespace Streamus.Controllers
         ///     the item should be saved or updated, though.
         /// </summary>
         [HttpPut]
-        public ActionResult Update(VideoDto videoDto)
+        public JsonResult Update(VideoDto videoDto)
         {
             Video video = Video.Create(videoDto);
 
@@ -41,29 +41,29 @@ namespace Streamus.Controllers
 
             VideoDto savedVideoDto = VideoDto.Create(video);
 
-            return new JsonServiceStackResult(savedVideoDto);
+            return Json(savedVideoDto);
         }
 
         [HttpGet]
-        public ActionResult Get(string id)
+        public JsonResult Get(string id)
         {
             Video video = VideoManager.Get(id);
             VideoDto videoDto = VideoDto.Create(video);
 
-            return new JsonServiceStackResult(videoDto);
+            return Json(videoDto);
         }
 
         [HttpPost]
-        public ActionResult SaveVideos(List<VideoDto> videoDtos)
+        public JsonResult SaveVideos(List<VideoDto> videoDtos)
         {
             List<Video> videos = Video.Create(videoDtos);
 
             VideoManager.Save(videos);
-            return new JsonServiceStackResult(videos);
+            return Json(videos);
         }
 
         [HttpGet]
-        public ActionResult GetByIds(List<string> ids)
+        public JsonResult GetByIds(List<string> ids)
         {
             var videoDtos = new List<VideoDto>();
 
@@ -74,7 +74,7 @@ namespace Streamus.Controllers
                 videoDtos = VideoDto.Create(videos);
             }
 
-            return new JsonServiceStackResult(videoDtos);
+            return Json(videoDtos);
         }
     }
 }

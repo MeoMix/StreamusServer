@@ -31,7 +31,7 @@ namespace Streamus.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(PlaylistDto playlistDto)
+        public JsonResult Create(PlaylistDto playlistDto)
         {
             Playlist playlist = Playlist.Create(playlistDto);
             playlist.User.AddPlaylist(playlist);
@@ -43,26 +43,26 @@ namespace Streamus.Controllers
 
             PlaylistDto savedPlaylistDto = PlaylistDto.Create(playlist);
 
-            return new JsonServiceStackResult(savedPlaylistDto);
+            return Json(savedPlaylistDto);
         }
 
         [HttpPut]
-        public ActionResult Update(PlaylistDto playlistDto)
+        public JsonResult Update(PlaylistDto playlistDto)
         {
             Playlist playlist = Playlist.Create(playlistDto);
             PlaylistManager.Update(playlist);
 
             PlaylistDto updatedPlaylistDto = PlaylistDto.Create(playlist);
-            return new JsonServiceStackResult(updatedPlaylistDto);
+            return Json(updatedPlaylistDto);
         }
 
         [HttpGet]
-        public ActionResult Get(Guid id)
+        public JsonResult Get(Guid id)
         {
             Playlist playlist = PlaylistManager.Get(id);
             PlaylistDto playlistDto = PlaylistDto.Create(playlist);
 
-            return new JsonServiceStackResult(playlistDto);
+            return Json(playlistDto);
         }
 
         [HttpDelete]
@@ -107,7 +107,7 @@ namespace Streamus.Controllers
             PlaylistManager.Save(playlistCopy);
 
             PlaylistDto playlistDto = PlaylistDto.Create(playlistCopy);
-            return new JsonServiceStackResult(playlistDto);
+            return Json(playlistDto);
         }
     }
 }

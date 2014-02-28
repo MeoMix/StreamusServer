@@ -21,7 +21,7 @@ namespace Streamus.Controllers
         }
 
         [HttpPost]
-        public JsonServiceStackResult Create(PlaylistItemDto playlistItemDto)
+        public JsonResult Create(PlaylistItemDto playlistItemDto)
         {
             PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
 
@@ -31,11 +31,11 @@ namespace Streamus.Controllers
             
             PlaylistItemDto savedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
 
-            return new JsonServiceStackResult(savedPlaylistItemDto);
+            return Json(savedPlaylistItemDto);
         }
 
         [HttpPost]
-        public JsonServiceStackResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
+        public JsonResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
             List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
 
@@ -52,7 +52,7 @@ namespace Streamus.Controllers
 
             List<PlaylistItemDto> savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
 
-            return new JsonServiceStackResult(savedPlaylistItemDtos);
+            return Json(savedPlaylistItemDtos);
         }
 
         [HttpPut]
@@ -63,7 +63,7 @@ namespace Streamus.Controllers
 
             PlaylistItemDto updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
 
-            return new JsonServiceStackResult(updatedPlaylistItemDto);
+            return Json(updatedPlaylistItemDto);
         }
 
         [HttpPut]
@@ -75,7 +75,7 @@ namespace Streamus.Controllers
 
             List<PlaylistItemDto> savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
 
-            return new JsonServiceStackResult(savedPlaylistItemDtos);
+            return Json(savedPlaylistItemDtos);
         }
 
         [HttpDelete]

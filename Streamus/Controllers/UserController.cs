@@ -30,31 +30,31 @@ namespace Streamus.Controllers
         /// </summary>
         /// <returns>The newly created User</returns>
         [HttpPost]
-        public ActionResult Create()
+        public JsonResult Create()
         {
             User user = UserManager.CreateUser();
             UserDto userDto = UserDto.Create(user);
 
-            return new JsonServiceStackResult(userDto);
+            return Json(userDto);
         }
 
         [HttpGet]
-        public ActionResult Get(Guid id)
+        public JsonResult Get(Guid id)
         {
             User user = UserManager.Get(id);
             UserDto userDto = UserDto.Create(user);
 
-            return new JsonServiceStackResult(userDto);
+            return Json(userDto);
         }
 
         [HttpGet]
-        public ActionResult GetByGooglePlusId(string googlePlusId)
+        public JsonResult GetByGooglePlusId(string googlePlusId)
         {
             User user = UserManager.GetByGooglePlusId(googlePlusId);
 
             UserDto userDto = UserDto.Create(user);
 
-            return new JsonServiceStackResult(userDto);
+            return Json(userDto);
         }
 
         [HttpPost]

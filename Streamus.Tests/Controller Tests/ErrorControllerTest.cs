@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web.Mvc;
 using NUnit.Framework;
 using Streamus.Controllers;
 using Streamus.Dao;
@@ -30,7 +31,7 @@ namespace Streamus.Tests.Controller_Tests
         [Test]
         public void CreateError_ShortMessage_ErrorCreated()
         {
-            ErrorDto errorDto = new ErrorDto
+            var errorDto = new ErrorDto
                 {
                     Message = "Hello World",
                     ClientVersion = "0.99",
@@ -38,10 +39,10 @@ namespace Streamus.Tests.Controller_Tests
                 };
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonServiceStackResult result = (JsonServiceStackResult)ErrorController.Create(errorDto);
+            JsonResult result = ErrorController.Create(errorDto);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            ErrorDto createdErrorDto = (ErrorDto)result.Data;
+            var createdErrorDto = (ErrorDto) result.Data;
 
             Assert.NotNull(createdErrorDto);
         }
@@ -49,18 +50,19 @@ namespace Streamus.Tests.Controller_Tests
         [Test]
         public void CreateError_LongMessage_MessageTruncatedErrorCreated()
         {
-            ErrorDto errorDto = new ErrorDto
-            {
-                Message = "Hello World This is a Really Long Message Which is going to be over 255 characters in length when finished which will cause the end result message to be truncated with three periods as to not overflow the database. Can I confirm that this is happening? Thanks",
-                ClientVersion = "0.99",
-                LineNumber = 2
-            };
+            var errorDto = new ErrorDto
+                {
+                    Message =
+                        "Hello World This is a Really Long Message Which is going to be over 255 characters in length when finished which will cause the end result message to be truncated with three periods as to not overflow the database. Can I confirm that this is happening? Thanks",
+                    ClientVersion = "0.99",
+                    LineNumber = 2
+                };
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonServiceStackResult result = (JsonServiceStackResult)ErrorController.Create(errorDto);
+            JsonResult result = ErrorController.Create(errorDto);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            ErrorDto createdErrorDto = (ErrorDto)result.Data;
+            var createdErrorDto = (ErrorDto) result.Data;
 
             Assert.NotNull(createdErrorDto);
             Assert.That(createdErrorDto.Message.Length == 255);
