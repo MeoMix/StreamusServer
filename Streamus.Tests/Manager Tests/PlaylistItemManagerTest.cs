@@ -149,9 +149,6 @@ namespace Streamus.Tests.Manager_Tests
             Assert.IsTrue(validationExceptionEncountered);
         }
 
-        //  TODO: There are more 'create' edge cases depending on how many items are in the Playlist. Consider creating
-        //  in the middle, at the end, at the front and bulk-create in one transaction.
-
         [Test]
         public void UpdateItemTitle_ItemExistsInDatabase_ItemTitleUpdated()
         {

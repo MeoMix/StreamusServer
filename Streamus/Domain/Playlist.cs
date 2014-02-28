@@ -39,7 +39,7 @@ namespace Streamus.Domain
         {
             Playlist playlist = Mapper.Map<PlaylistDto, Playlist>(playlistDto);
 
-            //  TODO: I could probably leverage backbone's CID property to have the items know of their playlist.
+            //  TODO: I could probably leverage backbone's CID property to have the items know of their playlist. Or maybe I should just enforce adding client-side before saving?
             //  If an unsaved playlist comes from the client with items already in it, the items will not know their playlist's ID.
             //  So, re-map to the playlist as appropriate.
 
