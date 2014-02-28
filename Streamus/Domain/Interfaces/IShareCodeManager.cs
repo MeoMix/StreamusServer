@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace Streamus.Domain.Interfaces
+﻿namespace Streamus.Domain.Interfaces
 {
     public interface IShareCodeManager
     {
         ShareCode GetByShortIdAndEntityTitle(string shareCodeShortId, string urlFriendlyEntityTitle);
-        ShareCode GetShareCode(ShareableEntityType entityType, Guid entityId);
+        ShareCode GetShareCode(IShareableEntity shareableEntity);
         void Save(ShareCode shareCode);
     }
 }

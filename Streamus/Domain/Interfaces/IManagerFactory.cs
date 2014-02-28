@@ -5,7 +5,7 @@
         IErrorManager GetErrorManager();
         IPlaylistItemManager GetPlaylistItemManager();
         IPlaylistManager GetPlaylistManager();
-        IShareCodeManager GetShareCodeManager(IPlaylistManager playlistManager);
+        IShareCodeManager GetShareCodeManager();
         IUserManager GetUserManager();
         IVideoManager GetVideoManager();
     }

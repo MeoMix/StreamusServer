@@ -36,10 +36,9 @@ namespace Streamus.Domain.Managers
             return PlaylistManager ?? (PlaylistManager = new PlaylistManager(Logger, DaoFactory.GetPlaylistDao(), DaoFactory.GetVideoDao()));
         }
 
-        //  TODO: Fix coupling w/ other manager.
-        public IShareCodeManager GetShareCodeManager(IPlaylistManager playlistManager)
+        public IShareCodeManager GetShareCodeManager()
         {
-            return ShareCodeManager ?? (ShareCodeManager = new ShareCodeManager(Logger, DaoFactory.GetPlaylistDao(), DaoFactory.GetShareCodeDao(), playlistManager));
+            return ShareCodeManager ?? (ShareCodeManager = new ShareCodeManager(Logger, DaoFactory.GetPlaylistDao(), DaoFactory.GetShareCodeDao()));
         }
 
         public IUserManager GetUserManager()

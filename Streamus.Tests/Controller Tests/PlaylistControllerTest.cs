@@ -16,6 +16,7 @@ namespace Streamus.Tests.Controller_Tests
         private PlaylistController PlaylistController;
         private PlaylistItemController PlaylistItemController;
         private IShareCodeManager ShareCodeManager;
+        private IPlaylistManager PlaylistManager;
         private IUserManager UserManager;
 
         /// <summary>
@@ -29,9 +30,9 @@ namespace Streamus.Tests.Controller_Tests
                 PlaylistController = new PlaylistController(Logger, ManagerFactory);
                 PlaylistItemController = new PlaylistItemController(Logger, ManagerFactory);
 
-                IPlaylistManager playlistManager = ManagerFactory.GetPlaylistManager();
-                ShareCodeManager = ManagerFactory.GetShareCodeManager(playlistManager);
+                ShareCodeManager = ManagerFactory.GetShareCodeManager();
                 UserManager = ManagerFactory.GetUserManager();
+                PlaylistManager = ManagerFactory.GetPlaylistManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -109,7 +110,8 @@ namespace Streamus.Tests.Controller_Tests
             User user = Helpers.CreateUser();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            ShareCode shareCode = ShareCodeManager.GetShareCode(ShareableEntityType.Playlist, user.Playlists.First().Id);
+            Playlist playlist = PlaylistManager.CopyAndSave(user.Playlists.First().Id);
+            ShareCode shareCode = ShareCodeManager.GetShareCode(playlist);
             NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();

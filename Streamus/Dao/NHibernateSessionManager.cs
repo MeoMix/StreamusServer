@@ -81,6 +81,7 @@ namespace Streamus.Dao
 
             session = CurrentSessionContext.Unbind(Instance.SessionFactory);
             session.Close();
+            session.Dispose();
         }
 
     }

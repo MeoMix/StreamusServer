@@ -35,7 +35,7 @@ namespace Streamus
             JsonMediaTypeFormatter json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
             json.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
 
-            //  Register your new model binder
+            //  Don't serialize JSON empty strings into null -- instead turn them into empty strings because this is more intuitive and I don't want to have to do n
             ModelBinders.Binders.DefaultBinder = new JsonEmptyStringNotNullModelBinder();
 
             RegisterControllerFactory();
@@ -62,8 +62,6 @@ namespace Streamus
         /// </summary>
         public static void CreateAutoMapperMaps()
         {
-            AutofacRegistrations.RegisterDaoFactory();
-
             using (ILifetimeScope scope = AutofacRegistrations.Container.BeginLifetimeScope())
             {
                 var daoFactory = scope.Resolve<IDaoFactory>();

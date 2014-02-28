@@ -1,23 +1,19 @@
-﻿using Streamus.Dao;
+﻿using log4net;
 using Streamus.Domain.Interfaces;
 using System;
-using log4net;
 
 namespace Streamus.Domain.Managers
 {
     public class ShareCodeManager : AbstractManager, IShareCodeManager
     {
-        private readonly IPlaylistManager PlaylistManager;
-
         private IPlaylistDao PlaylistDao { get; set; }
         private IShareCodeDao ShareCodeDao { get; set; }
 
-        public ShareCodeManager(ILog logger, IPlaylistDao playlistDao, IShareCodeDao shareCodeDao, IPlaylistManager playlistManager)
+        public ShareCodeManager(ILog logger, IPlaylistDao playlistDao, IShareCodeDao shareCodeDao)
             : base(logger)
         {
             PlaylistDao = playlistDao;
             ShareCodeDao = shareCodeDao;
-            PlaylistManager = playlistManager;
         }
 
         public ShareCode GetByShortIdAndEntityTitle(string shareCodeShortId, string urlFriendlyEntityTitle)
@@ -43,28 +39,13 @@ namespace Streamus.Domain.Managers
             return shareCode;
         }
 
-        public ShareCode GetShareCode(ShareableEntityType entityType, Guid entityId)
+        public ShareCode GetShareCode(IShareableEntity shareableEntity)
         {
-            //  TODO: Support sharing other entities.
-            if (entityType != ShareableEntityType.Playlist)
-                throw new NotSupportedException("Only Playlist entityType can be shared currently.");
-
             ShareCode shareCode;
 
             try
             {
-                Playlist playlistToCopy = PlaylistDao.Get(entityId);
-
-                if (playlistToCopy == null)
-                {
-                    string errorMessage = string.Format("No playlist found with id: {0}", entityId);
-                    throw new ApplicationException(errorMessage);
-                }
-
-                var shareablePlaylistCopy = new Playlist(playlistToCopy);
-                PlaylistManager.Save(shareablePlaylistCopy);
-
-                shareCode = new ShareCode(shareablePlaylistCopy);
+                shareCode = new ShareCode(shareableEntity);
                 Save(shareCode);
             }
             catch (Exception exception)

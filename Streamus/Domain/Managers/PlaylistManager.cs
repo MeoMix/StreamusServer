@@ -1,9 +1,9 @@
-﻿using Streamus.Dao;
+﻿using log4net;
+using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using log4net;
 
 namespace Streamus.Domain.Managers
 {
@@ -79,7 +79,7 @@ namespace Streamus.Domain.Managers
             {
                 playlist.ValidateAndThrow();
 
-                Playlist knownPlaylist = PlaylistDao.Get(playlist.Id);
+                Playlist knownPlaylist = Get(playlist.Id);
 
                 if (knownPlaylist == null)
                 {
@@ -101,7 +101,7 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Playlist playlist = PlaylistDao.Get(id);
+                Playlist playlist = Get(id);
                 playlist.User.RemovePlaylist(playlist);
                 PlaylistDao.Delete(playlist);
             }
@@ -116,7 +116,7 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Playlist playlist = PlaylistDao.Get(playlistId);
+                Playlist playlist = Get(playlistId);
                 playlist.Title = title;
                 PlaylistDao.Update(playlist);
             }
@@ -125,6 +125,27 @@ namespace Streamus.Domain.Managers
                 Logger.Error(exception);
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Copy a playlist. Useful for sharing.
+        /// </summary>
+        /// <param name="id">The playlist ID to copy</param>
+        /// <returns>A new playlist with a new ID which has been saved.</returns>
+        public Playlist CopyAndSave(Guid id)
+        {
+            Playlist playlistToCopy = Get(id);
+
+            if (playlistToCopy == null)
+            {
+                string errorMessage = string.Format("No playlist found with id: {0}", id);
+                throw new ApplicationException(errorMessage);
+            }
+
+            var copiedPlaylist = new Playlist(playlistToCopy);
+            Save(copiedPlaylist);
+
+            return copiedPlaylist;
         }
 
         /// <summary>

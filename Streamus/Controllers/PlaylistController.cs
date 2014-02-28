@@ -21,7 +21,7 @@ namespace Streamus.Controllers
             {
                 PlaylistManager = managerFactory.GetPlaylistManager();
                 UserManager = managerFactory.GetUserManager();
-                ShareCodeManager = managerFactory.GetShareCodeManager(PlaylistManager);
+                ShareCodeManager = managerFactory.GetShareCodeManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -95,7 +95,6 @@ namespace Streamus.Controllers
         public JsonResult CreateCopyByShareCode(string shareCodeShortId, string urlFriendlyEntityTitle, Guid userId)
         {
             ShareCode shareCode = ShareCodeManager.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
-
 
             //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
             Playlist playlistToCopy = PlaylistManager.Get(shareCode.EntityId);
