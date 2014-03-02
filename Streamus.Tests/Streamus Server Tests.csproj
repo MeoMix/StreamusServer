@@ -48,6 +48,9 @@
     <Reference Include="Autofac.Integration.Mvc">
       <HintPath>..\packages\Autofac.Mvc4.3.1.0\lib\net40\Autofac.Integration.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\FluentNHibernate.1.4.0.0\lib\net35\FluentNHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="FluentValidation">
       <HintPath>..\packages\FluentValidation.5.0.0.1\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
@@ -121,6 +124,11 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="PersistanceMappingTests\ErrorMappingTest.cs" />
+    <Compile Include="PersistanceMappingTests\PlaylistItemMappingTest.cs" />
+    <Compile Include="PersistanceMappingTests\PlaylistMappingTest.cs" />
+    <Compile Include="PersistanceMappingTests\UserMappingTest.cs" />
+    <Compile Include="PersistanceMappingTests\VideoMappingTest.cs" />
     <Compile Include="StreamusTest.cs" />
     <Compile Include="Controller Tests\ErrorControllerTest.cs" />
     <Compile Include="Controller Tests\PlaylistControllerTest.cs" />
