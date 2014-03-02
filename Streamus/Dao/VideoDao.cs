@@ -8,13 +8,19 @@ namespace Streamus.Dao
 {
     public class VideoDao : AbstractNHibernateDao<Video>, IVideoDao
     {
+        public VideoDao(ISession session)
+            : base(session)
+        {
+            
+        }
+
         public Video Get(string id)
         {
             Video video = null;
 
             if (id != default(string))
             {
-                video = NHibernateSession.Get<Video>(id);
+                video = Session.Get<Video>(id);
             }
 
             return video;
@@ -22,7 +28,7 @@ namespace Streamus.Dao
 
         public IList<Video> Get(List<string> ids)
         {
-            IQueryOver<Video, Video> criteria = NHibernateSession
+            IQueryOver<Video, Video> criteria = Session
                 .QueryOver<Video>()
                 .Where(video => video.Id.IsIn(ids));
 

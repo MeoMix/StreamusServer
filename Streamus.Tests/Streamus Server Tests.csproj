@@ -45,8 +45,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Autofac.3.3.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Autofac.Integration.Mvc">
+      <HintPath>..\packages\Autofac.Mvc4.3.1.0\lib\net40\Autofac.Integration.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="FluentValidation">
       <HintPath>..\packages\FluentValidation.5.0.0.1\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="HttpSimulator">
+      <HintPath>..\packages\HttpSimulator.1.0.0.0\lib\Net40\HttpSimulator.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections">
       <HintPath>..\packages\Iesi.Collections.3.2.0.1001\lib\Net35\Iesi.Collections.dll</HintPath>
@@ -115,7 +121,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="AbstractTest.cs" />
+    <Compile Include="StreamusTest.cs" />
     <Compile Include="Controller Tests\ErrorControllerTest.cs" />
     <Compile Include="Controller Tests\PlaylistControllerTest.cs" />
     <Compile Include="Controller Tests\PlaylistItemControllerTest.cs" />

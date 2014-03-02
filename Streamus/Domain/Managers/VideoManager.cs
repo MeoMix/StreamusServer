@@ -1,4 +1,5 @@
 ﻿using log4net;
+using NHibernate;
 using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 using System;
@@ -7,12 +8,12 @@ using System.Linq;
 
 namespace Streamus.Domain.Managers
 {
-    public class VideoManager : AbstractManager, IVideoManager
+    public class VideoManager : StreamusManager, IVideoManager
     {
         private IVideoDao VideoDao { get; set; }
 
-        public VideoManager(ILog logger, IVideoDao videoDao)
-            : base(logger) 
+        public VideoManager(ILog logger, ISession session, IVideoDao videoDao)
+            : base(logger, session) 
         {
             VideoDao = videoDao;
         }
@@ -23,7 +24,11 @@ namespace Streamus.Domain.Managers
 
             try
             {
+                Session.BeginTransaction();
+
                 video = VideoDao.Get(id);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -40,7 +45,11 @@ namespace Streamus.Domain.Managers
 
             try
             {
+                Session.BeginTransaction();
+
                 videos = VideoDao.Get(ids);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -55,7 +64,11 @@ namespace Streamus.Domain.Managers
         {
             try
             {
+                Session.BeginTransaction();
+
                 DoSave(video);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -68,18 +81,22 @@ namespace Streamus.Domain.Managers
         {
             try
             {
+                Session.BeginTransaction();
+
                 List<Video> videosList = videos.ToList();
 
                 if (videosList.Count > 1000)
                 {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(videosList.Count / 10);
+                    Session.SetBatchSize(videosList.Count / 10);
                 }
                 else
                 {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(videosList.Count / 5);
+                    Session.SetBatchSize(videosList.Count / 5);
                 }
 
                 videosList.ForEach(DoSave);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {

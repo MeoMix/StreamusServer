@@ -7,10 +7,10 @@ using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    [SessionManagement]
-    public class UserController : AbstractController
+    public class UserController : StreamusController
     {
         private readonly IUserManager UserManager;
+
         public UserController(ILog logger, IManagerFactory managerFactory)
             : base(logger)
         {

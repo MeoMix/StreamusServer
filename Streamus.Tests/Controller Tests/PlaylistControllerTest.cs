@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Streamus.Controllers;
-using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace Streamus.Tests.Controller_Tests
 {
     [TestFixture]
-    public class PlaylistControllerTest : AbstractTest
+    public class PlaylistControllerTest : StreamusTest
     {
         private PlaylistController PlaylistController;
         private PlaylistItemController PlaylistItemController;
@@ -48,28 +47,22 @@ namespace Streamus.Tests.Controller_Tests
 
             Guid firstPlaylistId = user.Playlists.First().Id;
 
-            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
+            //PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonResult result = PlaylistController.Create(playlistDto);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+            //JsonResult result = PlaylistController.Create(playlistDto);
 
-            var createdPlaylistDto = (PlaylistDto) result.Data;
+            //var createdPlaylistDto = (PlaylistDto) result.Data;
 
-            const int numItemsToCreate = 150;
-            List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, createdPlaylistDto.Id);
+            //const int numItemsToCreate = 150;
+            //List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, createdPlaylistDto.Id);
 
-            foreach (var splitPlaylistItemDtos in Split(playlistItemDtos, 50))
-            {
-                NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-                PlaylistItemController.CreateMultiple(splitPlaylistItemDtos);
-                NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
-            }
+            //foreach (var splitPlaylistItemDtos in Split(playlistItemDtos, 50))
+            //{
+            //    PlaylistItemController.CreateMultiple(splitPlaylistItemDtos);
+            //}
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Now delete the first playlist.
             PlaylistController.Delete(firstPlaylistId);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 
         public static List<List<PlaylistItemDto>> Split(List<PlaylistItemDto> source, int splitSize)
@@ -87,22 +80,17 @@ namespace Streamus.Tests.Controller_Tests
             User user = Helpers.CreateUser();
             PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             JsonResult result = PlaylistController.Create(playlistDto);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             var createdPlaylistDto = (PlaylistDto) result.Data;
 
             //  Make sure we actually get a Playlist DTO back from the Controller.
             Assert.NotNull(createdPlaylistDto);
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             User userFromDatabase = UserManager.Get(createdPlaylistDto.UserId);
 
             //  Make sure that the created playlist was cascade added to the User
             Assert.That(userFromDatabase.Playlists.Count(p => p.Id == createdPlaylistDto.Id) == 1);
-
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 
         [Test]
@@ -110,28 +98,21 @@ namespace Streamus.Tests.Controller_Tests
         {
             User user = Helpers.CreateUser();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             Playlist playlist = PlaylistManager.CopyAndSave(user.Playlists.First().Id);
             ShareCode shareCode = ShareCodeManager.GetShareCode(playlist);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Create a new playlist for the given user by loading up the playlist via sharecode.
             JsonResult result = PlaylistController.CreateCopyByShareCode(shareCode.ShortId, shareCode.UrlFriendlyEntityTitle, user.Id);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             var playlistDto = (PlaylistDto) result.Data;
 
             //  Make sure we actually get a Playlist DTO back from the Controller.
             Assert.NotNull(playlistDto);
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             User userFromDatabase = UserManager.Get(playlistDto.UserId);
 
             //  Make sure that the created playlist was cascade added to the User
             Assert.That(userFromDatabase.Playlists.Count(p => p.Id == playlistDto.Id) == 1);
-
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
     }
 }

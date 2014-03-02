@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Streamus.Dao;
-using Streamus.Domain;
+﻿using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Streamus.Tests
 {
@@ -36,9 +35,7 @@ namespace Streamus.Tests
 
             playlist.AddItem(playlistItem);
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistItemManager.Save(playlistItem);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             return playlistItem;
         }
@@ -58,12 +55,7 @@ namespace Streamus.Tests
 
         public User CreateUser()
         {
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-
             User user = UserManager.CreateUser();
-
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
-
             return user;
         }
 
@@ -73,14 +65,10 @@ namespace Streamus.Tests
         /// <returns></returns>
         public PlaylistDto CreatePlaylistDto(Guid userIdOverride)
         {
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-
             var playlistDto = new PlaylistDto
                 {
                     UserId = userIdOverride
                 };
-
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             return playlistDto;
         }

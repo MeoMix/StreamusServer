@@ -7,25 +7,20 @@ namespace Streamus.Dao
 {
     public class AbstractNHibernateDao<T> : MarshalByRefObject, IDao<T> where T : class
     {
+        protected ISession Session { get; set; }
         private readonly Type PersistentType = typeof (T);
 
-        /// <summary>
-        ///     Exposes the ISession used within the DAO.
-        /// </summary>
-        protected ISession NHibernateSession
+        public AbstractNHibernateDao(ISession session)
         {
-            get
-            {
-                return NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession();
-            }
-        }
+            Session = session;
+        } 
 
         /// <summary>
         ///     Loads every instance of the requested type with no filtering.
         /// </summary>
         public List<T> GetAll()
         {
-            ICriteria criteria = NHibernateSession.CreateCriteria(PersistentType);
+            ICriteria criteria = Session.CreateCriteria(PersistentType);
             return criteria.List<T>() as List<T>;
         }
 
@@ -36,27 +31,27 @@ namespace Streamus.Dao
         /// </summary>
         public void SaveOrUpdate(T entity)
         {
-            NHibernateSession.SaveOrUpdate(entity);
+            Session.SaveOrUpdate(entity);
         }
 
         public T Merge(T entity)
         {
-            return NHibernateSession.Merge(entity);
+            return Session.Merge(entity);
         }
 
         public void Save(T entity)
         {
-            NHibernateSession.Save(entity);
+            Session.Save(entity);
         }
 
         public void Update(T entity)
         {
-            NHibernateSession.Update(entity);
+            Session.Update(entity);
         }
 
         public void Delete(T entity)
         {
-            NHibernateSession.Delete(entity);
+            Session.Delete(entity);
         }
     }
 }

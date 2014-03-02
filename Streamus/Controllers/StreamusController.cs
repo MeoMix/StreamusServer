@@ -8,6 +8,11 @@ namespace Streamus.Controllers
     {
         protected readonly ILog Logger;
 
+        protected StreamusController()
+        {
+            
+        }
+
         protected StreamusController(ILog logger)
         {
             Logger = logger;

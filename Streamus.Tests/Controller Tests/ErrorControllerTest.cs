@@ -1,14 +1,13 @@
-﻿using System;
-using System.Web.Mvc;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Streamus.Controllers;
-using Streamus.Dao;
 using Streamus.Dto;
+using System;
+using System.Web.Mvc;
 
 namespace Streamus.Tests.Controller_Tests
 {
     [TestFixture]
-    public class ErrorControllerTest : AbstractTest
+    public class ErrorControllerTest : StreamusTest
     {
         private ErrorController ErrorController;
 
@@ -38,10 +37,7 @@ namespace Streamus.Tests.Controller_Tests
                     LineNumber = 2
                 };
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             JsonResult result = ErrorController.Create(errorDto);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
-
             var createdErrorDto = (ErrorDto) result.Data;
 
             Assert.NotNull(createdErrorDto);
@@ -58,9 +54,7 @@ namespace Streamus.Tests.Controller_Tests
                     LineNumber = 2
                 };
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             JsonResult result = ErrorController.Create(errorDto);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             var createdErrorDto = (ErrorDto) result.Data;
 

@@ -8,7 +8,7 @@ using Streamus.Domain.Interfaces;
 namespace Streamus.Tests.Manager_Tests
 {
     [TestFixture]
-    public class PlaylistManagerTest : AbstractTest
+    public class PlaylistManagerTest : StreamusTest
     {
         private IPlaylistManager PlaylistManager;
 
@@ -36,31 +36,18 @@ namespace Streamus.Tests.Manager_Tests
             User = Helpers.CreateUser();
             Video = Helpers.CreateUnsavedVideoWithId();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             videoManager.Save(Video);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
 
         [Test]
         public void Updates()
         {
             Playlist playlist = User.CreateAndAddPlaylist();
-
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistManager.Save(playlist);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            PlaylistManager.UpdateTitle(playlist.Id, "Existing Playlist 001");
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
-
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            Playlist playlistFromDatabase = PlaylistManager.Get(playlist.Id);
-            //  Test that the product was successfully inserted
-            Assert.IsNotNull(playlistFromDatabase);
-            //  Sessions should be isolated -- before and after should be different here.
-            Assert.AreNotEqual(playlist.Title, playlistFromDatabase.Title);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+            const string newTitle = "Existing Playlist 001";
+            PlaylistManager.UpdateTitle(playlist.Id, newTitle);
+            Assert.AreEqual(playlist.Title, newTitle);
         }
 
         /// <summary>
@@ -75,16 +62,11 @@ namespace Streamus.Tests.Manager_Tests
 
             User.AddPlaylist(playlist);
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistManager.Save(playlist);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Now delete the created Playlist and ensure it is removed.
             PlaylistManager.Delete(playlist.Id);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             Playlist deletedPlaylist = PlaylistManager.Get(playlist.Id);
 
             bool objectNotFoundExceptionEncountered = false;
@@ -99,7 +81,6 @@ namespace Streamus.Tests.Manager_Tests
             }
 
             Assert.IsTrue(objectNotFoundExceptionEncountered);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
     }
 }

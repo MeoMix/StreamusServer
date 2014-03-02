@@ -2,14 +2,12 @@
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
-using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    [SessionManagement]
-    public class VideoController : AbstractController
+    public class VideoController : StreamusController
     {
         private readonly IVideoManager VideoManager;
 

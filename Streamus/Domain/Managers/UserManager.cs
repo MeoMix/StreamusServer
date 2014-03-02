@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using NHibernate;
+using log4net;
 using Streamus.Domain.Interfaces;
 using System;
 
@@ -7,12 +8,12 @@ namespace Streamus.Domain.Managers
     /// <summary>
     ///     Provides a common spot for methods against Users which require transactions (Creating, Updating, Deleting)
     /// </summary>
-    public class UserManager : AbstractManager, IUserManager
+    public class UserManager : StreamusManager, IUserManager
     {
         private IUserDao UserDao { get; set; }
 
-        public UserManager(ILog logger, IUserDao userDao) 
-            : base(logger) 
+        public UserManager(ILog logger, ISession session, IUserDao userDao) 
+            : base(logger, session) 
         {
             UserDao = userDao;
         }
@@ -23,7 +24,11 @@ namespace Streamus.Domain.Managers
 
             try
             {
+                Session.BeginTransaction();
+
                 user = UserDao.Get(id);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -40,7 +45,11 @@ namespace Streamus.Domain.Managers
 
             try
             {
+                Session.BeginTransaction();
+
                 user = UserDao.GetByGooglePlusId(googlePlusId);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -62,6 +71,8 @@ namespace Streamus.Domain.Managers
 
             try
             {
+                Session.BeginTransaction();
+
                 user = new User
                     {
                         GooglePlusId = googlePlusId
@@ -69,6 +80,8 @@ namespace Streamus.Domain.Managers
 
                 user.ValidateAndThrow();
                 UserDao.Save(user);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -83,8 +96,12 @@ namespace Streamus.Domain.Managers
         {
             try
             {
+                Session.BeginTransaction();
+
                 user.ValidateAndThrow();
                 UserDao.Save(user);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -97,7 +114,11 @@ namespace Streamus.Domain.Managers
         {
             try
             {
+                Session.BeginTransaction();
+
                 UserDao.UpdateGooglePlusId(userId, googlePlusId);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {

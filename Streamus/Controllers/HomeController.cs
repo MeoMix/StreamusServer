@@ -1,10 +1,15 @@
-﻿using System.Web.Mvc;
+﻿using log4net;
+using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    [SessionManagement]
-    public class HomeController : Controller
+    public class HomeController : StreamusController
     {
+        public HomeController(ILog logger)
+            : base(logger)
+        {
+        }
+
         public ActionResult Index()
         {
             return View();

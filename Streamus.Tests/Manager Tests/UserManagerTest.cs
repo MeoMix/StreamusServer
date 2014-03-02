@@ -7,7 +7,7 @@ using Streamus.Domain.Interfaces;
 namespace Streamus.Tests.Manager_Tests
 {
     [TestFixture]
-    public class UserManagerTest : AbstractTest
+    public class UserManagerTest : StreamusTest
     {
         private IUserDao UserDao { get; set; }
 
@@ -32,16 +32,8 @@ namespace Streamus.Tests.Manager_Tests
         {
             User user = Helpers.CreateUser();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-
-            User userFromDatabase = UserDao.Get(user.Id);
-            //  Test that the product was successfully inserted
-            Assert.AreNotSame(user, userFromDatabase);
-
-            Assert.IsNotNull(userFromDatabase);
-            Assert.IsNotEmpty(userFromDatabase.Playlists);
-
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+            Assert.IsNotNull(user);
+            Assert.IsNotEmpty(user.Playlists);
         }
     }
 }

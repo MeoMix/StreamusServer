@@ -1,5 +1,5 @@
 ﻿using log4net;
-using Streamus.Dao;
+using NHibernate;
 using Streamus.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -7,13 +7,13 @@ using System.Linq;
 
 namespace Streamus.Domain.Managers
 {
-    public class PlaylistManager : AbstractManager, IPlaylistManager
+    public class PlaylistManager : StreamusManager, IPlaylistManager
     {
         private IPlaylistDao PlaylistDao { get; set; }
         private IVideoDao VideoDao { get; set; }
 
-        public PlaylistManager(ILog logger, IPlaylistDao playlistDao, IVideoDao videoDao)
-            : base(logger)
+        public PlaylistManager(ILog logger, ISession session, IPlaylistDao playlistDao, IVideoDao videoDao)
+            : base(logger, session)
         {
             PlaylistDao = playlistDao;
             VideoDao = videoDao;
@@ -25,7 +25,11 @@ namespace Streamus.Domain.Managers
 
             try
             {
+                Session.BeginTransaction();
+
                 playlist = PlaylistDao.Get(id);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -40,7 +44,11 @@ namespace Streamus.Domain.Managers
         {
             try
             {
+                Session.BeginTransaction();
+
                 DoSave(playlist);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -53,18 +61,22 @@ namespace Streamus.Domain.Managers
         {
             try
             {
+                Session.BeginTransaction();
+
                 List<Playlist> playlistsList = playlists.ToList();
 
                 if (playlistsList.Count > 1000)
                 {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistsList.Count / 10);
+                    Session.SetBatchSize(playlistsList.Count / 10);
                 }
                 else
                 {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistsList.Count / 5);
+                    Session.SetBatchSize(playlistsList.Count / 5);
                 }
 
                 playlistsList.ForEach(DoSave);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -77,9 +89,11 @@ namespace Streamus.Domain.Managers
         {
             try
             {
+                Session.BeginTransaction();
+
                 playlist.ValidateAndThrow();
 
-                Playlist knownPlaylist = Get(playlist.Id);
+                Playlist knownPlaylist = PlaylistDao.Get(playlist.Id);
 
                 if (knownPlaylist == null)
                 {
@@ -89,6 +103,8 @@ namespace Streamus.Domain.Managers
                 {
                     PlaylistDao.Merge(playlist);
                 }
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -101,9 +117,13 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Playlist playlist = Get(id);
+                Session.BeginTransaction();
+
+                Playlist playlist = PlaylistDao.Get(id);
                 playlist.User.RemovePlaylist(playlist);
-                PlaylistDao.Delete(playlist);
+                PlaylistDao.Delete(playlist); 
+                
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -116,9 +136,13 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Playlist playlist = Get(playlistId);
+                Session.BeginTransaction();
+
+                Playlist playlist = PlaylistDao.Get(playlistId);
                 playlist.Title = title;
                 PlaylistDao.Update(playlist);
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {
@@ -134,16 +158,26 @@ namespace Streamus.Domain.Managers
         /// <returns>A new playlist with a new ID which has been saved.</returns>
         public Playlist CopyAndSave(Guid id)
         {
-            Playlist playlistToCopy = Get(id);
+            Playlist copiedPlaylist;
 
-            if (playlistToCopy == null)
+            try
             {
-                string errorMessage = string.Format("No playlist found with id: {0}", id);
-                throw new ApplicationException(errorMessage);
-            }
+                Playlist playlistToCopy = PlaylistDao.Get(id);
 
-            var copiedPlaylist = new Playlist(playlistToCopy);
-            Save(copiedPlaylist);
+                if (playlistToCopy == null)
+                {
+                    string errorMessage = string.Format("No playlist found with id: {0}", id);
+                    throw new ApplicationException(errorMessage);
+                }
+
+                copiedPlaylist = new Playlist(playlistToCopy);
+                Save(copiedPlaylist);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
 
             return copiedPlaylist;
         }

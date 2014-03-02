@@ -49,6 +49,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Autofac.3.3.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Autofac.Integration.Mvc">
+      <HintPath>..\packages\Autofac.Mvc4.3.1.0\lib\net40\Autofac.Integration.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="AutoMapper, Version=3.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.dll</HintPath>
@@ -171,14 +174,12 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\AbstractController.cs" />
     <Compile Include="Controllers\JsonNetResult.cs" />
-    <Compile Include="Controllers\StreamusControllerFactory.cs" />
-    <Compile Include="Controllers\SessionManagementAttribute.cs" />
+    <Compile Include="Controllers\StreamusController.cs" />
     <Compile Include="Controllers\ShareCodeController.cs" />
     <Compile Include="Dao\AutofacRegistrations.cs" />
     <Compile Include="Dao\NHibernateDaoFactory.cs" />
-    <Compile Include="Dao\NHibernateSessionManager.cs" />
+    <Compile Include="Dao\NHibernateConfiguration.cs" />
     <Compile Include="Dao\ShareCodeDao.cs" />
     <Compile Include="Dao\ErrorDao.cs" />
     <Compile Include="Dao\PlaylistItemDao.cs" />
@@ -195,7 +196,7 @@
     <Compile Include="Domain\Interfaces\IManagerFactory.cs" />
     <Compile Include="Domain\Interfaces\IShareableEntity.cs" />
     <Compile Include="Domain\Interfaces\IShareCodeDao.cs" />
-    <Compile Include="Domain\Managers\AbstractManager.cs" />
+    <Compile Include="Domain\Managers\StreamusManager.cs" />
     <Compile Include="Domain\Managers\StreamusManagerFactory.cs" />
     <Compile Include="Domain\Managers\PlaylistItemManager.cs" />
     <Compile Include="Domain\Managers\ShareCodeManager.cs" />

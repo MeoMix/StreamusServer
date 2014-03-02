@@ -9,8 +9,7 @@ using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    [SessionManagement]
-    public class PlaylistItemController : AbstractController
+    public class PlaylistItemController : StreamusController
     {
         private readonly IPlaylistItemManager PlaylistItemManager;
 

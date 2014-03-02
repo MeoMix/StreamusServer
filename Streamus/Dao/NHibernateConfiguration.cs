@@ -1,6 +1,5 @@
 ﻿using NHibernate;
 using NHibernate.Cfg;
-using NHibernate.Context;
 using System;
 using System.Web;
 
@@ -60,28 +59,6 @@ namespace Streamus.Dao
 #endif
 
             SessionFactory = configuration.BuildSessionFactory();
-        }
-
-        public void OpenSessionAndBeginTransaction()
-        {
-            var session = SessionFactory.OpenSession();
-            CurrentSessionContext.Bind(session);
-            session.BeginTransaction();
-        }
-
-        public void CommitTransactionAndCloseSession()
-        {
-            var session = SessionFactory.GetCurrentSession();
-
-            var transaction = session.Transaction;
-            if (transaction != null && transaction.IsActive)
-            {
-                transaction.Commit();
-            }
-
-            session = CurrentSessionContext.Unbind(Instance.SessionFactory);
-            session.Close();
-            session.Dispose();
         }
 
     }

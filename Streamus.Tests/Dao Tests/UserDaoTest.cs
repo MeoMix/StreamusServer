@@ -5,7 +5,7 @@ using Streamus.Domain.Interfaces;
 namespace Streamus.Tests.Dao_Tests
 {
     [TestFixture]
-    public class UserDaoTest : AbstractTest
+    public class UserDaoTest : StreamusTest
     {
         private IUserDao UserDao { get; set; }
 

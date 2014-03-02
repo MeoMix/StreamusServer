@@ -7,8 +7,7 @@ using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    [SessionManagement]
-    public class ShareCodeController : AbstractController
+    public class ShareCodeController : StreamusController
     {
         private readonly IShareCodeManager ShareCodeManager;
         private readonly IPlaylistManager PlaylistManager;

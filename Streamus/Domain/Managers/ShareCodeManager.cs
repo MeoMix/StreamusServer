@@ -1,18 +1,17 @@
-﻿using log4net;
+﻿using NHibernate;
+using log4net;
 using Streamus.Domain.Interfaces;
 using System;
 
 namespace Streamus.Domain.Managers
 {
-    public class ShareCodeManager : AbstractManager, IShareCodeManager
+    public class ShareCodeManager : StreamusManager, IShareCodeManager
     {
-        private IPlaylistDao PlaylistDao { get; set; }
         private IShareCodeDao ShareCodeDao { get; set; }
 
-        public ShareCodeManager(ILog logger, IPlaylistDao playlistDao, IShareCodeDao shareCodeDao)
-            : base(logger)
+        public ShareCodeManager(ILog logger, ISession session, IShareCodeDao shareCodeDao)
+            : base(logger, session)
         {
-            PlaylistDao = playlistDao;
             ShareCodeDao = shareCodeDao;
         }
 
@@ -22,6 +21,8 @@ namespace Streamus.Domain.Managers
 
             try
             {
+                Session.BeginTransaction();
+
                 shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
 
                 if (shareCode == null)
@@ -29,6 +30,8 @@ namespace Streamus.Domain.Managers
 
                 if (shareCode.EntityType != ShareableEntityType.Playlist)
                     throw new ApplicationException("Expected shareCode to have entityType of Playlist");
+
+                Session.Transaction.Commit();
             }
             catch (Exception exception)
             {

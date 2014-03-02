@@ -1,4 +1,4 @@
-﻿using System;
+﻿using NHibernate;
 using log4net;
 using Streamus.Domain.Interfaces;
 
@@ -8,6 +8,7 @@ namespace Streamus.Domain.Managers
     {
         private readonly ILog Logger;
         private readonly IDaoFactory DaoFactory;
+        private readonly ISession Session;
 
         private IErrorManager ErrorManager;
         private IPlaylistItemManager PlaylistItemManager;
@@ -16,40 +17,41 @@ namespace Streamus.Domain.Managers
         private IUserManager UserManager;
         private IVideoManager VideoManager;
 
-        public StreamusManagerFactory(ILog logger, IDaoFactory daoFactory)
+        public StreamusManagerFactory(ILog logger, ISession session, IDaoFactory daoFactory)
         {
             Logger = logger;
+            Session = session;
             DaoFactory = daoFactory;
         }
 
         public IErrorManager GetErrorManager()
         {
-            return ErrorManager ?? (ErrorManager = new ErrorManager(Logger, DaoFactory.GetErrorDao()));
+            return ErrorManager ?? (ErrorManager = new ErrorManager(Logger, Session, DaoFactory.GetErrorDao()));
         }
 
         public IPlaylistItemManager GetPlaylistItemManager()
         {
-            return PlaylistItemManager ?? (PlaylistItemManager = new PlaylistItemManager(Logger, DaoFactory.GetPlaylistItemDao(), DaoFactory.GetVideoDao()));
+            return PlaylistItemManager ?? (PlaylistItemManager = new PlaylistItemManager(Logger, Session, DaoFactory.GetPlaylistItemDao(), DaoFactory.GetVideoDao()));
         }
 
         public IPlaylistManager GetPlaylistManager()
         {
-            return PlaylistManager ?? (PlaylistManager = new PlaylistManager(Logger, DaoFactory.GetPlaylistDao(), DaoFactory.GetVideoDao()));
+            return PlaylistManager ?? (PlaylistManager = new PlaylistManager(Logger, Session, DaoFactory.GetPlaylistDao(), DaoFactory.GetVideoDao()));
         }
 
         public IShareCodeManager GetShareCodeManager()
         {
-            return ShareCodeManager ?? (ShareCodeManager = new ShareCodeManager(Logger, DaoFactory.GetPlaylistDao(), DaoFactory.GetShareCodeDao()));
+            return ShareCodeManager ?? (ShareCodeManager = new ShareCodeManager(Logger, Session, DaoFactory.GetShareCodeDao()));
         }
 
         public IUserManager GetUserManager()
         {
-            return UserManager ?? (UserManager = new UserManager(Logger, DaoFactory.GetUserDao()));
+            return UserManager ?? (UserManager = new UserManager(Logger, Session, DaoFactory.GetUserDao()));
         }
 
         public IVideoManager GetVideoManager()
         {
-            return VideoManager ?? (VideoManager = new VideoManager(Logger, DaoFactory.GetVideoDao()));
+            return VideoManager ?? (VideoManager = new VideoManager(Logger, Session, DaoFactory.GetVideoDao()));
         }
     }
 }

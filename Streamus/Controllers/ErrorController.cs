@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using NHibernate;
+using log4net;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
@@ -6,8 +7,7 @@ using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    [SessionManagement]
-    public class ErrorController : AbstractController
+    public class ErrorController : StreamusController
     {
         private readonly IErrorManager ErrorManager;
 
