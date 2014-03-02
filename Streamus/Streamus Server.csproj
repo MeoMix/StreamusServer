@@ -62,6 +62,9 @@
     <Reference Include="EcmaScript.NET">
       <HintPath>..\packages\EcmaScript.Net.1.0.1.0\lib\net20\EcmaScript.NET.dll</HintPath>
     </Reference>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\FluentNHibernate.1.4.0.0\lib\net35\FluentNHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="FluentValidation">
       <HintPath>..\packages\FluentValidation.5.0.0.1\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
@@ -178,6 +181,12 @@
     <Compile Include="Controllers\StreamusController.cs" />
     <Compile Include="Controllers\ShareCodeController.cs" />
     <Compile Include="Dao\AutofacRegistrations.cs" />
+    <Compile Include="Dao\Mappings\ErrorMapping.cs" />
+    <Compile Include="Dao\Mappings\PlaylistItemMapping.cs" />
+    <Compile Include="Dao\Mappings\PlaylistMapping.cs" />
+    <Compile Include="Dao\Mappings\ShareCodeMapping.cs" />
+    <Compile Include="Dao\Mappings\UserMapping.cs" />
+    <Compile Include="Dao\Mappings\VideoMapping.cs" />
     <Compile Include="Dao\NHibernateDaoFactory.cs" />
     <Compile Include="Dao\NHibernateConfiguration.cs" />
     <Compile Include="Dao\ShareCodeDao.cs" />
