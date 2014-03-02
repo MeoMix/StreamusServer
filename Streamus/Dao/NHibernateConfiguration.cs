@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
 using System;
@@ -16,7 +17,7 @@ namespace Streamus.Dao
     /// </summary>
     public class NHibernateSessionManager
     {
-        private readonly string connectionString;
+        private readonly string ConnectionString;
 
         public ISessionFactory SessionFactory
         {
@@ -32,22 +33,21 @@ namespace Streamus.Dao
         /// <summary>
         ///     Initializes the NHibernate session factory upon instantiation.
         /// </summary>
-        /// <param name="appSetting"></param>
         private NHibernateSessionManager(string connectionString)
         {
-            this.connectionString = connectionString;
+            ConnectionString = connectionString;
             InitializeSessionFactory();
         }
 
         //  http://www.piotrwalat.net/nhibernate-session-management-in-asp-net-web-api/
         private void InitializeSessionFactory()
         {
-            var c = FluentNHibernate.Cfg.Fluently.Configure()
-                .Database(MsSqlConfiguration.MsSql2008.ConnectionString(connectionString).ShowSql().FormatSql())
+            FluentConfiguration fluentConfiguration = Fluently.Configure()
+                .Database(MsSqlConfiguration.MsSql2008.ConnectionString(ConnectionString).ShowSql().FormatSql())
                 .Mappings(cfg => cfg.FluentMappings.AddFromAssemblyOf<UserMapping>())
                 .ExposeConfiguration(ConfigureStreamusDataAccess);
 
-            SessionFactory = c.BuildSessionFactory();
+            SessionFactory = fluentConfiguration.BuildSessionFactory();
         }
 
         private static void ConfigureStreamusDataAccess(Configuration configuration)

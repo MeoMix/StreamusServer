@@ -1,5 +1,4 @@
 ﻿using log4net;
-using NHibernate;
 using Streamus.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,8 +11,8 @@ namespace Streamus.Domain.Managers
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private IVideoDao VideoDao { get; set; }
 
-        public PlaylistItemManager(ILog logger, ISession session, IPlaylistItemDao playlistItemDao, IVideoDao videoDao)
-            : base(logger, session)
+        public PlaylistItemManager(ILog logger, IPlaylistItemDao playlistItemDao, IVideoDao videoDao)
+            : base(logger)
         {
             PlaylistItemDao = playlistItemDao;
             VideoDao = videoDao;
@@ -25,11 +24,7 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    playlistItem = PlaylistItemDao.Get(id);
-                    transaction.Commit();
-                }
+                playlistItem = PlaylistItemDao.Get(id);
             }
             catch (Exception exception)
             {
@@ -44,12 +39,7 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    PlaylistItemDao.DeleteById(itemId);
-
-                    transaction.Commit();
-                }
+                PlaylistItemDao.DeleteById(itemId);
             }
             catch (Exception exception)
             {
@@ -64,23 +54,18 @@ namespace Streamus.Domain.Managers
             {
                 var playlistItemList = playlistItems.ToList();
 
-                if (playlistItemList.Count > 1000)
-                {
-                    Session.SetBatchSize(playlistItemList.Count / 10);
-                }
-                else if (playlistItemList.Count > 3)
-                {
-                    Session.SetBatchSize(playlistItemList.Count / 3);
-                }
-
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    playlistItemList.ForEach(DoUpdate);
-
-                    transaction.Commit();
-                }
+                //if (playlistItemList.Count > 1000)
+                //{
+                //    Session.SetBatchSize(playlistItemList.Count / 10);
+                //}
+                //else if (playlistItemList.Count > 3)
+                //{
+                //    Session.SetBatchSize(playlistItemList.Count / 3);
+                //}
                 
-                Session.SetBatchSize(0);
+                playlistItemList.ForEach(DoUpdate);
+
+                //Session.SetBatchSize(0);
             }
             catch (Exception exception)
             {
@@ -93,11 +78,7 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    DoUpdate(playlistItem);
-                    transaction.Commit();
-                }
+                DoUpdate(playlistItem);
             }
             catch (Exception exception)
             {
@@ -109,12 +90,8 @@ namespace Streamus.Domain.Managers
         public void Save(PlaylistItem playlistItem)
         {
             try
-            {                
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    DoSave(playlistItem);
-                    transaction.Commit();
-                }
+            {
+                DoSave(playlistItem);
             }
             catch (Exception exception)
             {
@@ -129,22 +106,18 @@ namespace Streamus.Domain.Managers
             {
                 var playlistItemList = playlistItems.ToList();
 
-                if (playlistItemList.Count > 1000)
-                {
-                    Session.SetBatchSize(playlistItemList.Count / 10);
-                }
-                else if(playlistItemList.Count > 3)
-                {
-                    Session.SetBatchSize(playlistItemList.Count / 3);
-                }
+                //if (playlistItemList.Count > 1000)
+                //{
+                //    Session.SetBatchSize(playlistItemList.Count / 10);
+                //}
+                //else if(playlistItemList.Count > 3)
+                //{
+                //    Session.SetBatchSize(playlistItemList.Count / 3);
+                //}
+                
+                playlistItemList.ForEach(DoSave);
 
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    playlistItemList.ForEach(DoSave);
-                    transaction.Commit();
-                }
-
-                Session.SetBatchSize(0);
+                //Session.SetBatchSize(0);
             }
             catch (Exception exception)
             {

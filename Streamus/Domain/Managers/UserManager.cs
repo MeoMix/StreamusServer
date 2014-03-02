@@ -12,8 +12,8 @@ namespace Streamus.Domain.Managers
     {
         private IUserDao UserDao { get; set; }
 
-        public UserManager(ILog logger, ISession session, IUserDao userDao) 
-            : base(logger, session) 
+        public UserManager(ILog logger, IUserDao userDao) 
+            : base(logger) 
         {
             UserDao = userDao;
         }
@@ -24,12 +24,7 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    user = UserDao.Get(id);
-
-                    transaction.Commit();
-                }
+                user = UserDao.Get(id);
             }
             catch (Exception exception)
             {
@@ -46,12 +41,7 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    user = UserDao.GetByGooglePlusId(googlePlusId);
-
-                    transaction.Commit();
-                }
+                user = UserDao.GetByGooglePlusId(googlePlusId);
             }
             catch (Exception exception)
             {
@@ -73,18 +63,13 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    user = new User
-                        {
-                            GooglePlusId = googlePlusId
-                        };
+                user = new User
+                    {
+                        GooglePlusId = googlePlusId
+                    };
 
-                    user.ValidateAndThrow();
-                    UserDao.Save(user);
-
-                    transaction.Commit();
-                }
+                user.ValidateAndThrow();
+                UserDao.Save(user);
             }
             catch (Exception exception)
             {
@@ -99,13 +84,8 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    user.ValidateAndThrow();
-                    UserDao.Save(user);
-
-                    transaction.Commit();
-                }
+                user.ValidateAndThrow();
+                UserDao.Save(user);
             }
             catch (Exception exception)
             {
@@ -118,12 +98,7 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    UserDao.UpdateGooglePlusId(userId, googlePlusId);
-
-                    transaction.Commit();
-                }
+                UserDao.UpdateGooglePlusId(userId, googlePlusId);
             }
             catch (Exception exception)
             {

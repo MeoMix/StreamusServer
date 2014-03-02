@@ -1,5 +1,4 @@
-﻿using NHibernate;
-using log4net;
+﻿using log4net;
 using Streamus.Domain.Interfaces;
 using System;
 
@@ -9,8 +8,8 @@ namespace Streamus.Domain.Managers
     {
         private IShareCodeDao ShareCodeDao { get; set; }
 
-        public ShareCodeManager(ILog logger, ISession session, IShareCodeDao shareCodeDao)
-            : base(logger, session)
+        public ShareCodeManager(ILog logger, IShareCodeDao shareCodeDao)
+            : base(logger)
         {
             ShareCodeDao = shareCodeDao;
         }
@@ -21,18 +20,13 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
+                shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
 
-                    if (shareCode == null)
-                        throw new ApplicationException("Unable to locate shareCode in database.");
+                if (shareCode == null)
+                    throw new ApplicationException("Unable to locate shareCode in database.");
 
-                    if (shareCode.EntityType != ShareableEntityType.Playlist)
-                        throw new ApplicationException("Expected shareCode to have entityType of Playlist");
-
-                    transaction.Commit();
-                }
+                if (shareCode.EntityType != ShareableEntityType.Playlist)
+                    throw new ApplicationException("Expected shareCode to have entityType of Playlist");
             }
             catch (Exception exception)
             {
@@ -49,12 +43,8 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    shareCode = new ShareCode(shareableEntity);
-                    DoSave(shareCode);
-                    transaction.Commit();
-                }
+                shareCode = new ShareCode(shareableEntity);
+                DoSave(shareCode);
             }
             catch (Exception exception)
             {
@@ -68,12 +58,8 @@ namespace Streamus.Domain.Managers
         public void Save(ShareCode shareCode)
         {
             try
-            {                
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    DoSave(shareCode);
-                    transaction.Commit();
-                }
+            {
+                DoSave(shareCode);
             }
             catch (Exception exception)
             {

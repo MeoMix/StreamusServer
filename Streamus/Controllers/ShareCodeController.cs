@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using NHibernate;
+using log4net;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
@@ -12,8 +13,8 @@ namespace Streamus.Controllers
         private readonly IShareCodeManager ShareCodeManager;
         private readonly IPlaylistManager PlaylistManager;
 
-        public ShareCodeController(ILog logger, IManagerFactory managerFactory)
-            : base(logger)
+        public ShareCodeController(ILog logger, ISession session, IManagerFactory managerFactory)
+            : base(logger, session)
         {
             ShareCodeManager = managerFactory.GetShareCodeManager();
             PlaylistManager = managerFactory.GetPlaylistManager();

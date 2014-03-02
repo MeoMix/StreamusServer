@@ -1,6 +1,4 @@
 ﻿using log4net;
-using NHibernate;
-using Streamus.Dao;
 using Streamus.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,8 +10,8 @@ namespace Streamus.Domain.Managers
     {
         private IVideoDao VideoDao { get; set; }
 
-        public VideoManager(ILog logger, ISession session, IVideoDao videoDao)
-            : base(logger, session) 
+        public VideoManager(ILog logger, IVideoDao videoDao)
+            : base(logger) 
         {
             VideoDao = videoDao;
         }
@@ -24,11 +22,7 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    video = VideoDao.Get(id);
-                    transaction.Commit();
-                }
+                video = VideoDao.Get(id);
             }
             catch (Exception exception)
             {
@@ -45,11 +39,7 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    videos = VideoDao.Get(ids);
-                    transaction.Commit();
-                }
+                videos = VideoDao.Get(ids);
             }
             catch (Exception exception)
             {
@@ -64,11 +54,7 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    DoSave(video);
-                    transaction.Commit();
-                }
+                DoSave(video);
             }
             catch (Exception exception)
             {
@@ -83,23 +69,18 @@ namespace Streamus.Domain.Managers
             {
                 List<Video> videosList = videos.ToList();
 
-                if (videosList.Count > 1000)
-                {
-                    Session.SetBatchSize(videosList.Count / 10);
-                }
-                else if (videosList.Count > 3)
-                {
-                    Session.SetBatchSize(videosList.Count / 3);
-                }
+                //if (videosList.Count > 1000)
+                //{
+                //    Session.SetBatchSize(videosList.Count / 10);
+                //}
+                //else if (videosList.Count > 3)
+                //{
+                //    Session.SetBatchSize(videosList.Count / 3);
+                //}
+                
+                videosList.ForEach(DoSave);
 
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    videosList.ForEach(DoSave);
-
-                    transaction.Commit();
-                }
-
-                Session.SetBatchSize(0);
+                //Session.SetBatchSize(0);
             }
             catch (Exception exception)
             {

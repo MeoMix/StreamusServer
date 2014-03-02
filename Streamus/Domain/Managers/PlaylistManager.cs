@@ -1,5 +1,4 @@
 ﻿using log4net;
-using NHibernate;
 using Streamus.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,8 +11,8 @@ namespace Streamus.Domain.Managers
         private IPlaylistDao PlaylistDao { get; set; }
         private IVideoDao VideoDao { get; set; }
 
-        public PlaylistManager(ILog logger, ISession session, IPlaylistDao playlistDao, IVideoDao videoDao)
-            : base(logger, session)
+        public PlaylistManager(ILog logger, IPlaylistDao playlistDao, IVideoDao videoDao)
+            : base(logger)
         {
             PlaylistDao = playlistDao;
             VideoDao = videoDao;
@@ -25,12 +24,7 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    playlist = PlaylistDao.Get(id);
-
-                    transaction.Commit();
-                }
+                playlist = PlaylistDao.Get(id);
             }
             catch (Exception exception)
             {
@@ -45,12 +39,7 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    DoSave(playlist);
-
-                    transaction.Commit();
-                }
+                DoSave(playlist);
             }
             catch (Exception exception)
             {
@@ -65,20 +54,18 @@ namespace Streamus.Domain.Managers
             {
                 List<Playlist> playlistsList = playlists.ToList();
 
-                if (playlistsList.Count > 1000)
-                {
-                    Session.SetBatchSize(playlistsList.Count / 10);
-                }
-                else if (playlistsList.Count > 3)
-                {
-                    Session.SetBatchSize(playlistsList.Count / 3);
-                }
+                //if (playlistsList.Count > 1000)
+                //{
+                //    Session.SetBatchSize(playlistsList.Count / 10);
+                //}
+                //else if (playlistsList.Count > 3)
+                //{
+                //    Session.SetBatchSize(playlistsList.Count / 3);
+                //}
+                
+                playlistsList.ForEach(DoSave);
 
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    playlistsList.ForEach(DoSave);
-                    transaction.Commit();
-                }
+                //Session.SetBatchSize(0);
             }
             catch (Exception exception)
             {
@@ -91,22 +78,17 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
+                playlist.ValidateAndThrow();
+
+                Playlist knownPlaylist = PlaylistDao.Get(playlist.Id);
+
+                if (knownPlaylist == null)
                 {
-                    playlist.ValidateAndThrow();
-
-                    Playlist knownPlaylist = PlaylistDao.Get(playlist.Id);
-
-                    if (knownPlaylist == null)
-                    {
-                        PlaylistDao.Update(playlist);
-                    }
-                    else
-                    {
-                        PlaylistDao.Merge(playlist);
-                    }
-
-                    transaction.Commit();
+                    PlaylistDao.Update(playlist);
+                }
+                else
+                {
+                    PlaylistDao.Merge(playlist);
                 }
             }
             catch (Exception exception)
@@ -120,12 +102,7 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    PlaylistDao.DeleteById(id);
-
-                    transaction.Commit();
-                }
+                PlaylistDao.DeleteById(id);
             }
             catch (Exception exception)
             {
@@ -138,11 +115,7 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    PlaylistDao.UpdateTitleById(playlistId, title);
-                    transaction.Commit();
-                }
+                PlaylistDao.UpdateTitleById(playlistId, title);
             }
             catch (Exception exception)
             {
@@ -162,21 +135,16 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
+                Playlist playlistToCopy = PlaylistDao.Get(id);
+
+                if (playlistToCopy == null)
                 {
-                    Playlist playlistToCopy = PlaylistDao.Get(id);
-
-                    if (playlistToCopy == null)
-                    {
-                        string errorMessage = string.Format("No playlist found with id: {0}", id);
-                        throw new ApplicationException(errorMessage);
-                    }
-
-                    copiedPlaylist = new Playlist(playlistToCopy);
-                    DoSave(copiedPlaylist);
-
-                    transaction.Commit();
+                    string errorMessage = string.Format("No playlist found with id: {0}", id);
+                    throw new ApplicationException(errorMessage);
                 }
+
+                copiedPlaylist = new Playlist(playlistToCopy);
+                DoSave(copiedPlaylist);
             }
             catch (Exception exception)
             {

@@ -1,5 +1,4 @@
 ﻿using log4net;
-using NHibernate;
 using Streamus.Domain.Interfaces;
 using System;
 
@@ -12,8 +11,8 @@ namespace Streamus.Domain.Managers
     {
         private IErrorDao ErrorDao { get; set; }
 
-        public ErrorManager(ILog logger, ISession session, IErrorDao errorDao)
-            : base(logger, session)
+        public ErrorManager(ILog logger, IErrorDao errorDao)
+            : base(logger)
         {
             ErrorDao = errorDao;
         }
@@ -22,13 +21,8 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                using (ITransaction transaction = Session.BeginTransaction())
-                {
-                    error.ValidateAndThrow();
-                    ErrorDao.Save(error);
-
-                    transaction.Commit();
-                }
+                error.ValidateAndThrow();
+                ErrorDao.Save(error);
             }
             catch (Exception exception)
             {

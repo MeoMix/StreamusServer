@@ -26,32 +26,32 @@ namespace Streamus.Domain.Managers
 
         public IErrorManager GetErrorManager()
         {
-            return ErrorManager ?? (ErrorManager = new ErrorManager(Logger, Session, DaoFactory.GetErrorDao()));
+            return ErrorManager ?? (ErrorManager = new ErrorManager(Logger, DaoFactory.GetErrorDao()));
         }
 
         public IPlaylistItemManager GetPlaylistItemManager()
         {
-            return PlaylistItemManager ?? (PlaylistItemManager = new PlaylistItemManager(Logger, Session, DaoFactory.GetPlaylistItemDao(), DaoFactory.GetVideoDao()));
+            return PlaylistItemManager ?? (PlaylistItemManager = new PlaylistItemManager(Logger, DaoFactory.GetPlaylistItemDao(), DaoFactory.GetVideoDao()));
         }
 
         public IPlaylistManager GetPlaylistManager()
         {
-            return PlaylistManager ?? (PlaylistManager = new PlaylistManager(Logger, Session, DaoFactory.GetPlaylistDao(), DaoFactory.GetVideoDao()));
+            return PlaylistManager ?? (PlaylistManager = new PlaylistManager(Logger, DaoFactory.GetPlaylistDao(), DaoFactory.GetVideoDao()));
         }
 
         public IShareCodeManager GetShareCodeManager()
         {
-            return ShareCodeManager ?? (ShareCodeManager = new ShareCodeManager(Logger, Session, DaoFactory.GetShareCodeDao()));
+            return ShareCodeManager ?? (ShareCodeManager = new ShareCodeManager(Logger, DaoFactory.GetShareCodeDao()));
         }
 
         public IUserManager GetUserManager()
         {
-            return UserManager ?? (UserManager = new UserManager(Logger, Session, DaoFactory.GetUserDao()));
+            return UserManager ?? (UserManager = new UserManager(Logger, DaoFactory.GetUserDao()));
         }
 
         public IVideoManager GetVideoManager()
         {
-            return VideoManager ?? (VideoManager = new VideoManager(Logger, Session, DaoFactory.GetVideoDao()));
+            return VideoManager ?? (VideoManager = new VideoManager(Logger, DaoFactory.GetVideoDao()));
         }
     }
 }
