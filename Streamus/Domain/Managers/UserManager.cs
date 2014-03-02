@@ -1,4 +1,4 @@
-﻿using NHibernate;
+﻿    using NHibernate;
 using log4net;
 using Streamus.Domain.Interfaces;
 using System;
@@ -24,11 +24,12 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                Session.BeginTransaction();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    user = UserDao.Get(id);
 
-                user = UserDao.Get(id);
-
-                Session.Transaction.Commit();
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -45,11 +46,12 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                Session.BeginTransaction();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    user = UserDao.GetByGooglePlusId(googlePlusId);
 
-                user = UserDao.GetByGooglePlusId(googlePlusId);
-
-                Session.Transaction.Commit();
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -71,17 +73,18 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                Session.BeginTransaction();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    user = new User
+                        {
+                            GooglePlusId = googlePlusId
+                        };
 
-                user = new User
-                    {
-                        GooglePlusId = googlePlusId
-                    };
+                    user.ValidateAndThrow();
+                    UserDao.Save(user);
 
-                user.ValidateAndThrow();
-                UserDao.Save(user);
-
-                Session.Transaction.Commit();
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -96,12 +99,13 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Session.BeginTransaction();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    user.ValidateAndThrow();
+                    UserDao.Save(user);
 
-                user.ValidateAndThrow();
-                UserDao.Save(user);
-
-                Session.Transaction.Commit();
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -114,11 +118,12 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Session.BeginTransaction();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    UserDao.UpdateGooglePlusId(userId, googlePlusId);
 
-                UserDao.UpdateGooglePlusId(userId, googlePlusId);
-
-                Session.Transaction.Commit();
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {

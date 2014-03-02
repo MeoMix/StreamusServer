@@ -21,17 +21,18 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                Session.BeginTransaction();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
 
-                shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
+                    if (shareCode == null)
+                        throw new ApplicationException("Unable to locate shareCode in database.");
 
-                if (shareCode == null)
-                    throw new ApplicationException("Unable to locate shareCode in database.");
+                    if (shareCode.EntityType != ShareableEntityType.Playlist)
+                        throw new ApplicationException("Expected shareCode to have entityType of Playlist");
 
-                if (shareCode.EntityType != ShareableEntityType.Playlist)
-                    throw new ApplicationException("Expected shareCode to have entityType of Playlist");
-
-                Session.Transaction.Commit();
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -48,8 +49,12 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                shareCode = new ShareCode(shareableEntity);
-                Save(shareCode);
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    shareCode = new ShareCode(shareableEntity);
+                    DoSave(shareCode);
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -63,8 +68,12 @@ namespace Streamus.Domain.Managers
         public void Save(ShareCode shareCode)
         {
             try
-            {
-                DoSave(shareCode);
+            {                
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    DoSave(shareCode);
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {

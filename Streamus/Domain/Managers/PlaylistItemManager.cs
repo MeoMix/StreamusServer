@@ -25,11 +25,11 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                Session.BeginTransaction();
-
-                playlistItem = PlaylistItemDao.Get(id);
-
-                Session.Transaction.Commit();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    playlistItem = PlaylistItemDao.Get(id);
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -44,15 +44,12 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Session.BeginTransaction();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    PlaylistItemDao.DeleteById(itemId);
 
-                PlaylistItem playlistItem = PlaylistItemDao.Get(itemId);
-
-                //  Be sure to remove from Playlist first so that cascade doesn't re-save.
-                playlistItem.Playlist.RemoveItem(playlistItem);
-                PlaylistItemDao.Delete(playlistItem);
-
-                Session.Transaction.Commit();
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -65,22 +62,25 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Session.BeginTransaction();
-
                 var playlistItemList = playlistItems.ToList();
 
                 if (playlistItemList.Count > 1000)
                 {
                     Session.SetBatchSize(playlistItemList.Count / 10);
                 }
-                else
+                else if (playlistItemList.Count > 3)
                 {
-                    Session.SetBatchSize(playlistItemList.Count / 5);
+                    Session.SetBatchSize(playlistItemList.Count / 3);
                 }
 
-                playlistItemList.ForEach(DoUpdate);
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    playlistItemList.ForEach(DoUpdate);
 
-                Session.Transaction.Commit();
+                    transaction.Commit();
+                }
+                
+                Session.SetBatchSize(0);
             }
             catch (Exception exception)
             {
@@ -93,11 +93,11 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Session.BeginTransaction();
-
-                DoUpdate(playlistItem);
-
-                Session.Transaction.Commit();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    DoUpdate(playlistItem);
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -109,8 +109,12 @@ namespace Streamus.Domain.Managers
         public void Save(PlaylistItem playlistItem)
         {
             try
-            {
-                DoSave(playlistItem);
+            {                
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    DoSave(playlistItem);
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -123,22 +127,24 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Session.BeginTransaction();
-
                 var playlistItemList = playlistItems.ToList();
 
                 if (playlistItemList.Count > 1000)
                 {
                     Session.SetBatchSize(playlistItemList.Count / 10);
                 }
-                else
+                else if(playlistItemList.Count > 3)
                 {
-                    Session.SetBatchSize(playlistItemList.Count / 5);
+                    Session.SetBatchSize(playlistItemList.Count / 3);
                 }
 
-                playlistItemList.ForEach(DoSave); 
-                
-                Session.Transaction.Commit();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    playlistItemList.ForEach(DoSave);
+                    transaction.Commit();
+                }
+
+                Session.SetBatchSize(0);
             }
             catch (Exception exception)
             {

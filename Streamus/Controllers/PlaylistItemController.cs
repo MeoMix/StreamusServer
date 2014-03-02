@@ -42,10 +42,7 @@ namespace Streamus.Controllers
             foreach (var playlistGrouping in playlistItems.GroupBy(i => i.Playlist))
             {
                 List<PlaylistItem> groupingItems = playlistGrouping.ToList();
-
-                Playlist playlist = groupingItems.First().Playlist;
-                playlist.AddItems(groupingItems);
-      
+                playlistGrouping.Key.AddItems(groupingItems);
                 PlaylistItemManager.Save(groupingItems);
             }
 

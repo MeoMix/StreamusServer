@@ -41,25 +41,33 @@ namespace Streamus.Tests.Controller_Tests
         }
 
         [Test]
+        public void DeletePlaylist_PlaylistEmpty_PlaylistDeletedSuccessfully()
+        {
+            User user = Helpers.CreateUser();
+
+            PlaylistController.Delete(user.Playlists.First().Id);
+        }
+
+        [Test]
         public void DeletePlaylist_NextToBigPlaylist_NoStackOverflowException()
         {
             User user = Helpers.CreateUser();
 
             Guid firstPlaylistId = user.Playlists.First().Id;
 
-            //PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
+            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
 
-            //JsonResult result = PlaylistController.Create(playlistDto);
+            JsonResult result = PlaylistController.Create(playlistDto);
 
-            //var createdPlaylistDto = (PlaylistDto) result.Data;
+            var createdPlaylistDto = (PlaylistDto)result.Data;
 
-            //const int numItemsToCreate = 150;
-            //List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, createdPlaylistDto.Id);
+            const int numItemsToCreate = 150;
+            List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, createdPlaylistDto.Id);
 
-            //foreach (var splitPlaylistItemDtos in Split(playlistItemDtos, 50))
-            //{
-            //    PlaylistItemController.CreateMultiple(splitPlaylistItemDtos);
-            //}
+            foreach (var splitPlaylistItemDtos in Split(playlistItemDtos, 50))
+            {
+                PlaylistItemController.CreateMultiple(splitPlaylistItemDtos);
+            }
 
             //  Now delete the first playlist.
             PlaylistController.Delete(firstPlaylistId);

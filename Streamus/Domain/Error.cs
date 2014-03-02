@@ -8,13 +8,13 @@ namespace Streamus.Domain
 {
     public class Error : AbstractDomainEntity<Guid>
     {
-        public string Message { get; set; }
-        public int LineNumber { get; set; }
-        public string Url { get; set; }
-        public string ClientVersion { get; set; }
-        public DateTime TimeOccurred { get; set; }
-        public string OperatingSystem { get; set; }
-        public string Architecture { get; set; }
+        public virtual string Message { get; set; }
+        public virtual int LineNumber { get; set; }
+        public virtual string Url { get; set; }
+        public virtual string ClientVersion { get; set; }
+        public virtual DateTime TimeOccurred { get; set; }
+        public virtual string OperatingSystem { get; set; }
+        public virtual string Architecture { get; set; }
 
         public Error()
         {
@@ -43,7 +43,7 @@ namespace Streamus.Domain
             return error;
         }
 
-        public void ValidateAndThrow()
+        public virtual void ValidateAndThrow()
         {
             var validator = new ErrorValidator();
             validator.ValidateAndThrow(this);

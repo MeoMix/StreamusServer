@@ -10,11 +10,11 @@ namespace Streamus.Domain
 {
     public class Video : IAbstractDomainEntity<string>
     {
-        public string Id { get; set; }
-        public string Title { get; set; }
-        public int Duration { get; set; }
-        public string Author { get; set; }
-        public bool HighDefinition { get; set; }
+        public virtual string Id { get; set; }
+        public virtual string Title { get; set; }
+        public virtual int Duration { get; set; }
+        public virtual string Author { get; set; }
+        public virtual bool HighDefinition { get; set; }
 
         public Video()
         {
@@ -43,7 +43,7 @@ namespace Streamus.Domain
             return videos;
         }
 
-        public void ValidateAndThrow()
+        public virtual void ValidateAndThrow()
         {
             var validator = new VideoValidator();
             validator.ValidateAndThrow(this);

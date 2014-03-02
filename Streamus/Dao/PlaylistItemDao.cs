@@ -24,5 +24,12 @@ namespace Streamus.Dao
 
             return playlistItem;
         }
+
+        public void DeleteById(Guid id)
+        {
+            Session.CreateSQLQuery("delete from PlaylistItems where id = :id")
+                .SetParameter("id", id)
+                .ExecuteUpdate();
+        }
     }
 }

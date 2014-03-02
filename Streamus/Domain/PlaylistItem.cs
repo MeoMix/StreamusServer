@@ -9,13 +9,13 @@ namespace Streamus.Domain
 {
     public class PlaylistItem : AbstractDomainEntity<Guid>
     {
-        public Playlist Playlist { get; set; }
-        public int Sequence { get; set; }
-        public string Title { get; set; }
-        public Video Video { get; set; }
+        public virtual Playlist Playlist { get; set; }
+        public virtual int Sequence { get; set; }
+        public virtual string Title { get; set; }
+        public virtual Video Video { get; set; }
 
         //  Not written to the database. Used for client to tell who is who after a save.
-        public string Cid { get; set; }
+        public virtual string Cid { get; set; }
 
         public PlaylistItem()
         {
@@ -50,7 +50,7 @@ namespace Streamus.Domain
             return playlistItems;
         }
 
-        public void ValidateAndThrow()
+        public virtual void ValidateAndThrow()
         {
             var validator = new PlaylistItemValidator();
             validator.ValidateAndThrow(this);

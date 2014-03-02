@@ -15,10 +15,10 @@ namespace Streamus.Domain
 
     public class ShareCode : AbstractDomainEntity<Guid>
     {
-        public ShareableEntityType EntityType { get; set; }
-        public Guid EntityId { get; set; }
-        public string ShortId { get; set; }
-        public string UrlFriendlyEntityTitle { get; set; }
+        public virtual ShareableEntityType EntityType { get; set; }
+        public virtual Guid EntityId { get; set; }
+        public virtual string ShortId { get; set; }
+        public virtual string UrlFriendlyEntityTitle { get; set; }
 
         public ShareCode()
         {
@@ -48,7 +48,7 @@ namespace Streamus.Domain
             return shareCode;
         }
 
-        public void ValidateAndThrow()
+        public virtual void ValidateAndThrow()
         {
             var validator = new ShareCodeValidator();
             validator.ValidateAndThrow(this);

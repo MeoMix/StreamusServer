@@ -24,11 +24,11 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                Session.BeginTransaction();
-
-                video = VideoDao.Get(id);
-
-                Session.Transaction.Commit();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    video = VideoDao.Get(id);
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -45,11 +45,11 @@ namespace Streamus.Domain.Managers
 
             try
             {
-                Session.BeginTransaction();
-
-                videos = VideoDao.Get(ids);
-
-                Session.Transaction.Commit();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    videos = VideoDao.Get(ids);
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -64,11 +64,11 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Session.BeginTransaction();
-
-                DoSave(video);
-
-                Session.Transaction.Commit();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    DoSave(video);
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
@@ -81,22 +81,25 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Session.BeginTransaction();
-
                 List<Video> videosList = videos.ToList();
 
                 if (videosList.Count > 1000)
                 {
                     Session.SetBatchSize(videosList.Count / 10);
                 }
-                else
+                else if (videosList.Count > 3)
                 {
-                    Session.SetBatchSize(videosList.Count / 5);
+                    Session.SetBatchSize(videosList.Count / 3);
                 }
 
-                videosList.ForEach(DoSave);
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    videosList.ForEach(DoSave);
 
-                Session.Transaction.Commit();
+                    transaction.Commit();
+                }
+
+                Session.SetBatchSize(0);
             }
             catch (Exception exception)
             {

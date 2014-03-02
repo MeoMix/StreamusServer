@@ -22,12 +22,13 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Session.BeginTransaction();
+                using (ITransaction transaction = Session.BeginTransaction())
+                {
+                    error.ValidateAndThrow();
+                    ErrorDao.Save(error);
 
-                error.ValidateAndThrow();
-                ErrorDao.Save(error);
-
-                Session.Transaction.Commit();
+                    transaction.Commit();
+                }
             }
             catch (Exception exception)
             {
