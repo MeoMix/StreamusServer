@@ -1,10 +1,8 @@
-﻿using System;
+﻿using FluentValidation;
+using Streamus.Domain.Validators;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
-using FluentValidation;
-using Streamus.Domain.Validators;
-using Streamus.Dto;
 
 namespace Streamus.Domain
 {
@@ -23,12 +21,6 @@ namespace Streamus.Domain
 
             //  A user should always have at least one Playlist.
             CreateAndAddPlaylist();
-        }
-
-        public static User Create(UserDto userDto)
-        {
-            User user = Mapper.Map<UserDto, User>(userDto);
-            return user;
         }
 
         public virtual Playlist CreateAndAddPlaylist()

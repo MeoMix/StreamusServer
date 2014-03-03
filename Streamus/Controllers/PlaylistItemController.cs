@@ -12,11 +12,13 @@ namespace Streamus.Controllers
 {
     public class PlaylistItemController : StreamusController
     {
+        private readonly IPlaylistManager PlaylistManager;
         private readonly IPlaylistItemManager PlaylistItemManager;
 
         public PlaylistItemController(ILog logger, ISession session, IManagerFactory managerFactory)
             : base(logger, session)
         {
+            PlaylistManager = managerFactory.GetPlaylistManager();
             PlaylistItemManager = managerFactory.GetPlaylistItemManager();
         }
 
@@ -27,7 +29,7 @@ namespace Streamus.Controllers
 
             using(ITransaction transaction = Session.BeginTransaction())
             {
-                PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
+                PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto, PlaylistManager);
 
                 playlistItem.Playlist.AddItem(playlistItem);
 
@@ -59,7 +61,7 @@ namespace Streamus.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
+                List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos, PlaylistManager);
 
                 //  Split items into their respective playlists and then save on each.
                 foreach (var playlistGrouping in playlistItems.GroupBy(i => i.Playlist))
@@ -85,7 +87,7 @@ namespace Streamus.Controllers
             using (ITransaction transaction = Session.BeginTransaction())
             {
 
-                PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
+                PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto, PlaylistManager);
                 PlaylistItemManager.Update(playlistItem);
 
                 updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
@@ -113,7 +115,7 @@ namespace Streamus.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
+                List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos, PlaylistManager);
 
                 PlaylistItemManager.Update(playlistItems);
 

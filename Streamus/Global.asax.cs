@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using Streamus.App_Start;
 using Streamus.Dao;
 using Streamus.Domain;
-using Streamus.Domain.Interfaces;
 using Streamus.Dto;
 using System.Net.Http.Formatting;
 using System.Web;
@@ -44,26 +43,19 @@ namespace Streamus
 
         /// <summary>
         ///     Initialize the AutoMapper mappings for the solution.
+        ///     Do not reverse the mappings between domain and DTO: http://lostechies.com/jimmybogard/2009/09/18/the-case-for-two-way-mapping-in-automapper/
         ///     http://automapper.codeplex.com/
         /// </summary>
         public static void CreateAutoMapperMaps()
         {
-            Mapper.CreateMap<Error, ErrorDto>()
-                    .ReverseMap();
+            Mapper.CreateMap<Error, ErrorDto>();
 
             Mapper.CreateMap<Playlist, PlaylistDto>();
-            //  I will set the User manually inside the entity. This is a shitty workaround, but I can't reference ManagerFactory from here or AutoFac goes crazy.
-            Mapper.CreateMap<PlaylistDto, Playlist>()
-                  .ForMember(playlist => playlist.User, opt => opt.Ignore());
-
             Mapper.CreateMap<PlaylistItem, PlaylistItemDto>();
-            Mapper.CreateMap<PlaylistItemDto, PlaylistItem>()
-                    .ForMember(playlistItem => playlistItem.Playlist, opt => opt.Ignore());
+            Mapper.CreateMap<ShareCode, ShareCodeDto>();
 
-            Mapper.CreateMap<ShareCode, ShareCodeDto>().ReverseMap();
-
-            Mapper.CreateMap<User, UserDto>().ReverseMap();
-            Mapper.CreateMap<Video, VideoDto>().ReverseMap();
+            Mapper.CreateMap<User, UserDto>();
+            Mapper.CreateMap<Video, VideoDto>();
 
             Mapper.AssertConfigurationIsValid();
         }

@@ -1,9 +1,8 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
-using System;
 using Streamus.Dto;
+using System;
 
 namespace Streamus.Domain
 {
@@ -44,7 +43,15 @@ namespace Streamus.Domain
 
         public static ShareCode Create(ShareCodeDto shareCodeDto)
         {
-            ShareCode shareCode = Mapper.Map<ShareCodeDto, ShareCode>(shareCodeDto);
+            ShareCode shareCode = new ShareCode
+                {
+                    EntityId = shareCodeDto.EntityId,
+                    EntityType = shareCodeDto.EntityType,
+                    Id = shareCodeDto.Id,
+                    ShortId = shareCodeDto.ShortId,
+                    UrlFriendlyEntityTitle = shareCodeDto.UrlFriendlyEntityTitle
+                };
+
             return shareCode;
         }
 

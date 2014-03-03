@@ -1,12 +1,10 @@
-﻿using System.Linq;
-using System.Web.Mvc;
-using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using Streamus.Dto;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Streamus.Domain
 {
@@ -41,21 +39,24 @@ namespace Streamus.Domain
             Video = playlistItem.Video;
         }
 
-        public static PlaylistItem Create(PlaylistItemDto playlistItemDto)
+        public static PlaylistItem Create(PlaylistItemDto playlistItemDto, IPlaylistManager playlistManager)
         {
-            PlaylistItem playlistItem = Mapper.Map<PlaylistItemDto, PlaylistItem>(playlistItemDto);
-
-            IManagerFactory managerFactory = DependencyResolver.Current.GetService<IManagerFactory>();
-            IPlaylistManager playlistManager = managerFactory.GetPlaylistManager();
-
-            playlistItem.Playlist = playlistManager.Get(playlistItemDto.PlaylistId);
+            PlaylistItem playlistItem = new PlaylistItem
+                {
+                    Cid = playlistItemDto.Cid,
+                    Id = playlistItemDto.Id,
+                    Playlist = playlistManager.Get(playlistItemDto.PlaylistId),
+                    Sequence = playlistItemDto.Sequence,
+                    Title = playlistItemDto.Title,
+                    Video = Video.Create(playlistItemDto.Video)
+                };
 
             return playlistItem;
         }
 
-        public static List<PlaylistItem> Create(IEnumerable<PlaylistItemDto> playlistItemDtos)
+        public static List<PlaylistItem> Create(IEnumerable<PlaylistItemDto> playlistItemDtos, IPlaylistManager playlistManager)
         {
-            List<PlaylistItem> playlistItems = new List<PlaylistItem>(playlistItemDtos.Select(Create));
+            List<PlaylistItem> playlistItems = new List<PlaylistItem>(playlistItemDtos.Select(pid => Create(pid, playlistManager)));
             return playlistItems;
         }
 

@@ -29,7 +29,7 @@ namespace Streamus.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                Playlist playlist = Playlist.Create(playlistDto);
+                Playlist playlist = Playlist.Create(playlistDto, UserManager, PlaylistManager);
                 playlist.User.AddPlaylist(playlist);
 
                 //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
@@ -52,7 +52,7 @@ namespace Streamus.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                Playlist playlist = Playlist.Create(playlistDto);
+                Playlist playlist = Playlist.Create(playlistDto, UserManager, PlaylistManager);
                 PlaylistManager.Update(playlist);
 
                 updatedPlaylistDto = PlaylistDto.Create(playlist);
