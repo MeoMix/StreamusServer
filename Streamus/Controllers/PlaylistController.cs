@@ -1,5 +1,5 @@
-﻿using NHibernate;
-using log4net;
+﻿using log4net;
+using NHibernate;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
@@ -14,8 +14,8 @@ namespace Streamus.Controllers
         private readonly IUserManager UserManager;
         private readonly IShareCodeManager ShareCodeManager;
 
-        public PlaylistController(ILog logger, ISession session, IManagerFactory managerFactory)
-            :base(logger, session)
+        public PlaylistController(ILog logger, IManagerFactory managerFactory)
+            :base(logger)
         {
             PlaylistManager = managerFactory.GetPlaylistManager();
             UserManager = managerFactory.GetUserManager();
@@ -25,15 +25,22 @@ namespace Streamus.Controllers
         [HttpPost]
         public JsonResult Create(PlaylistDto playlistDto)
         {
-            Playlist playlist = Playlist.Create(playlistDto);
-            playlist.User.AddPlaylist(playlist);
+            PlaylistDto savedPlaylistDto;
 
-            //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
-            playlist.ValidateAndThrow();
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                Playlist playlist = Playlist.Create(playlistDto);
+                playlist.User.AddPlaylist(playlist);
 
-            PlaylistManager.Save(playlist);
+                //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
+                playlist.ValidateAndThrow();
 
-            PlaylistDto savedPlaylistDto = PlaylistDto.Create(playlist);
+                PlaylistManager.Save(playlist);
+
+                savedPlaylistDto = PlaylistDto.Create(playlist);
+
+                transaction.Commit();
+            }
 
             return Json(savedPlaylistDto);
         }
@@ -41,26 +48,44 @@ namespace Streamus.Controllers
         [HttpPut]
         public JsonResult Update(PlaylistDto playlistDto)
         {
-            Playlist playlist = Playlist.Create(playlistDto);
-            PlaylistManager.Update(playlist);
+            PlaylistDto updatedPlaylistDto;
 
-            PlaylistDto updatedPlaylistDto = PlaylistDto.Create(playlist);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                Playlist playlist = Playlist.Create(playlistDto);
+                PlaylistManager.Update(playlist);
+
+                updatedPlaylistDto = PlaylistDto.Create(playlist);
+
+                transaction.Commit();
+            }
+
             return Json(updatedPlaylistDto);
         }
 
         [HttpGet]
         public JsonResult Get(Guid id)
         {
-            Playlist playlist = PlaylistManager.Get(id);
-            PlaylistDto playlistDto = PlaylistDto.Create(playlist);
+            PlaylistDto playlistDto;   
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                Playlist playlist = PlaylistManager.Get(id);
+                playlistDto = PlaylistDto.Create(playlist);
+
+                transaction.Commit();
+            }
 
             return Json(playlistDto);
         }
 
         [HttpDelete]
         public JsonResult Delete(Guid id)
-        {
-            PlaylistManager.Delete(id);
+        {            
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                PlaylistManager.Delete(id);
+                transaction.Commit();
+            }
 
             return Json(new
                 {
@@ -71,7 +96,12 @@ namespace Streamus.Controllers
         [HttpPost]
         public JsonResult UpdateTitle(Guid playlistId, string title)
         {
-            PlaylistManager.UpdateTitle(playlistId, title);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                PlaylistManager.UpdateTitle(playlistId, title);
+
+                transaction.Commit();
+            }
 
             return Json(new
                 {
@@ -79,6 +109,7 @@ namespace Streamus.Controllers
                 });
         }
 
+        //  TODO: Maybe this should be ShareCodeController's deal and not PlaylistController?
         /// <summary>
         ///     Retrieves a ShareCode relating to a Playlist, create a copy of the Playlist referenced by the ShareCode,
         ///     and return the copied Playlist.
@@ -86,19 +117,27 @@ namespace Streamus.Controllers
         [HttpGet]
         public JsonResult CreateCopyByShareCode(string shareCodeShortId, string urlFriendlyEntityTitle, Guid userId)
         {
-            ShareCode shareCode = ShareCodeManager.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
+            PlaylistDto playlistDto;
 
-            //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
-            Playlist playlistToCopy = PlaylistManager.Get(shareCode.EntityId);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                ShareCode shareCode = ShareCodeManager.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
 
-            User user = UserManager.Get(userId);
+                //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
+                Playlist playlistToCopy = PlaylistManager.Get(shareCode.EntityId);
 
-            var playlistCopy = new Playlist(playlistToCopy);
-            user.AddPlaylist(playlistCopy);
+                User user = UserManager.Get(userId);
 
-            PlaylistManager.Save(playlistCopy);
+                var playlistCopy = new Playlist(playlistToCopy);
+                user.AddPlaylist(playlistCopy);
 
-            PlaylistDto playlistDto = PlaylistDto.Create(playlistCopy);
+                PlaylistManager.Save(playlistCopy);
+
+                playlistDto = PlaylistDto.Create(playlistCopy);
+
+                transaction.Commit();
+            }
+
             return Json(playlistDto);
         }
     }

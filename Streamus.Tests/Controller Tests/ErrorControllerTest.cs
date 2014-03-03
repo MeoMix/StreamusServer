@@ -19,7 +19,7 @@ namespace Streamus.Tests.Controller_Tests
         {
             try
             {
-                ErrorController = new ErrorController(Logger, Session, ManagerFactory);
+                ErrorController = new ErrorController(Logger, ManagerFactory);
             }
             catch (TypeInitializationException exception)
             {

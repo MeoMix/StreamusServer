@@ -1,4 +1,6 @@
-﻿using NHibernate;
+﻿using System;
+using System.Web.Mvc;
+using NHibernate;
 using Streamus.Domain.Interfaces;
 
 namespace Streamus.Dao
@@ -15,11 +17,14 @@ namespace Streamus.Dao
         private IShareCodeDao ShareCodeDao;
         private IUserDao UserDao;
         private IVideoDao VideoDao;
-        private ISession Session;
+        private readonly ISession Session;
 
-        public NHibernateDaoFactory(ISession session)
+        public NHibernateDaoFactory()
         {
-            Session = session;
+            //  TODO: Is this different than passing ISession into NHibernateDaoFactory with AutoFac?
+            Session = DependencyResolver.Current.GetService<ISession>();
+
+            if (Session == null) throw new NullReferenceException("Session");
         }
 
         public IErrorDao GetErrorDao()

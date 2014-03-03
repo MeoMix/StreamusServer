@@ -1,5 +1,5 @@
-﻿using NHibernate;
-using log4net;
+﻿using log4net;
+using NHibernate;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
@@ -13,8 +13,8 @@ namespace Streamus.Controllers
         private readonly IShareCodeManager ShareCodeManager;
         private readonly IPlaylistManager PlaylistManager;
 
-        public ShareCodeController(ILog logger, ISession session, IManagerFactory managerFactory)
-            : base(logger, session)
+        public ShareCodeController(ILog logger, IManagerFactory managerFactory)
+            : base(logger)
         {
             ShareCodeManager = managerFactory.GetShareCodeManager();
             PlaylistManager = managerFactory.GetPlaylistManager();
@@ -26,9 +26,15 @@ namespace Streamus.Controllers
             if (entityType != ShareableEntityType.Playlist)
                 throw new NotSupportedException("Only Playlist entityType can be shared currently.");
 
-            Playlist playlist = PlaylistManager.CopyAndSave(entityId);
-            ShareCode shareCode = ShareCodeManager.GetShareCode(playlist);
-            ShareCodeDto shareCodeDto = ShareCodeDto.Create(shareCode);
+            ShareCodeDto shareCodeDto;
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                Playlist playlist = PlaylistManager.CopyAndSave(entityId);
+                ShareCode shareCode = ShareCodeManager.GetShareCode(playlist);
+                shareCodeDto = ShareCodeDto.Create(shareCode);
+
+                transaction.Commit();
+            }
 
             return Json(shareCodeDto);
         }

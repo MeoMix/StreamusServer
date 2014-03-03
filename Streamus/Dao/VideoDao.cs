@@ -20,7 +20,7 @@ namespace Streamus.Dao
 
             if (id != default(string))
             {
-                video = Session.Get<Video>(id);
+                video = Session.Load<Video>(id);
             }
 
             return video;

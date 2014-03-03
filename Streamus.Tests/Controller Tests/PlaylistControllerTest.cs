@@ -27,8 +27,8 @@ namespace Streamus.Tests.Controller_Tests
         {
             try
             {
-                PlaylistController = new PlaylistController(Logger, Session, ManagerFactory);
-                PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
+                PlaylistController = new PlaylistController(Logger, ManagerFactory);
+                PlaylistItemController = new PlaylistItemController(Logger, ManagerFactory);
 
                 ShareCodeManager = ManagerFactory.GetShareCodeManager();
                 UserManager = ManagerFactory.GetUserManager();

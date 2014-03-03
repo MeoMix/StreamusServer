@@ -1,4 +1,4 @@
-﻿using NHibernate;
+﻿using System;
 using log4net;
 using Streamus.Domain.Interfaces;
 
@@ -8,7 +8,6 @@ namespace Streamus.Domain.Managers
     {
         private readonly ILog Logger;
         private readonly IDaoFactory DaoFactory;
-        private readonly ISession Session;
 
         private IErrorManager ErrorManager;
         private IPlaylistItemManager PlaylistItemManager;
@@ -17,10 +16,12 @@ namespace Streamus.Domain.Managers
         private IUserManager UserManager;
         private IVideoManager VideoManager;
 
-        public StreamusManagerFactory(ILog logger, ISession session, IDaoFactory daoFactory)
+        public StreamusManagerFactory(ILog logger, IDaoFactory daoFactory)
         {
+            if (logger == null) throw new NullReferenceException("logger");
+            if (daoFactory == null) throw new NullReferenceException("daoFactory");
+
             Logger = logger;
-            Session = session;
             DaoFactory = daoFactory;
         }
 

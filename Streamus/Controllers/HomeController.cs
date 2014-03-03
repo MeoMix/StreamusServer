@@ -6,8 +6,8 @@ namespace Streamus.Controllers
 {
     public class HomeController : StreamusController
     {
-        public HomeController(ILog logger, ISession session)
-            : base(logger, session)
+        public HomeController(ILog logger)
+            : base(logger)
         {
         }
 

@@ -39,7 +39,10 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                PlaylistItemDao.DeleteById(itemId);
+                //  TODO: Do I still need to worry about Cascade re-saving?
+                PlaylistItem playlistItem = Get(itemId);
+
+                PlaylistItemDao.Delete(playlistItem);
             }
             catch (Exception exception)
             {
@@ -53,19 +56,7 @@ namespace Streamus.Domain.Managers
             try
             {
                 var playlistItemList = playlistItems.ToList();
-
-                //if (playlistItemList.Count > 1000)
-                //{
-                //    Session.SetBatchSize(playlistItemList.Count / 10);
-                //}
-                //else if (playlistItemList.Count > 3)
-                //{
-                //    Session.SetBatchSize(playlistItemList.Count / 3);
-                //}
-                
                 playlistItemList.ForEach(DoUpdate);
-
-                //Session.SetBatchSize(0);
             }
             catch (Exception exception)
             {
@@ -105,19 +96,7 @@ namespace Streamus.Domain.Managers
             try
             {
                 var playlistItemList = playlistItems.ToList();
-
-                //if (playlistItemList.Count > 1000)
-                //{
-                //    Session.SetBatchSize(playlistItemList.Count / 10);
-                //}
-                //else if(playlistItemList.Count > 3)
-                //{
-                //    Session.SetBatchSize(playlistItemList.Count / 3);
-                //}
-                
                 playlistItemList.ForEach(DoSave);
-
-                //Session.SetBatchSize(0);
             }
             catch (Exception exception)
             {

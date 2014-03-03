@@ -1,5 +1,5 @@
-﻿using NHibernate;
-using log4net;
+﻿using log4net;
+using NHibernate;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
@@ -12,8 +12,8 @@ namespace Streamus.Controllers
     {
         private readonly IUserManager UserManager;
 
-        public UserController(ILog logger, ISession session, IManagerFactory managerFactory)
-            : base(logger, session)
+        public UserController(ILog logger, IManagerFactory managerFactory)
+            : base(logger)
         {
             UserManager = managerFactory.GetUserManager();
         }
@@ -25,8 +25,15 @@ namespace Streamus.Controllers
         [HttpPost]
         public JsonResult Create()
         {
-            User user = UserManager.CreateUser();
-            UserDto userDto = UserDto.Create(user);
+            UserDto userDto;
+
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                User user = UserManager.CreateUser();
+                userDto = UserDto.Create(user);
+
+                transaction.Commit();
+            }
 
             return Json(userDto);
         }
@@ -34,27 +41,43 @@ namespace Streamus.Controllers
         [HttpGet]
         public JsonResult Get(Guid id)
         {
-            User user = UserManager.Get(id);
-            UserDto userDto = UserDto.Create(user);
+            UserDto userDto;
+     
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                User user = UserManager.Get(id);
+                userDto = UserDto.Create(user);
 
+                transaction.Commit();
+            }
             return Json(userDto);
         }
 
         [HttpGet]
         public JsonResult GetByGooglePlusId(string googlePlusId)
         {
-            User user = UserManager.GetByGooglePlusId(googlePlusId);
+            UserDto userDto;
+  
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                User user = UserManager.GetByGooglePlusId(googlePlusId);
+                userDto = UserDto.Create(user);
 
-            UserDto userDto = UserDto.Create(user);
+                transaction.Commit();
+            }
 
             return Json(userDto);
         }
 
         [HttpPost]
         public JsonResult UpdateGooglePlusId(Guid userId, string googlePlusId)
-        {
-            UserManager.UpdateGooglePlusId(userId, googlePlusId);
+        {            
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                UserManager.UpdateGooglePlusId(userId, googlePlusId);
 
+                transaction.Commit();
+            }
             return Json(new
             {
                 success = true

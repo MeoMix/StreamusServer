@@ -11,44 +11,47 @@ namespace Streamus.Tests.PersistanceMappingTests
         [Test]
         public void ShouldMap()
         {
-            var sessionFactory = NHibernateSessionManager.Instance.SessionFactory;
+            var sessionFactory = new NHibernateConfiguration().Configure().BuildSessionFactory();
+
             using (var session = sessionFactory.OpenSession())
-            using (var transaction = session.BeginTransaction())
             {
-                var createdUser = new User { GooglePlusId = "some id?", Name = "user name" };
-
-                session.Save(createdUser);
-
-                var playlist2 = new Playlist("users second playlist")
+                using (var transaction = session.BeginTransaction())
                 {
-                    User = createdUser,
-                    Sequence = 200,
-                };
+                    var createdUser = new User {GooglePlusId = "some id?", Name = "user name"};
 
-                var playlistItem = new PlaylistItem
-                {
-                    Cid = "cid",
-                    Playlist = playlist2,
-                    Video = new Video(),
-                    Sequence = 200,
-                };
+                    session.Save(createdUser);
 
-                playlist2.AddItem(playlistItem);
+                    var playlist2 = new Playlist("users second playlist")
+                        {
+                            User = createdUser,
+                            Sequence = 200,
+                        };
 
-                var playlistId = session.Save(playlist2);
+                    var playlistItem = new PlaylistItem
+                        {
+                            Cid = "cid",
+                            Playlist = playlist2,
+                            Video = new Video(),
+                            Sequence = 200,
+                        };
 
-                session.Flush();
-                session.Clear();
+                    playlist2.AddItem(playlistItem);
 
-                var savedPlaylist = session.Get<Playlist>(playlistId);
+                    var playlistId = session.Save(playlist2);
 
-                Assert.That(savedPlaylist.Title, Is.EqualTo("users second playlist"));
-                Assert.That(savedPlaylist.Id, Is.Not.EqualTo(Guid.Empty));
-                Assert.That(savedPlaylist.Sequence, Is.EqualTo(200));
+                    session.Flush();
+                    session.Clear();
 
-                Assert.That(savedPlaylist.Items, Has.Exactly(1).EqualTo(playlistItem));
+                    var savedPlaylist = session.Get<Playlist>(playlistId);
 
-                transaction.Rollback();
+                    Assert.That(savedPlaylist.Title, Is.EqualTo("users second playlist"));
+                    Assert.That(savedPlaylist.Id, Is.Not.EqualTo(Guid.Empty));
+                    Assert.That(savedPlaylist.Sequence, Is.EqualTo(200));
+
+                    Assert.That(savedPlaylist.Items, Has.Exactly(1).EqualTo(playlistItem));
+
+                    transaction.Rollback();
+                }
             }
         }
     }

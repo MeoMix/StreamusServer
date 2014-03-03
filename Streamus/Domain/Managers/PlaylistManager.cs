@@ -1,8 +1,6 @@
 ﻿using log4net;
 using Streamus.Domain.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Streamus.Domain.Managers
 {
@@ -48,38 +46,13 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        public void Save(IEnumerable<Playlist> playlists)
-        {
-            try
-            {
-                List<Playlist> playlistsList = playlists.ToList();
-
-                //if (playlistsList.Count > 1000)
-                //{
-                //    Session.SetBatchSize(playlistsList.Count / 10);
-                //}
-                //else if (playlistsList.Count > 3)
-                //{
-                //    Session.SetBatchSize(playlistsList.Count / 3);
-                //}
-                
-                playlistsList.ForEach(DoSave);
-
-                //Session.SetBatchSize(0);
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                throw;
-            }
-        }
-
         public void Update(Playlist playlist)
         {
             try
             {
                 playlist.ValidateAndThrow();
 
+                //  TODO: Is this necessary still? Seems odd to me.
                 Playlist knownPlaylist = PlaylistDao.Get(playlist.Id);
 
                 if (knownPlaylist == null)
@@ -101,8 +74,10 @@ namespace Streamus.Domain.Managers
         public void Delete(Guid id)
         {
             try
-            {
-                PlaylistDao.DeleteById(id);
+            {                
+                //  TODO: Do I still need to worry about Cascade re-saving?
+                Playlist playlist = PlaylistDao.Get(id);
+                PlaylistDao.Delete(playlist);
             }
             catch (Exception exception)
             {
@@ -115,7 +90,10 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                PlaylistDao.UpdateTitleById(playlistId, title);
+                Playlist playlist = Get(playlistId);
+                playlist.Title = title;
+
+                Update(playlist);
             }
             catch (Exception exception)
             {

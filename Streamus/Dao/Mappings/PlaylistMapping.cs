@@ -14,7 +14,10 @@ namespace Streamus.Dao.Mappings
             Map(e => e.Title).Not.Nullable();
             Map(e => e.Sequence).Not.Nullable();
 
-            HasMany(p => p.Items).Inverse().Not.LazyLoad().Fetch.Join().Cascade.AllDeleteOrphan().KeyColumn("PlaylistId");
+            //  Only update properties which have changed.
+            DynamicUpdate();
+
+            HasMany(p => p.Items).Inverse().Fetch.Join().Cascade.AllDeleteOrphan().KeyColumn("PlaylistId");
 
             References(p => p.User).Column("UserId");
         }

@@ -68,19 +68,7 @@ namespace Streamus.Domain.Managers
             try
             {
                 List<Video> videosList = videos.ToList();
-
-                //if (videosList.Count > 1000)
-                //{
-                //    Session.SetBatchSize(videosList.Count / 10);
-                //}
-                //else if (videosList.Count > 3)
-                //{
-                //    Session.SetBatchSize(videosList.Count / 3);
-                //}
-                
                 videosList.ForEach(DoSave);
-
-                //Session.SetBatchSize(0);
             }
             catch (Exception exception)
             {

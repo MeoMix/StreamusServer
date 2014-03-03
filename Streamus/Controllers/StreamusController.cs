@@ -1,6 +1,7 @@
-﻿using System.Text;
-using NHibernate;
+﻿using NHibernate;
 using log4net;
+using System;
+using System.Text;
 using System.Web.Mvc;
 
 namespace Streamus.Controllers
@@ -9,23 +10,17 @@ namespace Streamus.Controllers
     {
         protected readonly ILog Logger;
         protected new readonly ISession Session;
-        private ITransaction Transaction;
 
-        protected StreamusController(ILog logger, ISession session)
+        protected StreamusController(ILog logger/*, ISession session*/)
         {
+            if (logger == null) throw new ArgumentNullException("logger");
+            //if (session == null) throw new ArgumentNullException("session");
+
             Logger = logger;
-            Session = session;
-        }
 
-        protected override void OnActionExecuting(ActionExecutingContext actionContext)
-        {
-            Transaction = Session.BeginTransaction();
-        }
-
-        protected override void OnActionExecuted(ActionExecutedContext actionExecutedContext)
-        {
-            Transaction.Commit();
-            Transaction.Dispose();
+            //  TODO: I receive a warning, "Multiple sessions in a single request." by NHProf if I work with the ISession parameter and not through DependencyResolver.
+            Session = DependencyResolver.Current.GetService<ISession>();
+            //Session = session;
         }
 
         protected override JsonResult Json(object data, string contentType, Encoding contentEncoding, JsonRequestBehavior behavior)

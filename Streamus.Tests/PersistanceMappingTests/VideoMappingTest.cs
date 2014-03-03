@@ -10,20 +10,25 @@ namespace Streamus.Tests.PersistanceMappingTests
     {
         [Test]
         public void ShouldMap()
-        {var sessionFactory = NHibernateSessionManager.Instance.SessionFactory;
-            using (var session = sessionFactory.OpenSession())
-            using (var transaction = session.BeginTransaction())
-            {
-                new PersistenceSpecification<Video>(session)
-                    .CheckProperty(v => v.Author, "author")
-                    .CheckProperty(v => v.Duration, 90)
-                    .CheckProperty(v => v.HighDefinition, true)
-                    .CheckProperty(v => v.Id, "some id")
-                    .CheckProperty(v => v.Title, "title")
-                    .VerifyTheMappings();
+        {
+            var sessionFactory = new NHibernateConfiguration().Configure().BuildSessionFactory();
 
-                transaction.Rollback();
+            using (var session = sessionFactory.OpenSession())
+            {
+                using (var transaction = session.BeginTransaction())
+                {
+                    new PersistenceSpecification<Video>(session)
+                        .CheckProperty(v => v.Author, "author")
+                        .CheckProperty(v => v.Duration, 90)
+                        .CheckProperty(v => v.HighDefinition, true)
+                        .CheckProperty(v => v.Id, "some id")
+                        .CheckProperty(v => v.Title, "title")
+                        .VerifyTheMappings();
+
+                    transaction.Rollback();
+                }
             }
+
         }
     }
 }

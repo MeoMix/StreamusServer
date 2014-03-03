@@ -8,8 +8,11 @@ namespace Streamus.Dao.Mappings
         public VideoMapping()
         {
             Table("[Videos]");
-            Not.LazyLoad(); 
-            ReadOnly(); 
+
+            ReadOnly();
+
+            //  Only update properties which have changed.
+            DynamicUpdate();
             
             Id(e => e.Id).GeneratedBy.Assigned().Length(11);
 

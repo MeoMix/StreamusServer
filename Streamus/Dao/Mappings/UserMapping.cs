@@ -9,16 +9,18 @@ namespace Streamus.Dao.Mappings
         public UserMapping()
         {
             Table("[Users]");
-            Not.LazyLoad();
+
             Id(e => e.Id).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
+
+            //  Only update properties which have changed.
+            DynamicUpdate();
 
             Map(e => e.Name).Not.Nullable();
             Map(e => e.GooglePlusId).Not.Nullable();
 
             HasMany(u => u.Playlists)
                 .Inverse()
-                .Not.LazyLoad()
-                .Fetch.Select()
+                .Fetch.Join()
                 .Cascade.AllDeleteOrphan()
                 .KeyColumn("UserId");
         }

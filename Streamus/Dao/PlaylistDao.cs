@@ -24,20 +24,5 @@ namespace Streamus.Dao
 
             return playlist;
         }
-
-        public void DeleteById(Guid id)
-        {
-            Session.CreateSQLQuery("delete from Playlists where id = :id")
-                .SetParameter("id", id)
-                .ExecuteUpdate();
-        }
-
-        public void UpdateTitleById(Guid id, string title)
-        {
-            Session.CreateSQLQuery("update Playlists set title = :title where id = :id")
-                .SetParameter("id", id)
-                .SetParameter("title", title)
-                .ExecuteUpdate();
-        }
     }
 }

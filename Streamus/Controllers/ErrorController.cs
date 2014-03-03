@@ -1,5 +1,5 @@
-﻿using NHibernate;
-using log4net;
+﻿using log4net;
+using NHibernate;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
@@ -11,8 +11,8 @@ namespace Streamus.Controllers
     {
         private readonly IErrorManager ErrorManager;
 
-        public ErrorController(ILog logger, ISession session, IManagerFactory managerFactory)
-            : base(logger, session)
+        public ErrorController(ILog logger, IManagerFactory managerFactory)
+            : base(logger)
         {
             ErrorManager = managerFactory.GetErrorManager();
         }
@@ -20,10 +20,17 @@ namespace Streamus.Controllers
         [HttpPost, Throttle(Name = "ClientErrorThrottle", Message = "You must wait {n} seconds before accessing logging another error.", Seconds = 60)]
         public JsonResult Create(ErrorDto errorDto)
         {
-            Error error = Error.Create(errorDto);
-            ErrorManager.Save(error);
+            ErrorDto savedErrorDto;
 
-            ErrorDto savedErrorDto = ErrorDto.Create(error);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                Error error = Error.Create(errorDto);
+                ErrorManager.Save(error);
+
+                savedErrorDto = ErrorDto.Create(error);
+
+                transaction.Commit();
+            }
 
             return Json(savedErrorDto);
         }

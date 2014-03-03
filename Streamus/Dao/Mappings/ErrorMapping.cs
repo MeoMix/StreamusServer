@@ -9,8 +9,11 @@ namespace Streamus.Dao.Mappings
         public ErrorMapping()
         {
             Table("[Errors]");
-            Not.LazyLoad();
+
             Id(e => e.Id).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
+
+            //  Only update properties which have changed.
+            DynamicUpdate();
 
             Map(e => e.Message).Not.Nullable();
             Map(e => e.LineNumber).Not.Nullable();

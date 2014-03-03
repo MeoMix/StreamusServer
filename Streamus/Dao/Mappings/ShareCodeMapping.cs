@@ -9,8 +9,11 @@ namespace Streamus.Dao.Mappings
         public ShareCodeMapping()
         {
             Table("[ShareCodes]");
-            Not.LazyLoad();
+
             Id(e => e.Id).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
+
+            //  Only update properties which have changed.
+            DynamicUpdate();
 
             Map(e => e.EntityType).CustomType<ShareableEntityType>().Not.Nullable();
             Map(e => e.EntityId).Not.Nullable();

@@ -1,5 +1,5 @@
-﻿using Autofac;
-using AutoMapper;
+﻿using AutoMapper;
+using HibernatingRhinos.Profiler.Appender.NHibernate;
 using Newtonsoft.Json;
 using Streamus.App_Start;
 using Streamus.Dao;
@@ -29,7 +29,7 @@ namespace Streamus
 
         public static void InitializeApplication()
         {
-            //HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
+            NHibernateProfiler.Initialize();
 
             JsonMediaTypeFormatter json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
             json.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
@@ -37,7 +37,7 @@ namespace Streamus
             //  Don't serialize JSON empty strings into null -- instead turn them into empty strings because this is more intuitive and I don't want to have to do n
             ModelBinders.Binders.DefaultBinder = new JsonEmptyStringNotNullModelBinder();
 
-            AutofacRegistrations.RegisterDaoFactory();
+            AutofacRegistrations.RegisterAndSetResolver();
 
             CreateAutoMapperMaps();
         }

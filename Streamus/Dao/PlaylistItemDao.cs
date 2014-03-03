@@ -19,17 +19,10 @@ namespace Streamus.Dao
 
             if (id != default(Guid))
             {
-                playlistItem = Session.Get<PlaylistItem>(id);
+                playlistItem = Session.Load<PlaylistItem>(id);
             }
 
             return playlistItem;
-        }
-
-        public void DeleteById(Guid id)
-        {
-            Session.CreateSQLQuery("delete from PlaylistItems where id = :id")
-                .SetParameter("id", id)
-                .ExecuteUpdate();
         }
     }
 }

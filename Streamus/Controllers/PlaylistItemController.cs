@@ -1,5 +1,5 @@
-﻿using NHibernate;
-using log4net;
+﻿using log4net;
+using NHibernate;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
@@ -14,8 +14,8 @@ namespace Streamus.Controllers
     {
         private readonly IPlaylistItemManager PlaylistItemManager;
 
-        public PlaylistItemController(ILog logger, ISession session, IManagerFactory managerFactory)
-            : base(logger, session)
+        public PlaylistItemController(ILog logger, IManagerFactory managerFactory)
+            : base(logger)
         {
             PlaylistItemManager = managerFactory.GetPlaylistItemManager();
         }
@@ -23,13 +23,20 @@ namespace Streamus.Controllers
         [HttpPost]
         public JsonResult Create(PlaylistItemDto playlistItemDto)
         {
-            PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
+            PlaylistItemDto savedPlaylistItemDto;
 
-            playlistItem.Playlist.AddItem(playlistItem);
+            using(ITransaction transaction = Session.BeginTransaction())
+            {
+                PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
 
-            PlaylistItemManager.Save(playlistItem);
-            
-            PlaylistItemDto savedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
+                playlistItem.Playlist.AddItem(playlistItem);
+
+                PlaylistItemManager.Save(playlistItem);
+
+                savedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
+                
+                transaction.Commit();
+            }
 
             return Json(savedPlaylistItemDto);
         }
@@ -37,17 +44,35 @@ namespace Streamus.Controllers
         [HttpPost]
         public JsonResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
-            List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
+            List<PlaylistItemDto> savedPlaylistItemDtos;
 
-            //  Split items into their respective playlists and then save on each.
-            foreach (var playlistGrouping in playlistItems.GroupBy(i => i.Playlist))
+            int count = playlistItemDtos.Count;
+
+            if (count > 1000)
             {
-                List<PlaylistItem> groupingItems = playlistGrouping.ToList();
-                playlistGrouping.Key.AddItems(groupingItems);
-                PlaylistItemManager.Save(groupingItems);
+                Session.SetBatchSize(count / 10);
+            }
+            else if (count > 3)
+            {
+                Session.SetBatchSize(count / 3);
             }
 
-            List<PlaylistItemDto> savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
+
+                //  Split items into their respective playlists and then save on each.
+                foreach (var playlistGrouping in playlistItems.GroupBy(i => i.Playlist))
+                {
+                    List<PlaylistItem> groupingItems = playlistGrouping.ToList();
+                    playlistGrouping.Key.AddItems(groupingItems);
+                    PlaylistItemManager.Save(groupingItems);
+                }
+
+                savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
+
+                transaction.Commit();
+            }
 
             return Json(savedPlaylistItemDtos);
         }
@@ -55,10 +80,17 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult Update(PlaylistItemDto playlistItemDto)
         {
-            PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
-            PlaylistItemManager.Update(playlistItem);
+            PlaylistItemDto updatedPlaylistItemDto;
 
-            PlaylistItemDto updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+
+                PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
+                PlaylistItemManager.Update(playlistItem);
+
+                updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
+                transaction.Commit();
+            }
 
             return Json(updatedPlaylistItemDto);
         }
@@ -66,11 +98,29 @@ namespace Streamus.Controllers
         [HttpPut]
         public ActionResult UpdateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
-            List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
+            List<PlaylistItemDto> savedPlaylistItemDtos;
 
-            PlaylistItemManager.Update(playlistItems);
+            int count = playlistItemDtos.Count;
 
-            List<PlaylistItemDto> savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
+            if (count > 1000)
+            {
+                Session.SetBatchSize(count / 10);
+            }
+            else if (count > 3)
+            {
+                Session.SetBatchSize(count / 3);
+            }
+
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
+
+                PlaylistItemManager.Update(playlistItems);
+
+                savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
+
+                transaction.Commit();
+            }
 
             return Json(savedPlaylistItemDtos);
         }
@@ -78,7 +128,11 @@ namespace Streamus.Controllers
         [HttpDelete]
         public JsonResult Delete(Guid id)
         {
-            PlaylistItemManager.Delete(id);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                PlaylistItemManager.Delete(id);
+                transaction.Commit();
+            }
 
             return Json(new
                 {

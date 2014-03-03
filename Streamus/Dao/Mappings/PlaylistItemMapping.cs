@@ -9,8 +9,11 @@ namespace Streamus.Dao.Mappings
         public PlaylistItemMapping()
         {
             Table("[PlaylistItems]");
-            Not.LazyLoad();
+
             Id(e => e.Id).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
+
+            //  Only update properties which have changed.
+            DynamicUpdate();
 
             Map(e => e.Title).Not.Nullable();
             Map(e => e.Sequence).Not.Nullable();

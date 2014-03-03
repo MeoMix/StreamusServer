@@ -20,18 +20,7 @@ namespace Streamus.Dao
 
             if (id != default(Guid))
             {
-                user = Session.Get<User>(id);
-
-                //  If failed to find by ID -- assume an error on my DB's part and gracefully fall back to a new user account since it is missing.
-                if (user == null)
-                {
-                    user = new User
-                        {
-                            Id = id
-                        };
-                    Save(user);
-                }
-
+                user = Session.Load<User>(id);
             }
 
             return user;
