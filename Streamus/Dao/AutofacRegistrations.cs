@@ -21,7 +21,11 @@ namespace Streamus.Dao
             containerBuilder.Register(x => new NHibernateConfiguration().Configure().BuildSessionFactory()).SingleInstance();
 
             //  Everything else wants an instance of Session per HTTP request, so indicate that:
-            containerBuilder.Register(x => x.Resolve<ISessionFactory>().OpenSession()).InstancePerHttpRequest();
+            //containerBuilder.Register(x => x.Resolve<ISessionFactory>().OpenSession()).InstancePerHttpRequest();
+            containerBuilder.Register(x =>
+            {
+                return x.Resolve<ISessionFactory>().OpenSession();
+            }).As<ISession>().InstancePerHttpRequest();
             containerBuilder.Register(x => LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType)).InstancePerHttpRequest();
 
             containerBuilder.RegisterType<NHibernateDaoFactory>().As<IDaoFactory>().InstancePerHttpRequest();
