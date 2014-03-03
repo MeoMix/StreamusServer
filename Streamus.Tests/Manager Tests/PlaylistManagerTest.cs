@@ -67,20 +67,18 @@ namespace Streamus.Tests.Manager_Tests
             //  Now delete the created Playlist and ensure it is removed.
             PlaylistManager.Delete(playlist.Id);
 
-            Playlist deletedPlaylist = PlaylistManager.Get(playlist.Id);
 
-            bool objectNotFoundExceptionEncountered = false;
+            bool exceptionEncountered = false;
             try
             {
-                //  Evaluating a lazyily-loaded entity which isn't in the database will throw an ONF exception.
-                Assert.IsNull(deletedPlaylist);
+                Playlist deletedPlaylist = PlaylistManager.Get(playlist.Id);
             }
             catch (ObjectNotFoundException)
             {
-                objectNotFoundExceptionEncountered = true;
+                exceptionEncountered = true;
             }
 
-            Assert.IsTrue(objectNotFoundExceptionEncountered);
+            Assert.IsTrue(exceptionEncountered);
         }
     }
 }

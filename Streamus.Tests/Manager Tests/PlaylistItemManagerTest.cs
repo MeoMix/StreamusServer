@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using NHibernate;
 using NUnit.Framework;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
@@ -159,8 +160,17 @@ namespace Streamus.Tests.Manager_Tests
             //  Now delete the created PlaylistItem and ensure it is removed.
             PlaylistItemManager.Delete(playlistItem.Id);
 
-            PlaylistItem deletedPlaylistItem = PlaylistItemManager.Get(playlistItem.Id);
-            Assert.IsNull(deletedPlaylistItem);
+            bool exceptionEncountered = false;
+            try
+            {
+                PlaylistItemManager.Get(playlistItem.Id);
+            }
+            catch (ObjectNotFoundException)
+            {
+                exceptionEncountered = true;
+            }
+
+            Assert.IsTrue(exceptionEncountered);
         }
 
         /// <summary>
@@ -174,13 +184,22 @@ namespace Streamus.Tests.Manager_Tests
             PlaylistItem firstItem = Helpers.CreateItemInPlaylist(Playlist);
 
             //  Create the second PlaylistItem and write it to the database.
-            PlaylistItem secondItem = Helpers.CreateItemInPlaylist(Playlist);
+            Helpers.CreateItemInPlaylist(Playlist);
 
             //  Now delete the first PlaylistItem and ensure it is removed.
             PlaylistItemManager.Delete(firstItem.Id);
 
-            PlaylistItem deletedPlaylistItem = PlaylistItemManager.Get(firstItem.Id);
-            Assert.IsNull(deletedPlaylistItem);
+            bool exceptionEncountered = false;
+            try
+            {
+                PlaylistItemManager.Get(firstItem.Id);
+            }
+            catch (ObjectNotFoundException)
+            {
+                exceptionEncountered = true;
+            }
+
+            Assert.IsTrue(exceptionEncountered);
         }
 
         //  TODO: Test case where there are 2 PlaylistItems in the Playlist before deleting.

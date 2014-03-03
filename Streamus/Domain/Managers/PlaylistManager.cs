@@ -75,8 +75,8 @@ namespace Streamus.Domain.Managers
         {
             try
             {                
-                //  TODO: Do I still need to worry about Cascade re-saving?
                 Playlist playlist = PlaylistDao.Get(id);
+                playlist.User.Playlists.Remove(playlist);
                 PlaylistDao.Delete(playlist);
             }
             catch (Exception exception)
