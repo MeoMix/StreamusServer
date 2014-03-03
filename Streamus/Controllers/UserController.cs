@@ -12,8 +12,8 @@ namespace Streamus.Controllers
     {
         private readonly IUserManager UserManager;
 
-        public UserController(ILog logger, IManagerFactory managerFactory)
-            : base(logger)
+        public UserController(ILog logger, ISession session, IManagerFactory managerFactory)
+            : base(logger, session)
         {
             UserManager = managerFactory.GetUserManager();
         }

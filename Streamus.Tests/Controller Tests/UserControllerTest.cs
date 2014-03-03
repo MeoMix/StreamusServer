@@ -25,8 +25,8 @@ namespace Streamus.Tests.Controller_Tests
         {
             try
             {
-                PlaylistItemController = new PlaylistItemController(Logger, ManagerFactory);
-                UserController = new UserController(Logger, ManagerFactory);
+                PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
+                UserController = new UserController(Logger, Session, ManagerFactory);
                 UserManager = ManagerFactory.GetUserManager();
             }
             catch (TypeInitializationException exception)

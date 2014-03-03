@@ -48,23 +48,17 @@ namespace Streamus
         /// </summary>
         public static void CreateAutoMapperMaps()
         {
-            IDaoFactory daoFactory = DependencyResolver.Current.GetService<IDaoFactory>();
-
             Mapper.CreateMap<Error, ErrorDto>()
                     .ReverseMap();
 
-            IPlaylistDao playlistDao = daoFactory.GetPlaylistDao();
-            IUserDao userDao = daoFactory.GetUserDao();
-
             Mapper.CreateMap<Playlist, PlaylistDto>();
+            //  I will set the User manually inside the entity. This is a shitty workaround, but I can't reference ManagerFactory from here or AutoFac goes crazy.
             Mapper.CreateMap<PlaylistDto, Playlist>()
-                    .ForMember(playlist => playlist.User,
-                                opt => opt.MapFrom(playlistDto => userDao.Get(playlistDto.UserId)));
+                  .ForMember(playlist => playlist.User, opt => opt.Ignore());
 
             Mapper.CreateMap<PlaylistItem, PlaylistItemDto>();
             Mapper.CreateMap<PlaylistItemDto, PlaylistItem>()
-                    .ForMember(playlistItem => playlistItem.Playlist,
-                                opt => opt.MapFrom(playlistItemDto => playlistDao.Get(playlistItemDto.PlaylistId)));
+                    .ForMember(playlistItem => playlistItem.Playlist, opt => opt.Ignore());
 
             Mapper.CreateMap<ShareCode, ShareCodeDto>().ReverseMap();
 

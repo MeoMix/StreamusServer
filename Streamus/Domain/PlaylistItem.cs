@@ -1,5 +1,8 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using System.Web.Mvc;
+using AutoMapper;
 using FluentValidation;
+using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using Streamus.Dto;
 using System;
@@ -41,12 +44,18 @@ namespace Streamus.Domain
         public static PlaylistItem Create(PlaylistItemDto playlistItemDto)
         {
             PlaylistItem playlistItem = Mapper.Map<PlaylistItemDto, PlaylistItem>(playlistItemDto);
+
+            IManagerFactory managerFactory = DependencyResolver.Current.GetService<IManagerFactory>();
+            IPlaylistManager playlistManager = managerFactory.GetPlaylistManager();
+
+            playlistItem.Playlist = playlistManager.Get(playlistItemDto.PlaylistId);
+
             return playlistItem;
         }
 
         public static List<PlaylistItem> Create(IEnumerable<PlaylistItemDto> playlistItemDtos)
         {
-            List<PlaylistItem> playlistItems = Mapper.Map<IEnumerable<PlaylistItemDto>, List<PlaylistItem>>(playlistItemDtos);
+            List<PlaylistItem> playlistItems = new List<PlaylistItem>(playlistItemDtos.Select(Create));
             return playlistItems;
         }
 

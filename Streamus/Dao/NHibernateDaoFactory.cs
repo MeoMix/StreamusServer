@@ -19,12 +19,11 @@ namespace Streamus.Dao
         private IVideoDao VideoDao;
         private readonly ISession Session;
 
-        public NHibernateDaoFactory()
+        public NHibernateDaoFactory(ISession session)
         {
-            //  TODO: Is this different than passing ISession into NHibernateDaoFactory with AutoFac?
-            Session = DependencyResolver.Current.GetService<ISession>();
+            if (session == null) throw new NullReferenceException("session");
 
-            if (Session == null) throw new NullReferenceException("Session");
+            Session = session;
         }
 
         public IErrorDao GetErrorDao()

@@ -11,8 +11,8 @@ namespace Streamus.Controllers
     {
         private readonly IErrorManager ErrorManager;
 
-        public ErrorController(ILog logger, IManagerFactory managerFactory)
-            : base(logger)
+        public ErrorController(ILog logger, ISession session, IManagerFactory managerFactory)
+            : base(logger, session)
         {
             ErrorManager = managerFactory.GetErrorManager();
         }

@@ -14,8 +14,8 @@ namespace Streamus.Controllers
     {
         private readonly IPlaylistItemManager PlaylistItemManager;
 
-        public PlaylistItemController(ILog logger, IManagerFactory managerFactory)
-            : base(logger)
+        public PlaylistItemController(ILog logger, ISession session, IManagerFactory managerFactory)
+            : base(logger, session)
         {
             PlaylistItemManager = managerFactory.GetPlaylistItemManager();
         }

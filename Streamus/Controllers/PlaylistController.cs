@@ -14,8 +14,8 @@ namespace Streamus.Controllers
         private readonly IUserManager UserManager;
         private readonly IShareCodeManager ShareCodeManager;
 
-        public PlaylistController(ILog logger, IManagerFactory managerFactory)
-            :base(logger)
+        public PlaylistController(ILog logger, ISession session, IManagerFactory managerFactory)
+            : base(logger, session)
         {
             PlaylistManager = managerFactory.GetPlaylistManager();
             UserManager = managerFactory.GetUserManager();

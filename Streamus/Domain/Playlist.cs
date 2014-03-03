@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Web.Mvc;
+using AutoMapper;
 using FluentValidation;
+using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using Streamus.Dto;
 using System;
@@ -38,6 +40,11 @@ namespace Streamus.Domain
         public static Playlist Create(PlaylistDto playlistDto)
         {
             Playlist playlist = Mapper.Map<PlaylistDto, Playlist>(playlistDto);
+
+            IManagerFactory managerFactory = DependencyResolver.Current.GetService<IManagerFactory>();
+            IUserManager userManager = managerFactory.GetUserManager();
+
+            playlist.User = userManager.Get(playlistDto.Id);
 
             //  TODO: I could probably leverage backbone's CID property to have the items know of their playlist. Or maybe I should just enforce adding client-side before saving?
             //  If an unsaved playlist comes from the client with items already in it, the items will not know their playlist's ID.
