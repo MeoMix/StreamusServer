@@ -20,7 +20,7 @@ namespace Streamus.Dao
 
             if (id != default(Guid))
             {
-                user = Session.Load<User>(id);
+                user = Session.Get<User>(id);
             }
 
             return user;

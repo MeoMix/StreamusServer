@@ -46,6 +46,22 @@ namespace Streamus.Tests.Controller_Tests
             Assert.That(userFromDatabase != null);
         }
 
+        /// <summary>
+        /// Ensure that graceful fallback occurs if the database glitches out and doesn't have a user.
+        /// </summary>
+        [Test]
+        public void GeteUser_UserDoesNotExist_UserCreated()
+        {
+            Guid guid = Guid.NewGuid();
+            JsonResult result = UserController.Get(guid);
+
+            var createdUserDto = (UserDto)result.Data;
+
+            User userFromDatabase = UserManager.Get(createdUserDto.Id);
+            Assert.That(userFromDatabase != null);
+            Assert.AreNotEqual(guid, userFromDatabase.Id);
+        }
+
         //  TODO: Test the response time of this and make sure it isn't a long running query for big playlists.
         [Test]
         public void GetUserWithBulkPlaylistItems_UserCreatedWithLotsOfItems_UserHasOnePlaylist()

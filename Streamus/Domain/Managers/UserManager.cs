@@ -25,17 +25,14 @@ namespace Streamus.Domain.Managers
             try
             {
                 user = UserDao.Get(id);
-            }
-            catch (ObjectNotFoundException objectNotFoundException)
-            {
-                Logger.Debug(objectNotFoundException);
 
-                //  If failed to find by ID -- assume an error on my DB's part and gracefully fall back to a new user account since it is missing.
-                user = new User
+                if (user == null)
                 {
-                    Id = id
-                };
-                Save(user);
+                    Logger.DebugFormat("Failed to find user with ID {0}. Creating new user with that ID.", id);
+
+                    //  If failed to find by ID -- assume an error on my DB's part and gracefully fall back to a new user account since it is missing.
+                    user = CreateUser();
+                }
             }
             catch (Exception exception)
             {
