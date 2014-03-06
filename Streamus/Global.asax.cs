@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using HibernatingRhinos.Profiler.Appender.NHibernate;
 using Newtonsoft.Json;
 using Streamus.App_Start;
 using Streamus.Dao;
@@ -28,7 +27,7 @@ namespace Streamus
 
         public static void InitializeApplication()
         {
-            NHibernateProfiler.Initialize();
+            //NHibernateProfiler.Initialize();
 
             JsonMediaTypeFormatter json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
             json.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
