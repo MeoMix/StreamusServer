@@ -1,8 +1,10 @@
-﻿using FluentNHibernate.Cfg;
+﻿using System;
+using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using Streamus.Dao.Mappings;
 using System.Configuration;
 using Configuration = NHibernate.Cfg.Configuration;
+using Environment = NHibernate.Cfg.Environment;
 
 namespace Streamus.Dao
 {
@@ -26,6 +28,7 @@ namespace Streamus.Dao
             //  You are responsible to bind and unbind an ISession instance with static methods of class CurrentSessionContext.
             configuration.SetProperty("current_session_context_class", "web");
             configuration.SetProperty("connection.isolation", "ReadUncommitted");
+            configuration.SetProperty(Environment.CommandTimeout, TimeSpan.FromSeconds(15).TotalSeconds.ToString());
 #if DEBUG
             configuration.SetProperty("default_schema", "[Streamus].[dbo]");
             configuration.SetProperty("generate_statistics", "true");

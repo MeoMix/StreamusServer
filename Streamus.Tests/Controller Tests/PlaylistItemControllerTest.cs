@@ -132,5 +132,26 @@ namespace Streamus.Tests.Controller_Tests
                 Assert.That(playlist.Items.Count == numItemsToCreate * currentIteration);
             }
         }
+
+        [Test]
+        public void DeletePlaylistItem_ItemExistsInPlaylist_DeletedSuccessfully()
+        {
+            PlaylistItemDto playlistItemDto = Helpers.CreatePlaylistItemDto();
+
+            var result = PlaylistItemController.Create(playlistItemDto);
+
+            var createdPlaylistItemDto = (PlaylistItemDto)result.Data;
+
+            //  Make sure we actually get a PlaylistItem DTO back from the Controller.
+            Assert.NotNull(createdPlaylistItemDto);
+
+            Playlist playlist = PlaylistManager.Get(createdPlaylistItemDto.PlaylistId);
+
+            //  Make sure that the created playlistItem was cascade added to the Playlist
+            Assert.That(playlist.Items.Count(i => i.Id == createdPlaylistItemDto.Id) == 1);
+
+            PlaylistItemController.Delete(createdPlaylistItemDto.Id);
+
+        }
     }
 }
