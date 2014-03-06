@@ -1,21 +1,22 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
+using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using Streamus.Dto;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Streamus.Domain
 {
     public class PlaylistItem : AbstractDomainEntity<Guid>
     {
-        public Playlist Playlist { get; set; }
-        public int Sequence { get; set; }
-        public string Title { get; set; }
-        public Video Video { get; set; }
+        public virtual Playlist Playlist { get; set; }
+        public virtual int Sequence { get; set; }
+        public virtual string Title { get; set; }
+        public virtual Video Video { get; set; }
 
         //  Not written to the database. Used for client to tell who is who after a save.
-        public string Cid { get; set; }
+        public virtual string Cid { get; set; }
 
         public PlaylistItem()
         {
@@ -38,19 +39,28 @@ namespace Streamus.Domain
             Video = playlistItem.Video;
         }
 
-        public static PlaylistItem Create(PlaylistItemDto playlistItemDto)
+        public static PlaylistItem Create(PlaylistItemDto playlistItemDto, IPlaylistManager playlistManager)
         {
-            PlaylistItem playlistItem = Mapper.Map<PlaylistItemDto, PlaylistItem>(playlistItemDto);
+            PlaylistItem playlistItem = new PlaylistItem
+                {
+                    Cid = playlistItemDto.Cid,
+                    Id = playlistItemDto.Id,
+                    Playlist = playlistManager.Get(playlistItemDto.PlaylistId),
+                    Sequence = playlistItemDto.Sequence,
+                    Title = playlistItemDto.Title,
+                    Video = Video.Create(playlistItemDto.Video)
+                };
+
             return playlistItem;
         }
 
-        public static List<PlaylistItem> Create(IEnumerable<PlaylistItemDto> playlistItemDtos)
+        public static List<PlaylistItem> Create(IEnumerable<PlaylistItemDto> playlistItemDtos, IPlaylistManager playlistManager)
         {
-            List<PlaylistItem> playlistItems = Mapper.Map<IEnumerable<PlaylistItemDto>, List<PlaylistItem>>(playlistItemDtos);
+            List<PlaylistItem> playlistItems = new List<PlaylistItem>(playlistItemDtos.Select(pid => Create(pid, playlistManager)));
             return playlistItems;
         }
 
-        public void ValidateAndThrow()
+        public virtual void ValidateAndThrow()
         {
             var validator = new PlaylistItemValidator();
             validator.ValidateAndThrow(this);

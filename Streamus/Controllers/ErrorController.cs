@@ -1,24 +1,38 @@
-﻿using Streamus.Domain;
-using Streamus.Domain.Managers;
+﻿using log4net;
+using NHibernate;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
 using Streamus.Dto;
 using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    [SessionManagement]
-    public class ErrorController : Controller
+    public class ErrorController : StreamusController
     {
-        private static readonly ErrorManager ErrorManager = new ErrorManager();
+        private readonly IErrorManager ErrorManager;
+
+        public ErrorController(ILog logger, ISession session, IManagerFactory managerFactory)
+            : base(logger, session)
+        {
+            ErrorManager = managerFactory.GetErrorManager();
+        }
 
         [HttpPost, Throttle(Name = "ClientErrorThrottle", Message = "You must wait {n} seconds before accessing logging another error.", Seconds = 60)]
-        public ActionResult Create(ErrorDto errorDto)
+        public JsonResult Create(ErrorDto errorDto)
         {
-            Error error = Error.Create(errorDto);
-            ErrorManager.Save(error);
+            ErrorDto savedErrorDto;
 
-            ErrorDto savedErrorDto = ErrorDto.Create(error);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                Error error = Error.Create(errorDto);
+                ErrorManager.Save(error);
 
-            return new JsonServiceStackResult(savedErrorDto);
+                savedErrorDto = ErrorDto.Create(error);
+
+                transaction.Commit();
+            }
+
+            return Json(savedErrorDto);
         }
     }
 }

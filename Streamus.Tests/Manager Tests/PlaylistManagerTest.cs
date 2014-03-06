@@ -4,17 +4,16 @@ using NUnit.Framework;
 using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 
 namespace Streamus.Tests.Manager_Tests
 {
     [TestFixture]
-    public class PlaylistManagerTest : AbstractTest
+    public class PlaylistManagerTest : StreamusTest
     {
-        private IPlaylistDao PlaylistDao { get; set; }
+        private IPlaylistManager PlaylistManager;
+
         private User User { get; set; }
         private Video Video { get; set; }
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -22,9 +21,12 @@ namespace Streamus.Tests.Manager_Tests
         [TestFixtureSetUp]
         public new void TestFixtureSetUp()
         {
+            IVideoManager videoManager;
+
             try
             {
-                PlaylistDao = DaoFactory.GetPlaylistDao();
+                PlaylistManager = ManagerFactory.GetPlaylistManager();
+                videoManager = ManagerFactory.GetVideoManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -32,34 +34,20 @@ namespace Streamus.Tests.Manager_Tests
             }
 
             User = Helpers.CreateUser();
-
             Video = Helpers.CreateUnsavedVideoWithId();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            new VideoManager().Save(Video);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+            videoManager.Save(Video);
         }
 
         [Test]
         public void Updates()
         {
             Playlist playlist = User.CreateAndAddPlaylist();
-
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistManager.Save(playlist);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            PlaylistManager.UpdateTitle(playlist.Id, "Existing Playlist 001");
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
-
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
-            //  Test that the product was successfully inserted
-            Assert.IsNotNull(playlistFromDatabase);
-            //  Sessions should be isolated -- before and after should be different here.
-            Assert.AreNotEqual(playlist.Title, playlistFromDatabase.Title);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+            const string newTitle = "Existing Playlist 001";
+            PlaylistManager.UpdateTitle(playlist.Id, newTitle);
+            Assert.AreEqual(playlist.Title, newTitle);
         }
 
         /// <summary>
@@ -74,31 +62,23 @@ namespace Streamus.Tests.Manager_Tests
 
             User.AddPlaylist(playlist);
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistManager.Save(playlist);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             //  Now delete the created Playlist and ensure it is removed.
             PlaylistManager.Delete(playlist.Id);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            Playlist deletedPlaylist = PlaylistDao.Get(playlist.Id);
 
-            bool objectNotFoundExceptionEncountered = false;
+            bool exceptionEncountered = false;
             try
             {
-                //  Evaluating a lazyily-loaded entity which isn't in the database will throw an ONF exception.
-                Assert.IsNull(deletedPlaylist);
+                Playlist deletedPlaylist = PlaylistManager.Get(playlist.Id);
             }
             catch (ObjectNotFoundException)
             {
-                objectNotFoundExceptionEncountered = true;
+                exceptionEncountered = true;
             }
 
-            Assert.IsTrue(objectNotFoundExceptionEncountered);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+            Assert.IsTrue(exceptionEncountered);
         }
     }
 }

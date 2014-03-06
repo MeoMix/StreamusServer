@@ -1,9 +1,8 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
-using System;
 using Streamus.Dto;
+using System;
 
 namespace Streamus.Domain
 {
@@ -15,10 +14,10 @@ namespace Streamus.Domain
 
     public class ShareCode : AbstractDomainEntity<Guid>
     {
-        public ShareableEntityType EntityType { get; set; }
-        public Guid EntityId { get; set; }
-        public string ShortId { get; set; }
-        public string UrlFriendlyEntityTitle { get; set; }
+        public virtual ShareableEntityType EntityType { get; set; }
+        public virtual Guid EntityId { get; set; }
+        public virtual string ShortId { get; set; }
+        public virtual string UrlFriendlyEntityTitle { get; set; }
 
         public ShareCode()
         {
@@ -44,11 +43,19 @@ namespace Streamus.Domain
 
         public static ShareCode Create(ShareCodeDto shareCodeDto)
         {
-            ShareCode shareCode = Mapper.Map<ShareCodeDto, ShareCode>(shareCodeDto);
+            ShareCode shareCode = new ShareCode
+                {
+                    EntityId = shareCodeDto.EntityId,
+                    EntityType = shareCodeDto.EntityType,
+                    Id = shareCodeDto.Id,
+                    ShortId = shareCodeDto.ShortId,
+                    UrlFriendlyEntityTitle = shareCodeDto.UrlFriendlyEntityTitle
+                };
+
             return shareCode;
         }
 
-        public void ValidateAndThrow()
+        public virtual void ValidateAndThrow()
         {
             var validator = new ShareCodeValidator();
             validator.ValidateAndThrow(this);

@@ -1,4 +1,6 @@
-﻿using Streamus.Domain.Interfaces;
+﻿    using NHibernate;
+using log4net;
+using Streamus.Domain.Interfaces;
 using System;
 
 namespace Streamus.Domain.Managers
@@ -6,13 +8,56 @@ namespace Streamus.Domain.Managers
     /// <summary>
     ///     Provides a common spot for methods against Users which require transactions (Creating, Updating, Deleting)
     /// </summary>
-    public class UserManager : AbstractManager
+    public class UserManager : StreamusManager, IUserManager
     {
         private IUserDao UserDao { get; set; }
 
-        public UserManager()
+        public UserManager(ILog logger, IUserDao userDao) 
+            : base(logger) 
         {
-            UserDao = DaoFactory.GetUserDao();
+            UserDao = userDao;
+        }
+
+        public User Get(Guid id)
+        {
+            User user;
+
+            try
+            {
+                user = UserDao.Get(id);
+
+                if (user == null)
+                {
+                    Logger.DebugFormat("Failed to find user with ID {0}. Creating new user with that ID.", id);
+
+                    //  If failed to find by ID -- assume an error on my DB's part and gracefully fall back to a new user account since it is missing.
+                    user = CreateUser();
+                }
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return user;
+        }
+
+        public User GetByGooglePlusId(string googlePlusId)
+        {
+            User user;
+
+            try
+            {
+                user = UserDao.GetByGooglePlusId(googlePlusId);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return user;
         }
 
         /// <summary>
@@ -69,5 +114,6 @@ namespace Streamus.Domain.Managers
                 throw;
             }
         }
+
     }
 }

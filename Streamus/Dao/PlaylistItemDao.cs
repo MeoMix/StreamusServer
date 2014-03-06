@@ -1,4 +1,5 @@
-﻿using Streamus.Domain;
+﻿using NHibernate;
+using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using System;
 
@@ -6,13 +7,19 @@ namespace Streamus.Dao
 {
     public class PlaylistItemDao : AbstractNHibernateDao<PlaylistItem>, IPlaylistItemDao
     {
+        public PlaylistItemDao(ISession session)
+            : base(session)
+        {
+            
+        }
+
         public PlaylistItem Get(Guid id)
         {
             PlaylistItem playlistItem = null;
 
             if (id != default(Guid))
             {
-                playlistItem = NHibernateSession.Get<PlaylistItem>(id);
+                playlistItem = Session.Load<PlaylistItem>(id);
             }
 
             return playlistItem;

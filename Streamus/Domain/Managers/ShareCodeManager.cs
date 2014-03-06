@@ -1,44 +1,50 @@
-﻿using System;
+﻿using log4net;
 using Streamus.Domain.Interfaces;
+using System;
 
 namespace Streamus.Domain.Managers
 {
-    public class ShareCodeManager : AbstractManager
+    public class ShareCodeManager : StreamusManager, IShareCodeManager
     {
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
-
-        private IPlaylistDao PlaylistDao { get; set; }
         private IShareCodeDao ShareCodeDao { get; set; }
 
-        public ShareCodeManager()
+        public ShareCodeManager(ILog logger, IShareCodeDao shareCodeDao)
+            : base(logger)
         {
-            PlaylistDao = DaoFactory.GetPlaylistDao();
-            ShareCodeDao = DaoFactory.GetShareCodeDao();
+            ShareCodeDao = shareCodeDao;
         }
 
-        public ShareCode GetShareCode(ShareableEntityType entityType, Guid entityId)
+        public ShareCode GetByShortIdAndEntityTitle(string shareCodeShortId, string urlFriendlyEntityTitle)
         {
-            //  TODO: Support sharing other entities.
-            if (entityType != ShareableEntityType.Playlist)
-                throw new NotSupportedException("Only Playlist entityType can be shared currently.");
-
             ShareCode shareCode;
 
             try
             {
-                Playlist playlistToCopy = PlaylistDao.Get(entityId);
+                shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
 
-                if (playlistToCopy == null)
-                {
-                    string errorMessage = string.Format("No playlist found with id: {0}", entityId);
-                    throw new ApplicationException(errorMessage);
-                }
+                if (shareCode == null)
+                    throw new ApplicationException("Unable to locate shareCode in database.");
 
-                var shareablePlaylistCopy = new Playlist(playlistToCopy);
-                PlaylistManager.Save(shareablePlaylistCopy);
+                if (shareCode.EntityType != ShareableEntityType.Playlist)
+                    throw new ApplicationException("Expected shareCode to have entityType of Playlist");
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
 
-                shareCode = new ShareCode(shareablePlaylistCopy);
-                Save(shareCode);
+            return shareCode;
+        }
+
+        public ShareCode GetShareCode(IShareableEntity shareableEntity)
+        {
+            ShareCode shareCode;
+
+            try
+            {
+                shareCode = new ShareCode(shareableEntity);
+                DoSave(shareCode);
             }
             catch (Exception exception)
             {

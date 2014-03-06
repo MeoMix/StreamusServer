@@ -1,21 +1,21 @@
 ﻿using NUnit.Framework;
 using Streamus.Controllers;
-using Streamus.Dao;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
 using Streamus.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 
 namespace Streamus.Tests.Controller_Tests
 {
     [TestFixture]
-    public class UserControllerTest : AbstractTest
+    public class UserControllerTest : StreamusTest
     {
-        private static readonly PlaylistItemController PlaylistItemController = new PlaylistItemController();
-        private static readonly UserController UserController = new UserController();
-        private IUserDao UserDao { get; set; }
+        private PlaylistItemController PlaylistItemController;
+        private UserController UserController;
+        private IUserManager UserManager;
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -25,7 +25,9 @@ namespace Streamus.Tests.Controller_Tests
         {
             try
             {
-                UserDao = DaoFactory.GetUserDao();
+                PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
+                UserController = new UserController(Logger, Session, ManagerFactory);
+                UserManager = ManagerFactory.GetUserManager();
             }
             catch (TypeInitializationException exception)
             {
@@ -36,69 +38,66 @@ namespace Streamus.Tests.Controller_Tests
         [Test]
         public void CreateUser_UserDoesNotExist_UserCreated()
         {
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonServiceStackResult result = (JsonServiceStackResult)UserController.Create();
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+            JsonResult result = UserController.Create();
 
-            UserDto createdUserDto = (UserDto)result.Data;
+            var createdUserDto = (UserDto)result.Data;
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            User userFromDatabase = UserDao.Get(createdUserDto.Id);
+            User userFromDatabase = UserManager.Get(createdUserDto.Id);
             Assert.That(userFromDatabase != null);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+        }
+
+        /// <summary>
+        /// Ensure that graceful fallback occurs if the database glitches out and doesn't have a user.
+        /// </summary>
+        [Test]
+        public void GeteUser_UserDoesNotExist_UserCreated()
+        {
+            Guid guid = Guid.NewGuid();
+            JsonResult result = UserController.Get(guid);
+
+            var createdUserDto = (UserDto)result.Data;
+
+            User userFromDatabase = UserManager.Get(createdUserDto.Id);
+            Assert.That(userFromDatabase != null);
+            Assert.AreNotEqual(guid, userFromDatabase.Id);
         }
 
         //  TODO: Test the response time of this and make sure it isn't a long running query for big playlists.
         [Test]
         public void GetUserWithBulkPlaylistItems_UserCreatedWithLotsOfItems_UserHasOnePlaylist()
         {
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonServiceStackResult result = (JsonServiceStackResult)UserController.Create();
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+            JsonResult result = UserController.Create();
 
-            UserDto createdUserDto = (UserDto)result.Data;
+            var createdUserDto = (UserDto)result.Data;
 
             const int numItemsToCreate = 2000;
 
             Guid playlistId = createdUserDto.Playlists.First().Id;
             List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, playlistId);
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistItemController.CreateMultiple(playlistItemDtos);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-
-            User userFromDatabase = UserDao.Get(createdUserDto.Id);
+            User userFromDatabase = UserManager.Get(createdUserDto.Id);
 
             Assert.That(userFromDatabase.Playlists.Count == createdUserDto.Playlists.Count);
             Assert.That(userFromDatabase.Playlists.First().Items.Count() == numItemsToCreate);
-
-            //  Different sessions -- first should be de-synced from the second.
-            Assert.That(userFromDatabase.Playlists.First().Items.Count() != createdUserDto.Playlists.First().Items.Count());
         }
-        
+
         //  TODO: GooglePlusID should be immutable.
         [Test]
         public void UpdateUserGooglePlusId_NoGooglePlusIdSet_GooglePlusIdSetSuccessfully()
         {
             const string googlePlusId = "109695597859594825120";
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            JsonServiceStackResult result = (JsonServiceStackResult)UserController.Create();
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+            JsonResult result = UserController.Create();
 
-            UserDto createdUserDto = (UserDto)result.Data;
+            var createdUserDto = (UserDto)result.Data;
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             UserController.UpdateGooglePlusId(createdUserDto.Id, googlePlusId);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-            User userFromDatabase = UserDao.Get(createdUserDto.Id);
+            User userFromDatabase = UserManager.Get(createdUserDto.Id);
 
             Assert.That(userFromDatabase.Playlists.Count == createdUserDto.Playlists.Count);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
         }
     }
 }

@@ -1,0 +1,132 @@
+﻿using System;
+using NHibernate;
+using NUnit.Framework;
+using Streamus.Dao;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
+
+namespace Streamus.Tests.Manager_Tests
+{
+    [TestFixture]
+    public class PlaylistManagerTest : StreamusTest
+    {
+        private IPlaylistManager PlaylistManager;
+
+        private User User { get; set; }
+        private Video Video { get; set; }
+
+        /// <summary>
+        ///     This code is only ran once for the given TestFixture.
+        /// </summary>
+        [TestFixtureSetUp]
+        public new void TestFixtureSetUp()
+        {
+            IVideoManager videoManager;
+
+            try
+            {
+                PlaylistManager = ManagerFactory.GetPlaylistManager();
+                videoManager = ManagerFactory.GetVideoManager();
+            }
+            catch (TypeInitializationException exception)
+            {
+                throw exception.InnerException;
+            }
+
+            User = Helpers.CreateUser();
+<<<<<<< HEAD
+
+            Video = Helpers.CreateUnsavedVideoWithId();
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            new VideoManager().Save(Video);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+=======
+            Video = Helpers.CreateUnsavedVideoWithId();
+
+            videoManager.Save(Video);
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+        }
+
+        [Test]
+        public void Updates()
+        {
+            Playlist playlist = User.CreateAndAddPlaylist();
+<<<<<<< HEAD
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+=======
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+            PlaylistManager.Save(playlist);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+<<<<<<< HEAD
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            PlaylistManager.UpdateTitle(playlist.Id, "Existing Playlist 001");
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            Playlist playlistFromDatabase = PlaylistDao.Get(playlist.Id);
+            //  Test that the product was successfully inserted
+            Assert.IsNotNull(playlistFromDatabase);
+            //  Sessions should be isolated -- before and after should be different here.
+            Assert.AreNotEqual(playlist.Title, playlistFromDatabase.Title);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+=======
+            const string newTitle = "Existing Playlist 001";
+            PlaylistManager.UpdateTitle(playlist.Id, newTitle);
+            Assert.AreEqual(playlist.Title, newTitle);
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+        }
+
+        /// <summary>
+        ///     Verifies that a Playlist can be deleted properly.
+        /// </summary>
+        [Test]
+        public void DeletePlaylist()
+        {
+            //  Create a new Playlist and write it to the database.
+            string title = string.Format("New Playlist {0:D4}", User.Playlists.Count);
+            var playlist = new Playlist(title);
+
+            User.AddPlaylist(playlist);
+
+<<<<<<< HEAD
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+=======
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+            PlaylistManager.Save(playlist);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            //  Now delete the created Playlist and ensure it is removed.
+            PlaylistManager.Delete(playlist.Id);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+<<<<<<< HEAD
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            Playlist deletedPlaylist = PlaylistDao.Get(playlist.Id);
+
+            bool objectNotFoundExceptionEncountered = false;
+=======
+
+            bool exceptionEncountered = false;
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+            try
+            {
+                Playlist deletedPlaylist = PlaylistManager.Get(playlist.Id);
+            }
+            catch (ObjectNotFoundException)
+            {
+                exceptionEncountered = true;
+            }
+
+<<<<<<< HEAD
+            Assert.IsTrue(objectNotFoundExceptionEncountered);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+=======
+            Assert.IsTrue(exceptionEncountered);
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+        }
+    }
+}

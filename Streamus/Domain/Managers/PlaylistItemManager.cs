@@ -1,4 +1,4 @@
-﻿using Streamus.Dao;
+﻿using log4net;
 using Streamus.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -6,25 +6,41 @@ using System.Linq;
 
 namespace Streamus.Domain.Managers
 {
-    public class PlaylistItemManager : AbstractManager
+    public class PlaylistItemManager : StreamusManager, IPlaylistItemManager
     {
         private IPlaylistItemDao PlaylistItemDao { get; set; }
         private IVideoDao VideoDao { get; set; }
 
-        public PlaylistItemManager()
+        public PlaylistItemManager(ILog logger, IPlaylistItemDao playlistItemDao, IVideoDao videoDao)
+            : base(logger)
         {
-            PlaylistItemDao = DaoFactory.GetPlaylistItemDao();
-            VideoDao = DaoFactory.GetVideoDao();
+            PlaylistItemDao = playlistItemDao;
+            VideoDao = videoDao;
+        }
+
+        public PlaylistItem Get(Guid id)
+        {
+            PlaylistItem playlistItem;
+
+            try
+            {
+                playlistItem = PlaylistItemDao.Get(id);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return playlistItem;
         }
 
         public void Delete(Guid itemId)
         {
             try
             {
-                PlaylistItem playlistItem = PlaylistItemDao.Get(itemId);
-
-                //  Be sure to remove from Playlist first so that cascade doesn't re-save.
-                playlistItem.Playlist.RemoveItem(playlistItem);
+                PlaylistItem playlistItem = Get(itemId);
+                playlistItem.Playlist.Items.Remove(playlistItem);
                 PlaylistItemDao.Delete(playlistItem);
             }
             catch (Exception exception)
@@ -39,16 +55,6 @@ namespace Streamus.Domain.Managers
             try
             {
                 var playlistItemList = playlistItems.ToList();
-
-                if (playlistItemList.Count > 1000)
-                {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistItemList.Count / 10);
-                }
-                else
-                {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistItemList.Count / 5);
-                }
-
                 playlistItemList.ForEach(DoUpdate);
             }
             catch (Exception exception)
@@ -89,16 +95,6 @@ namespace Streamus.Domain.Managers
             try
             {
                 var playlistItemList = playlistItems.ToList();
-
-                if (playlistItemList.Count > 1000)
-                {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistItemList.Count / 10);
-                }
-                else
-                {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistItemList.Count / 5);
-                }
-
                 playlistItemList.ForEach(DoSave);
             }
             catch (Exception exception)

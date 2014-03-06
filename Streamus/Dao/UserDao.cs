@@ -8,24 +8,19 @@ namespace Streamus.Dao
 {
     public class UserDao : AbstractNHibernateDao<User>, IUserDao
     {
+        public UserDao(ISession session)
+            : base(session)
+        {
+            
+        }
+
         public User Get(Guid id)
         {
             User user = null;
 
             if (id != default(Guid))
             {
-                user = NHibernateSession.Get<User>(id);
-
-                //  If failed to find by ID -- assume an error on my DB's part and gracefully fall back to a new user account since it is missing.
-                if (user == null)
-                {
-                    user = new User
-                        {
-                            Id = id
-                        };
-                    Save(user);
-                }
-
+                user = Session.Get<User>(id);
             }
 
             return user;
@@ -37,7 +32,7 @@ namespace Streamus.Dao
 
             if (googlePlusId != string.Empty)
             {
-                ICriteria criteria = NHibernateSession
+                ICriteria criteria = Session
                     .CreateCriteria(typeof (User), "User")
                     .Add(Restrictions.Eq("User.GooglePlusId", googlePlusId));
 
@@ -50,7 +45,7 @@ namespace Streamus.Dao
         //  http://stackoverflow.com/questions/3390561/nhibernate-update-single-field-without-loading-entity
         public void UpdateGooglePlusId(Guid id, string googlePlusId)
         {
-            NHibernateSession.CreateQuery("update User set GooglePlusId = :googlePlusId where id = :id")
+            Session.CreateQuery("update User set GooglePlusId = :googlePlusId where id = :id")
                .SetParameter("googlePlusId", googlePlusId)
                .SetParameter("id", id)
                .ExecuteUpdate();

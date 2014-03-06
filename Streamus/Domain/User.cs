@@ -1,19 +1,17 @@
-﻿using System;
+﻿using FluentValidation;
+using Streamus.Domain.Validators;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
-using FluentValidation;
-using Streamus.Domain.Validators;
-using Streamus.Dto;
 
 namespace Streamus.Domain
 {
     public class User : AbstractDomainEntity<Guid>
     {
-        public string Name { get; set; }
-        public string GooglePlusId { get; set; }
+        public virtual string Name { get; set; }
+        public virtual string GooglePlusId { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
-        public ICollection<Playlist> Playlists { get; set; }
+        public virtual ICollection<Playlist> Playlists { get; set; }
 
         public User()
         {
@@ -25,13 +23,7 @@ namespace Streamus.Domain
             CreateAndAddPlaylist();
         }
 
-        public static User Create(UserDto userDto)
-        {
-            User user = Mapper.Map<UserDto, User>(userDto);
-            return user;
-        }
-
-        public Playlist CreateAndAddPlaylist()
+        public virtual Playlist CreateAndAddPlaylist()
         {
             string title = string.Format("Playlist {0:D4}", Playlists.Count);
             var playlist = new Playlist(title)
@@ -43,12 +35,12 @@ namespace Streamus.Domain
             return playlist;
         }
 
-        public void RemovePlaylist(Playlist playlist)
+        public virtual void RemovePlaylist(Playlist playlist)
         {
             Playlists.Remove(playlist);
         }
 
-        public void ValidateAndThrow()
+        public virtual void ValidateAndThrow()
         {
             var validator = new UserValidator();
             validator.ValidateAndThrow(this);

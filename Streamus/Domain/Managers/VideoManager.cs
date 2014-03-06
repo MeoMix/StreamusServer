@@ -1,18 +1,53 @@
-﻿using System;
+﻿using log4net;
+using Streamus.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Streamus.Dao;
-using Streamus.Domain.Interfaces;
 
 namespace Streamus.Domain.Managers
 {
-    public class VideoManager : AbstractManager
+    public class VideoManager : StreamusManager, IVideoManager
     {
         private IVideoDao VideoDao { get; set; }
 
-        public VideoManager()
+        public VideoManager(ILog logger, IVideoDao videoDao)
+            : base(logger) 
         {
-            VideoDao = DaoFactory.GetVideoDao();
+            VideoDao = videoDao;
+        }
+
+        public Video Get(string id)
+        {
+            Video video;
+
+            try
+            {
+                video = VideoDao.Get(id);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return video;
+        }
+
+        public IList<Video> Get(List<string> ids)
+        {
+            IList<Video> videos;
+
+            try
+            {
+                videos = VideoDao.Get(ids);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return videos;
         }
 
         public void Save(Video video)
@@ -33,16 +68,6 @@ namespace Streamus.Domain.Managers
             try
             {
                 List<Video> videosList = videos.ToList();
-
-                if (videosList.Count > 1000)
-                {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(videosList.Count / 10);
-                }
-                else
-                {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(videosList.Count / 5);
-                }
-
                 videosList.ForEach(DoSave);
             }
             catch (Exception exception)
@@ -52,7 +77,7 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        public void DoSave(Video video)
+        private void DoSave(Video video)
         {
             video.ValidateAndThrow();
 

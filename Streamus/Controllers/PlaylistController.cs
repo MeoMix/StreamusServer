@@ -1,79 +1,91 @@
-﻿using System;
-using System.Reflection;
-using System.Web.Mvc;
-using Streamus.Dao;
+﻿using log4net;
+using NHibernate;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using Streamus.Dto;
-using log4net;
+using System;
+using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    [SessionManagement]
-    public class PlaylistController : Controller
+    public class PlaylistController : StreamusController
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static readonly PlaylistManager PlaylistManager = new PlaylistManager();
+        private readonly IPlaylistManager PlaylistManager;
+        private readonly IUserManager UserManager;
+        private readonly IShareCodeManager ShareCodeManager;
 
-        private readonly IPlaylistDao PlaylistDao;
-        private readonly IUserDao UserDao;
-        private readonly IShareCodeDao ShareCodeDao;
-
-        public PlaylistController()
+        public PlaylistController(ILog logger, ISession session, IManagerFactory managerFactory)
+            : base(logger, session)
         {
-            try
-            {
-                PlaylistDao = new PlaylistDao();
-                UserDao = new UserDao();
-                ShareCodeDao = new ShareCodeDao();
-            }
-            catch (TypeInitializationException exception)
-            {
-                Logger.Error(exception.InnerException);
-                throw exception.InnerException;
-            }
+            PlaylistManager = managerFactory.GetPlaylistManager();
+            UserManager = managerFactory.GetUserManager();
+            ShareCodeManager = managerFactory.GetShareCodeManager();
         }
 
         [HttpPost]
-        public ActionResult Create(PlaylistDto playlistDto)
+        public JsonResult Create(PlaylistDto playlistDto)
         {
-            Playlist playlist = Playlist.Create(playlistDto);
-            playlist.User.AddPlaylist(playlist);
+            PlaylistDto savedPlaylistDto;
 
-            //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
-            playlist.ValidateAndThrow();
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                Playlist playlist = Playlist.Create(playlistDto, UserManager, PlaylistManager);
+                playlist.User.AddPlaylist(playlist);
 
-            PlaylistManager.Save(playlist);
+                //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
+                playlist.ValidateAndThrow();
 
-            PlaylistDto savedPlaylistDto = PlaylistDto.Create(playlist);
+                PlaylistManager.Save(playlist);
 
-            return new JsonServiceStackResult(savedPlaylistDto);
+                savedPlaylistDto = PlaylistDto.Create(playlist);
+
+                transaction.Commit();
+            }
+
+            return Json(savedPlaylistDto);
         }
 
         [HttpPut]
-        public ActionResult Update(PlaylistDto playlistDto)
+        public JsonResult Update(PlaylistDto playlistDto)
         {
-            Playlist playlist = Playlist.Create(playlistDto);
-            PlaylistManager.Update(playlist);
+            PlaylistDto updatedPlaylistDto;
 
-            PlaylistDto updatedPlaylistDto = PlaylistDto.Create(playlist);
-            return new JsonServiceStackResult(updatedPlaylistDto);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                Playlist playlist = Playlist.Create(playlistDto, UserManager, PlaylistManager);
+                PlaylistManager.Update(playlist);
+
+                updatedPlaylistDto = PlaylistDto.Create(playlist);
+
+                transaction.Commit();
+            }
+
+            return Json(updatedPlaylistDto);
         }
 
         [HttpGet]
-        public ActionResult Get(Guid id)
+        public JsonResult Get(Guid id)
         {
-            Playlist playlist = PlaylistDao.Get(id);
-            PlaylistDto playlistDto = PlaylistDto.Create(playlist);
+            PlaylistDto playlistDto;   
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                Playlist playlist = PlaylistManager.Get(id);
+                playlistDto = PlaylistDto.Create(playlist);
 
-            return new JsonServiceStackResult(playlistDto);
+                transaction.Commit();
+            }
+
+            return Json(playlistDto);
         }
 
         [HttpDelete]
         public JsonResult Delete(Guid id)
-        {
-            PlaylistManager.Delete(id);
+        {            
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                PlaylistManager.Delete(id);
+                transaction.Commit();
+            }
 
             return Json(new
                 {
@@ -84,7 +96,12 @@ namespace Streamus.Controllers
         [HttpPost]
         public JsonResult UpdateTitle(Guid playlistId, string title)
         {
-            PlaylistManager.UpdateTitle(playlistId, title);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                PlaylistManager.UpdateTitle(playlistId, title);
+
+                transaction.Commit();
+            }
 
             return Json(new
                 {
@@ -92,6 +109,7 @@ namespace Streamus.Controllers
                 });
         }
 
+        //  TODO: Maybe this should be ShareCodeController's deal and not PlaylistController?
         /// <summary>
         ///     Retrieves a ShareCode relating to a Playlist, create a copy of the Playlist referenced by the ShareCode,
         ///     and return the copied Playlist.
@@ -99,30 +117,28 @@ namespace Streamus.Controllers
         [HttpGet]
         public JsonResult CreateCopyByShareCode(string shareCodeShortId, string urlFriendlyEntityTitle, Guid userId)
         {
-            ShareCode shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
+            PlaylistDto playlistDto;
 
-            if (shareCode == null)
+            using (ITransaction transaction = Session.BeginTransaction())
             {
-                throw new ApplicationException("Unable to locate shareCode in database.");
+                ShareCode shareCode = ShareCodeManager.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
+
+                //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
+                Playlist playlistToCopy = PlaylistManager.Get(shareCode.EntityId);
+
+                User user = UserManager.Get(userId);
+
+                var playlistCopy = new Playlist(playlistToCopy);
+                user.AddPlaylist(playlistCopy);
+
+                PlaylistManager.Save(playlistCopy);
+
+                playlistDto = PlaylistDto.Create(playlistCopy);
+
+                transaction.Commit();
             }
 
-            if (shareCode.EntityType != ShareableEntityType.Playlist)
-            {
-                throw new ApplicationException("Expected shareCode to have entityType of Playlist");
-            }
-
-            //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
-            Playlist playlistToCopy = PlaylistDao.Get(shareCode.EntityId);
-
-            User user = UserDao.Get(userId);
-
-            var playlistCopy = new Playlist(playlistToCopy);
-            user.AddPlaylist(playlistCopy);
-
-            PlaylistManager.Save(playlistCopy);
-
-            PlaylistDto playlistDto = PlaylistDto.Create(playlistCopy);
-            return new JsonServiceStackResult(playlistDto);
+            return Json(playlistDto);
         }
     }
 }

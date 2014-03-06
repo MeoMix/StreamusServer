@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
+using Streamus.Domain.Interfaces;
 using Streamus.Domain.Validators;
 using Streamus.Dto;
 using System;
@@ -35,17 +35,23 @@ namespace Streamus.Domain
             Copy(playlist);
         }
 
-        public static Playlist Create(PlaylistDto playlistDto)
+        public static Playlist Create(PlaylistDto playlistDto, IUserManager userManager, IPlaylistManager playlistManager)
         {
-            Playlist playlist = Mapper.Map<PlaylistDto, Playlist>(playlistDto);
+            Playlist playlist = new Playlist
+                {
+                    Id = playlistDto.Id,
+                    Items = PlaylistItem.Create(playlistDto.Items, playlistManager),
+                    Sequence = playlistDto.Sequence,
+                    Title = playlistDto.Title,
+                    User = userManager.Get(playlistDto.UserId)
+                };
 
-            //  TODO: I could probably leverage backbone's CID property to have the items know of their playlist.
+            //  TODO: This seems unnecessary...
+            //  TODO: I could probably leverage backbone's CID property to have the items know of their playlist. Or maybe I should just enforce adding client-side before saving?
             //  If an unsaved playlist comes from the client with items already in it, the items will not know their playlist's ID.
             //  So, re-map to the playlist as appropriate.
-
             List<PlaylistItem> improperlyAddedItems = playlist.Items.Where(i => i.Playlist == null).ToList();
             improperlyAddedItems.ForEach(i => playlist.Items.Remove(i));
-
             playlist.AddItems(improperlyAddedItems);
 
             return playlist;

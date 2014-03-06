@@ -1,12 +1,8 @@
-﻿using Autofac;
-using AutoMapper;
+﻿using AutoMapper;
 using Newtonsoft.Json;
-using NHibernate;
-using NHibernate.Cfg;
 using Streamus.App_Start;
 using Streamus.Dao;
 using Streamus.Domain;
-using Streamus.Domain.Interfaces;
 using Streamus.Dto;
 using System.Net.Http.Formatting;
 using System.Web;
@@ -31,53 +27,34 @@ namespace Streamus
 
         public static void InitializeApplication()
         {
-            //HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
+            //NHibernateProfiler.Initialize();
 
             JsonMediaTypeFormatter json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
             json.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
 
-            //  Register your new model binder
+            //  Don't serialize JSON empty strings into null -- instead turn them into empty strings because this is more intuitive and I don't want to have to do n
             ModelBinders.Binders.DefaultBinder = new JsonEmptyStringNotNullModelBinder();
 
-            AutofacRegistrations.RegisterDaoFactory();
+            AutofacRegistrations.RegisterAndSetResolver();
 
             CreateAutoMapperMaps();
-
-            //  TODO: It would be nice to use ServiceStack JSON deserializing as it is faster than the default, but I can't get it
-            //  to properly deserialize child entities in the JSON object.
-            //Remove and JsonValueProviderFactory and add JsonServiceStackValueProviderFactory
-            //ValueProviderFactories.Factories.Remove(ValueProviderFactories.Factories.OfType<JsonValueProviderFactory>().FirstOrDefault());
-            //ValueProviderFactories.Factories.Add(new JsonServiceStackValueProviderFactory());
         }
 
         /// <summary>
         ///     Initialize the AutoMapper mappings for the solution.
+        ///     Do not reverse the mappings between domain and DTO: http://lostechies.com/jimmybogard/2009/09/18/the-case-for-two-way-mapping-in-automapper/
         ///     http://automapper.codeplex.com/
         /// </summary>
         public static void CreateAutoMapperMaps()
         {
-            AutofacRegistrations.RegisterDaoFactory();
-            ILifetimeScope scope = AutofacRegistrations.Container.BeginLifetimeScope();
-            var daoFactory = scope.Resolve<IDaoFactory>();
-
-            Mapper.CreateMap<Error, ErrorDto>()
-                  .ReverseMap();
-
-            IPlaylistDao playlistDao = daoFactory.GetPlaylistDao();
-            IUserDao userDao = daoFactory.GetUserDao();
+            Mapper.CreateMap<Error, ErrorDto>();
 
             Mapper.CreateMap<Playlist, PlaylistDto>();
-            Mapper.CreateMap<PlaylistDto, Playlist>()
-                .ForMember(playlist => playlist.User, opt => opt.MapFrom(playlistDto => userDao.Get(playlistDto.UserId)));
-
             Mapper.CreateMap<PlaylistItem, PlaylistItemDto>();
-            Mapper.CreateMap<PlaylistItemDto, PlaylistItem>()
-                .ForMember(playlistItem => playlistItem.Playlist, opt => opt.MapFrom(playlistItemDto => playlistDao.Get(playlistItemDto.PlaylistId)));
+            Mapper.CreateMap<ShareCode, ShareCodeDto>();
 
-            Mapper.CreateMap<ShareCode, ShareCodeDto>().ReverseMap();
-
-            Mapper.CreateMap<User, UserDto>().ReverseMap();
-            Mapper.CreateMap<Video, VideoDto>().ReverseMap();
+            Mapper.CreateMap<User, UserDto>();
+            Mapper.CreateMap<Video, VideoDto>();
 
             Mapper.AssertConfigurationIsValid();
         }
@@ -98,23 +75,4 @@ namespace Streamus
             return base.BindModel(controllerContext, bindingContext);
         }
     }
-
-    //public sealed class JsonServiceStackValueProviderFactory : ValueProviderFactory
-    //{
-    //    public override IValueProvider GetValueProvider(ControllerContext controllerContext)
-    //    {
-    //        if (controllerContext == null)
-    //            throw new ArgumentNullException("controllerContext");
-
-    //        if (!controllerContext.HttpContext.Request.ContentType.StartsWith("application/json", StringComparison.OrdinalIgnoreCase))
-    //            return null;
-
-    //        var streamReader = new StreamReader(controllerContext.HttpContext.Request.InputStream);
-    //        string body = streamReader.ReadToEnd();
-
-              //  Neither ServiceStack nor JsonDotNet work:
-    //        return string.IsNullOrEmpty(body) ? null : new DictionaryValueProvider<object>(JsonConvert.DeserializeObject<ExpandoObject>(body, new ExpandoObjectConverter()), CultureInfo.CurrentCulture);
-    //        return new DictionaryValueProvider<object>(ServiceStack.Text.JsonSerializer.DeserializeFromString<ExpandoObject>(body), CultureInfo.CurrentCulture);
-    //    }
-    //}
 }

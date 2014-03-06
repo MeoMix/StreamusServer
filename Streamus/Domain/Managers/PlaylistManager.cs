@@ -1,20 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Streamus.Dao;
+﻿using log4net;
 using Streamus.Domain.Interfaces;
+using System;
 
 namespace Streamus.Domain.Managers
 {
-    public class PlaylistManager : AbstractManager
+    public class PlaylistManager : StreamusManager, IPlaylistManager
     {
         private IPlaylistDao PlaylistDao { get; set; }
         private IVideoDao VideoDao { get; set; }
 
-        public PlaylistManager()
+        public PlaylistManager(ILog logger, IPlaylistDao playlistDao, IVideoDao videoDao)
+            : base(logger)
         {
-            PlaylistDao = DaoFactory.GetPlaylistDao();
-            VideoDao = DaoFactory.GetVideoDao();
+            PlaylistDao = playlistDao;
+            VideoDao = videoDao;
+        }
+
+        public Playlist Get(Guid id)
+        {
+            Playlist playlist;
+
+            try
+            {
+                playlist = PlaylistDao.Get(id);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return playlist;
         }
 
         public void Save(Playlist playlist)
@@ -30,56 +46,13 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        public void Save(IEnumerable<Playlist> playlists)
-        {
-            try
-            {
-                List<Playlist> playlistsList = playlists.ToList();
-
-                if (playlistsList.Count > 1000)
-                {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistsList.Count / 10);
-                }
-                else
-                {
-                    NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().SetBatchSize(playlistsList.Count / 5);
-                }
-
-                playlistsList.ForEach(DoSave);
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     This is the work for saving a PlaylistItem without the Transaction wrapper.
-        /// </summary>
-        private void DoSave(Playlist playlist)
-        {
-            foreach (PlaylistItem playlistItem in playlist.Items)
-            {
-                //  This is a bit of a hack, but NHibernate pays attention to the "dirtyness" of immutable entities.
-                //  As such, if two PlaylistItems reference the same Video object -- NonUniqueObjectException is thrown even though no changes
-                //  can be persisted to the database.
-                playlistItem.Video = VideoDao.Merge(playlistItem.Video);
-
-                playlistItem.ValidateAndThrow();
-                playlistItem.Video.ValidateAndThrow();
-            }
-
-            playlist.ValidateAndThrow();
-            PlaylistDao.Save(playlist);
-        }
-
         public void Update(Playlist playlist)
         {
             try
             {
                 playlist.ValidateAndThrow();
 
+                //  TODO: Is this necessary still? Seems odd to me.
                 Playlist knownPlaylist = PlaylistDao.Get(playlist.Id);
 
                 if (knownPlaylist == null)
@@ -101,9 +74,9 @@ namespace Streamus.Domain.Managers
         public void Delete(Guid id)
         {
             try
-            {
+            {                
                 Playlist playlist = PlaylistDao.Get(id);
-                playlist.User.RemovePlaylist(playlist);
+                playlist.User.Playlists.Remove(playlist);
                 PlaylistDao.Delete(playlist);
             }
             catch (Exception exception)
@@ -117,9 +90,10 @@ namespace Streamus.Domain.Managers
         {
             try
             {
-                Playlist playlist = PlaylistDao.Get(playlistId);
+                Playlist playlist = Get(playlistId);
                 playlist.Title = title;
-                PlaylistDao.Update(playlist);
+
+                Update(playlist);
             }
             catch (Exception exception)
             {
@@ -128,22 +102,55 @@ namespace Streamus.Domain.Managers
             }
         }
 
-        //public void UpdateFirstItem(Guid playlistId, Guid firstItemId)
-        //{
-        //    try
-        //    {
-        //        NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().BeginTransaction();
-        //        Playlist playlist = PlaylistDao.Get(playlistId);
-        //        playlist.FirstItem = PlaylistItemDao.Get(firstItemId);
-        //        PlaylistDao.Update(playlist);
-        //        NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().CommitTransaction();
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        Logger.Error(exception);
-        //        NHibernateSessionManager.Instance.SessionFactory.GetCurrentSession().RollbackTransaction();
-        //        throw;
-        //    }
-        //}
+        /// <summary>
+        /// Copy a playlist. Useful for sharing.
+        /// </summary>
+        /// <param name="id">The playlist ID to copy</param>
+        /// <returns>A new playlist with a new ID which has been saved.</returns>
+        public Playlist CopyAndSave(Guid id)
+        {
+            Playlist copiedPlaylist;
+
+            try
+            {
+                Playlist playlistToCopy = PlaylistDao.Get(id);
+
+                if (playlistToCopy == null)
+                {
+                    string errorMessage = string.Format("No playlist found with id: {0}", id);
+                    throw new ApplicationException(errorMessage);
+                }
+
+                copiedPlaylist = new Playlist(playlistToCopy);
+                DoSave(copiedPlaylist);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return copiedPlaylist;
+        }
+
+        /// <summary>
+        ///     This is the work for saving a PlaylistItem without the Transaction wrapper.
+        /// </summary>
+        private void DoSave(Playlist playlist)
+        {
+            foreach (PlaylistItem playlistItem in playlist.Items)
+            {
+                //  This is a bit of a hack, but NHibernate pays attention to the "dirtyness" of immutable entities.
+                //  As such, if two PlaylistItems reference the same Video object -- NonUniqueObjectException is thrown even though no changes
+                //  can be persisted to the database.
+                playlistItem.Video = VideoDao.Merge(playlistItem.Video);
+
+                playlistItem.ValidateAndThrow();
+                playlistItem.Video.ValidateAndThrow();
+            }
+
+            playlist.ValidateAndThrow();
+            PlaylistDao.Save(playlist);
+        }
     }
 }

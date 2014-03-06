@@ -1,26 +1,31 @@
-﻿using System;
+﻿using Streamus.Domain;
+using Streamus.Domain.Interfaces;
+using Streamus.Dto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Streamus.Dao;
-using Streamus.Domain;
-using Streamus.Domain.Managers;
-using Streamus.Dto;
 
 namespace Streamus.Tests
 {
     /// <summary>
     ///     Stores common methods used by tests. Just useful for keeping things DRY between test cases.
     /// </summary>
-    public static class Helpers
+    public class Helpers
     {
-        private static readonly UserManager UserManager = new UserManager();
-        private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
+        private readonly IUserManager UserManager;
+        private readonly IPlaylistItemManager PlaylistItemManager;
+
+        public Helpers(IManagerFactory managerFactory)
+        {
+            UserManager = managerFactory.GetUserManager();
+            PlaylistItemManager = managerFactory.GetPlaylistItemManager();
+        }
 
         /// <summary>
         ///     Creates a new Video and PlaylistItem, puts item in the database and then returns
         ///     the item. Just a nice utility method to keep things DRY.
         /// </summary>
-        public static PlaylistItem CreateItemInPlaylist(Playlist playlist)
+        public PlaylistItem CreateItemInPlaylist(Playlist playlist)
         {
             Video videoNotInDatabase = CreateUnsavedVideoWithId();
 
@@ -30,9 +35,7 @@ namespace Streamus.Tests
 
             playlist.AddItem(playlistItem);
 
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
             PlaylistItemManager.Save(playlistItem);
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
 
             return playlistItem;
         }
@@ -40,7 +43,7 @@ namespace Streamus.Tests
         /// <summary>
         ///     Creates a new Video with a random Id, or a given Id if specified, saves it to the database and returns it.
         /// </summary>
-        public static Video CreateUnsavedVideoWithId(string idOverride = "", string titleOverride = "")
+        public Video CreateUnsavedVideoWithId(string idOverride = "", string titleOverride = "")
         {
             //  Create a random video ID to ensure the Video doesn't exist in the database currently.
             string randomVideoId = idOverride == string.Empty ? Guid.NewGuid().ToString().Substring(0, 11) : idOverride;
@@ -50,14 +53,9 @@ namespace Streamus.Tests
             return video;
         }
 
-        public static User CreateUser()
+        public User CreateUser()
         {
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-
             User user = UserManager.CreateUser();
-
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
-
             return user;
         }
 
@@ -65,16 +63,12 @@ namespace Streamus.Tests
         ///     Generate a PlaylistDto which has the User as its parent.
         /// </summary>
         /// <returns></returns>
-        public static PlaylistDto CreatePlaylistDto(Guid userIdOverride)
+        public PlaylistDto CreatePlaylistDto(Guid userIdOverride)
         {
-            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
-
             var playlistDto = new PlaylistDto
-                {
-                    UserId = userIdOverride
-                };
-
-            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+            {
+                UserId = userIdOverride
+            };
 
             return playlistDto;
         }
@@ -83,7 +77,7 @@ namespace Streamus.Tests
         ///     Create a new Playlist, save it to the DB, then generate a PlaylistItemDto
         ///     which has the Playlist as its parent.
         /// </summary>
-        public static PlaylistItemDto CreatePlaylistItemDto()
+        public PlaylistItemDto CreatePlaylistItemDto()
         {
             User user = CreateUser();
 
@@ -93,10 +87,10 @@ namespace Streamus.Tests
             VideoDto videoDto = VideoDto.Create(video);
 
             var playlistItemDto = new PlaylistItemDto
-                {
-                    PlaylistId = playlistId,
-                    Video = videoDto
-                };
+            {
+                PlaylistId = playlistId,
+                Video = videoDto
+            };
 
             return playlistItemDto;
         }
@@ -105,7 +99,7 @@ namespace Streamus.Tests
         ///     Create a new Playlist, save it to the DB, then generate N PlaylistItemDtos
         ///     which have the Playlist as their parent.
         /// </summary>
-        public static List<PlaylistItemDto> CreatePlaylistItemsDto(int itemsToCreate, Guid playlistId = default(Guid))
+        public List<PlaylistItemDto> CreatePlaylistItemsDto(int itemsToCreate, Guid playlistId = default(Guid))
         {
             if (playlistId == default(Guid))
             {

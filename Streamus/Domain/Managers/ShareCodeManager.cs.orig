@@ -1,0 +1,93 @@
+<<<<<<< HEAD
+﻿using System;
+=======
+﻿using log4net;
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+using Streamus.Domain.Interfaces;
+using System;
+
+namespace Streamus.Domain.Managers
+{
+    public class ShareCodeManager : StreamusManager, IShareCodeManager
+    {
+        private IShareCodeDao ShareCodeDao { get; set; }
+
+        public ShareCodeManager(ILog logger, IShareCodeDao shareCodeDao)
+            : base(logger)
+        {
+            ShareCodeDao = shareCodeDao;
+        }
+
+        public ShareCode GetByShortIdAndEntityTitle(string shareCodeShortId, string urlFriendlyEntityTitle)
+        {
+            ShareCode shareCode;
+
+            try
+            {
+<<<<<<< HEAD
+                Playlist playlistToCopy = PlaylistDao.Get(entityId);
+=======
+                shareCode = ShareCodeDao.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
+
+                if (shareCode == null)
+                    throw new ApplicationException("Unable to locate shareCode in database.");
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+
+                if (shareCode.EntityType != ShareableEntityType.Playlist)
+                    throw new ApplicationException("Expected shareCode to have entityType of Playlist");
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return shareCode;
+        }
+
+<<<<<<< HEAD
+                shareCode = new ShareCode(shareablePlaylistCopy);
+                Save(shareCode);
+=======
+        public ShareCode GetShareCode(IShareableEntity shareableEntity)
+        {
+            ShareCode shareCode;
+
+            try
+            {
+                shareCode = new ShareCode(shareableEntity);
+                DoSave(shareCode);
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return shareCode;
+        }
+
+        public void Save(ShareCode shareCode)
+        {
+            try
+            {
+                DoSave(shareCode);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     This is the work for saving a ShareCode without the Transaction wrapper.
+        /// </summary>
+        private void DoSave(ShareCode shareCode)
+        {
+            shareCode.ValidateAndThrow();
+            ShareCodeDao.Save(shareCode);
+        }
+    }
+}

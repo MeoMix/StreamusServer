@@ -1,43 +1,42 @@
 ﻿using log4net;
-using Streamus.Dao;
+using NHibernate;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using Streamus.Dto;
 using System;
-using System.Reflection;
 using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    [SessionManagement]
-    public class ShareCodeController : Controller
+    public class ShareCodeController : StreamusController
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static readonly ShareCodeManager ShareCodeManager = new ShareCodeManager();
+        private readonly IShareCodeManager ShareCodeManager;
+        private readonly IPlaylistManager PlaylistManager;
 
-        private readonly IShareCodeDao ShareCodeDao;
-
-        public ShareCodeController()
+        public ShareCodeController(ILog logger, ISession session, IManagerFactory managerFactory)
+            : base(logger, session)
         {
-            try
-            {
-                ShareCodeDao = new ShareCodeDao();
-            }
-            catch (TypeInitializationException exception)
-            {
-                Logger.Error(exception.InnerException);
-                throw exception.InnerException;
-            }
+            ShareCodeManager = managerFactory.GetShareCodeManager();
+            PlaylistManager = managerFactory.GetPlaylistManager();
         }
 
         [HttpGet]
         public JsonResult GetShareCode(ShareableEntityType entityType, Guid entityId)
         {
-            ShareCode shareCode = ShareCodeManager.GetShareCode(entityType, entityId);
-            ShareCodeDto shareCodeDto = ShareCodeDto.Create(shareCode);
+            if (entityType != ShareableEntityType.Playlist)
+                throw new NotSupportedException("Only Playlist entityType can be shared currently.");
 
-            return new JsonServiceStackResult(shareCodeDto);
+            ShareCodeDto shareCodeDto;
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                Playlist playlist = PlaylistManager.CopyAndSave(entityId);
+                ShareCode shareCode = ShareCodeManager.GetShareCode(playlist);
+                shareCodeDto = ShareCodeDto.Create(shareCode);
+
+                transaction.Commit();
+            }
+
+            return Json(shareCodeDto);
         }
     }
 }

@@ -1,0 +1,167 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using NUnit.Framework;
+using Streamus.Dao;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
+
+namespace Streamus.Tests.Manager_Tests
+{
+    [TestFixture]
+    public class VideoManagerTest : StreamusTest
+    {
+        private IVideoManager VideoManager;
+
+        /// <summary>
+        ///     This code is only ran once for the given TestFixture.
+        /// </summary>
+        [TestFixtureSetUp]
+        public new void TestFixtureSetUp()
+        {
+            try
+            {
+                VideoManager = ManagerFactory.GetVideoManager();
+            }
+            catch (TypeInitializationException exception)
+            {
+                throw exception.InnerException;
+            }
+
+            Helpers.CreateUser();
+        }
+
+        /// <summary>
+        ///     A video not in the database should save without hesitation.
+        /// </summary>
+        [Test]
+        public void SaveVideo_NotInDatabase_VideoSaved()
+        {
+            Video video = Helpers.CreateUnsavedVideoWithId();
+<<<<<<< HEAD
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            VideoManager.Save(video);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            Video videoFromDatabase = VideoDao.Get(video.Id);
+=======
+
+            VideoManager.Save(video);
+
+            Video videoFromDatabase = VideoManager.Get(video.Id);
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+
+            //  Test that the video was successfully inserted
+            Assert.IsNotNull(videoFromDatabase);
+            Assert.AreEqual(video.Title, videoFromDatabase.Title);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+        }
+
+        //  TODO: This test case is broken but I don't care because Video is on its way out.
+        /// <summary>
+        ///     Video's properties cannot change once inserted into the database.
+        /// </summary>
+<<<<<<< HEAD
+        [Test]
+        public void TryUpdateVideoTitle_VideoImmutable_TitleNotUpdated()
+        {
+            //  Save the first video.
+            Video video = Helpers.CreateUnsavedVideoWithId();
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            VideoManager.Save(video);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+=======
+        //[Test]
+        //public void TryUpdateVideoTitle_VideoImmutable_TitleNotUpdated()
+        //{
+        //    //  Save the first video.
+        //    Video video = Helpers.CreateUnsavedVideoWithId();
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+
+        //    VideoManager.Save(video);
+
+<<<<<<< HEAD
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            VideoManager.Save(video);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            Video videoFromDatabase = VideoDao.Get(video.Id);
+
+            //  Ensure video title hasn't changed.
+            Assert.AreEqual(videoFromDatabase.Title, originalVideoTitle);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+        }
+=======
+        //    string originalVideoTitle = video.Title;
+        //    video.Title = "Video's new title";
+
+        //    VideoManager.Save(video);
+
+        //    //  Load from database to ensure it didn't change.
+        //    Session.Refresh(video);
+
+        //    //  Ensure video title hasn't changed.
+        //    Assert.AreEqual(video.Title, originalVideoTitle);
+        //}
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+
+        /// <summary>
+        ///     Make sure multiple Video entities can be saved in one transaction.
+        /// </summary>
+        [Test]
+        public void SaveVideos_VideosDontShareIDs_VideosSaved()
+        {
+            var videos = new List<Video>
+                {
+                    Helpers.CreateUnsavedVideoWithId(),
+                    Helpers.CreateUnsavedVideoWithId()
+                };
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            VideoManager.Save(videos);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+<<<<<<< HEAD
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            //  Make sure multiple videos were able to be saved.
+            videos.Select(v => VideoDao.Get(v.Id)).ToList().ForEach(Assert.IsNotNull);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+=======
+            //  Make sure multiple videos were able to be saved.
+            videos.Select(v => VideoManager.Get(v.Id)).ToList().ForEach(Assert.IsNotNull);
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+        }
+
+        /// <summary>
+        ///     Multiples videos with the same ID can be saved at once, but shouldn't have an effect on the database
+        ///     for any which already exist.
+        /// </summary>
+        [Test]
+        public void SaveVideos_VideosShareIDs_VideosSaved()
+        {
+            Video video = Helpers.CreateUnsavedVideoWithId();
+
+            var videos = new List<Video>
+                {
+                    video,
+                    Helpers.CreateUnsavedVideoWithId(video.Id)
+                };
+
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            VideoManager.Save(videos);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+
+<<<<<<< HEAD
+            NHibernateSessionManager.Instance.OpenSessionAndBeginTransaction();
+            //  Make sure multiple videos were able to be saved.
+            videos.Select(v => VideoDao.Get(v.Id)).ToList().ForEach(Assert.IsNotNull);
+            NHibernateSessionManager.Instance.CommitTransactionAndCloseSession();
+=======
+            //  Make sure multiple videos were able to be saved.
+            videos.Select(v => VideoManager.Get(v.Id)).ToList().ForEach(Assert.IsNotNull);
+>>>>>>> 16381095067cf126186665c366f47078d4bae461
+        }
+    }
+}

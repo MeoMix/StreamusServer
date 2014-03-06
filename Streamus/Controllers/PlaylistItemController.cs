@@ -1,5 +1,7 @@
-﻿using Streamus.Domain;
-using Streamus.Domain.Managers;
+﻿using log4net;
+using NHibernate;
+using Streamus.Domain;
+using Streamus.Domain.Interfaces;
 using Streamus.Dto;
 using System;
 using System.Collections.Generic;
@@ -8,73 +10,131 @@ using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    [SessionManagement]
-    public class PlaylistItemController : Controller
+    public class PlaylistItemController : StreamusController
     {
-        private static readonly PlaylistItemManager PlaylistItemManager = new PlaylistItemManager();
+        private readonly IPlaylistManager PlaylistManager;
+        private readonly IPlaylistItemManager PlaylistItemManager;
 
-        [HttpPost]
-        public JsonServiceStackResult Create(PlaylistItemDto playlistItemDto)
+        public PlaylistItemController(ILog logger, ISession session, IManagerFactory managerFactory)
+            : base(logger, session)
         {
-            PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
-
-            playlistItem.Playlist.AddItem(playlistItem);
-
-            PlaylistItemManager.Save(playlistItem);
-            
-            PlaylistItemDto savedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
-
-            return new JsonServiceStackResult(savedPlaylistItemDto);
+            PlaylistManager = managerFactory.GetPlaylistManager();
+            PlaylistItemManager = managerFactory.GetPlaylistItemManager();
         }
 
         [HttpPost]
-        public JsonServiceStackResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
+        public JsonResult Create(PlaylistItemDto playlistItemDto)
         {
-            List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
+            PlaylistItemDto savedPlaylistItemDto;
 
-            //  Split items into their respective playlists and then save on each.
-            foreach (var playlistGrouping in playlistItems.GroupBy(i => i.Playlist))
+            using(ITransaction transaction = Session.BeginTransaction())
             {
-                List<PlaylistItem> groupingItems = playlistGrouping.ToList();
+                PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto, PlaylistManager);
 
-                Playlist playlist = groupingItems.First().Playlist;
-                playlist.AddItems(groupingItems);
-      
-                PlaylistItemManager.Save(groupingItems);
+                playlistItem.Playlist.AddItem(playlistItem);
+
+                PlaylistItemManager.Save(playlistItem);
+
+                savedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
+                
+                transaction.Commit();
             }
 
-            List<PlaylistItemDto> savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
+            return Json(savedPlaylistItemDto);
+        }
 
-            return new JsonServiceStackResult(savedPlaylistItemDtos);
+        [HttpPost]
+        public JsonResult CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
+        {
+            List<PlaylistItemDto> savedPlaylistItemDtos;
+
+            int count = playlistItemDtos.Count;
+
+            if (count > 1000)
+            {
+                Session.SetBatchSize(count / 10);
+            }
+            else if (count > 3)
+            {
+                Session.SetBatchSize(count / 3);
+            }
+
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos, PlaylistManager);
+
+                //  Split items into their respective playlists and then save on each.
+                foreach (var playlistGrouping in playlistItems.GroupBy(i => i.Playlist))
+                {
+                    List<PlaylistItem> groupingItems = playlistGrouping.ToList();
+                    playlistGrouping.Key.AddItems(groupingItems);
+                    PlaylistItemManager.Save(groupingItems);
+                }
+
+                savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
+
+                transaction.Commit();
+            }
+
+            return Json(savedPlaylistItemDtos);
         }
 
         [HttpPut]
         public ActionResult Update(PlaylistItemDto playlistItemDto)
         {
-            PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto);
-            PlaylistItemManager.Update(playlistItem);
+            PlaylistItemDto updatedPlaylistItemDto;
 
-            PlaylistItemDto updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
 
-            return new JsonServiceStackResult(updatedPlaylistItemDto);
+                PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto, PlaylistManager);
+                PlaylistItemManager.Update(playlistItem);
+
+                updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
+                transaction.Commit();
+            }
+
+            return Json(updatedPlaylistItemDto);
         }
 
         [HttpPut]
         public ActionResult UpdateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
-            List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos);
+            List<PlaylistItemDto> savedPlaylistItemDtos;
 
-            PlaylistItemManager.Update(playlistItems);
+            int count = playlistItemDtos.Count;
 
-            List<PlaylistItemDto> savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
+            if (count > 1000)
+            {
+                Session.SetBatchSize(count / 10);
+            }
+            else if (count > 3)
+            {
+                Session.SetBatchSize(count / 3);
+            }
 
-            return new JsonServiceStackResult(savedPlaylistItemDtos);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos, PlaylistManager);
+
+                PlaylistItemManager.Update(playlistItems);
+
+                savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
+
+                transaction.Commit();
+            }
+
+            return Json(savedPlaylistItemDtos);
         }
 
         [HttpDelete]
         public JsonResult Delete(Guid id)
         {
-            PlaylistItemManager.Delete(id);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                PlaylistItemManager.Delete(id);
+                transaction.Commit();
+            }
 
             return Json(new
                 {

@@ -1,36 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Web.Mvc;
-using Streamus.Dao;
+﻿using log4net;
+using NHibernate;
 using Streamus.Domain;
 using Streamus.Domain.Interfaces;
-using Streamus.Domain.Managers;
 using Streamus.Dto;
-using log4net;
+using System;
+using System.Web.Mvc;
 
 namespace Streamus.Controllers
 {
-    [SessionManagement]
-    public class UserController : Controller
+    public class UserController : StreamusController
     {
-        private static readonly ILog Logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static readonly UserManager UserManager = new UserManager();
+        private readonly IUserManager UserManager;
 
-        private readonly IUserDao UserDao;
-
-        public UserController()
+        public UserController(ILog logger, ISession session, IManagerFactory managerFactory)
+            : base(logger, session)
         {
-            try
-            {
-                UserDao = new UserDao();
-            }
-            catch (TypeInitializationException exception)
-            {
-                Logger.Error(exception.InnerException);
-                throw exception.InnerException;
-            }
+            UserManager = managerFactory.GetUserManager();
         }
 
         /// <summary>
@@ -38,38 +23,61 @@ namespace Streamus.Controllers
         /// </summary>
         /// <returns>The newly created User</returns>
         [HttpPost]
-        public ActionResult Create()
+        public JsonResult Create()
         {
-            User user = UserManager.CreateUser();
-            UserDto userDto = UserDto.Create(user);
+            UserDto userDto;
 
-            return new JsonServiceStackResult(userDto);
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                User user = UserManager.CreateUser();
+                userDto = UserDto.Create(user);
+
+                transaction.Commit();
+            }
+
+            return Json(userDto);
         }
 
         [HttpGet]
-        public ActionResult Get(Guid id)
+        public JsonResult Get(Guid id)
         {
-            User user = UserDao.Get(id);
-            UserDto userDto = UserDto.Create(user);
+            UserDto userDto;
+     
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                User user = UserManager.Get(id);
+                userDto = UserDto.Create(user);
 
-            return new JsonServiceStackResult(userDto);
+                transaction.Commit();
+            }
+            return Json(userDto);
         }
 
         [HttpGet]
-        public ActionResult GetByGooglePlusId(string googlePlusId)
+        public JsonResult GetByGooglePlusId(string googlePlusId)
         {
-            User user = UserDao.GetByGooglePlusId(googlePlusId);
+            UserDto userDto;
+  
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                User user = UserManager.GetByGooglePlusId(googlePlusId);
+                userDto = UserDto.Create(user);
 
-            UserDto userDto = UserDto.Create(user);
+                transaction.Commit();
+            }
 
-            return new JsonServiceStackResult(userDto);
+            return Json(userDto);
         }
 
         [HttpPost]
         public JsonResult UpdateGooglePlusId(Guid userId, string googlePlusId)
-        {
-            UserManager.UpdateGooglePlusId(userId, googlePlusId);
+        {            
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                UserManager.UpdateGooglePlusId(userId, googlePlusId);
 
+                transaction.Commit();
+            }
             return Json(new
             {
                 success = true

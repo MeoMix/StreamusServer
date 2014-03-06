@@ -7,9 +7,15 @@ namespace Streamus.Dao
 {
     public class ShareCodeDao : AbstractNHibernateDao<ShareCode>, IShareCodeDao
     {
+        public ShareCodeDao(ISession session)
+            : base(session)
+        {
+            
+        }
+
         public ShareCode GetByShortIdAndEntityTitle(string shareCodeShortId, string urlFriendlyEntityTitle)
         {
-            ICriteria criteria = NHibernateSession
+            ICriteria criteria = Session
                 .CreateCriteria(typeof (ShareCode), "ShareCode")
                 .Add(Restrictions.Eq("ShareCode.ShortId", shareCodeShortId))
                 .Add(Restrictions.Eq("ShareCode.UrlFriendlyEntityTitle", urlFriendlyEntityTitle));
