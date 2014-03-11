@@ -5,6 +5,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streamus Server", "Streamus
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streamus Server Tests", "Streamus.Tests\Streamus Server Tests.csproj", "{19C3910E-DEA7-42DA-ADCA-638E63DB4646}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streamus Web API", "Streamus Web API\Streamus Web API.csproj", "{DD8013B6-D07C-4987-BA0D-22D629136826}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streamus Web API Tests", "Streamus Web API Tests\Streamus Web API Tests.csproj", "{81D65905-20E6-4525-A9C8-003946790BF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +23,14 @@ Global
 		{19C3910E-DEA7-42DA-ADCA-638E63DB4646}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19C3910E-DEA7-42DA-ADCA-638E63DB4646}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19C3910E-DEA7-42DA-ADCA-638E63DB4646}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD8013B6-D07C-4987-BA0D-22D629136826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD8013B6-D07C-4987-BA0D-22D629136826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD8013B6-D07C-4987-BA0D-22D629136826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD8013B6-D07C-4987-BA0D-22D629136826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81D65905-20E6-4525-A9C8-003946790BF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81D65905-20E6-4525-A9C8-003946790BF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81D65905-20E6-4525-A9C8-003946790BF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81D65905-20E6-4525-A9C8-003946790BF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

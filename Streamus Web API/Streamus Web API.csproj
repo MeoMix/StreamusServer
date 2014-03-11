@@ -7,7 +7,7 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>4183f519-918c-491c-9e8d-e6f5f9ede63b</ProjectGuid>
+    <ProjectGuid>{DD8013B6-D07C-4987-BA0D-22D629136826}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -38,8 +38,40 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.3.0\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.WebApi">
+      <HintPath>..\packages\Autofac.WebApi2.3.2.0\lib\net45\Autofac.Integration.WebApi.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.Net4">
+      <HintPath>..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\FluentNHibernate.1.4.0.0\lib\net35\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation">
+      <HintPath>..\packages\FluentValidation.5.0.0.1\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.3.2.0.1001\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.1.0\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -49,6 +81,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.1.0\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -61,28 +97,96 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Formatting">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.0.0\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.0.0\lib\net45\System.Web.Http.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.Http.WebHost">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.0.0\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.Net4.dll">
+      <Link>AutoMapper.Net4.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\PlaylistController.cs" />
+    <Compile Include="Controllers\PlaylistItemController.cs" />
+    <Compile Include="Controllers\ShareCodeController.cs" />
+    <Compile Include="Controllers\StreamusController.cs" />
+    <Compile Include="Controllers\ThrottleAttribute.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\VideoController.cs" />
+    <Compile Include="Dao\AbstractNHibernateDao.cs" />
+    <Compile Include="Dao\AutofacRegistrations.cs" />
+    <Compile Include="Dao\ErrorDao.cs" />
+    <Compile Include="Dao\Mappings\ErrorMapping.cs" />
+    <Compile Include="Dao\Mappings\PlaylistItemMapping.cs" />
+    <Compile Include="Dao\Mappings\PlaylistMapping.cs" />
+    <Compile Include="Dao\Mappings\ShareCodeMapping.cs" />
+    <Compile Include="Dao\Mappings\UserMapping.cs" />
+    <Compile Include="Dao\Mappings\VideoMapping.cs" />
+    <Compile Include="Dao\NHibernateConfiguration.cs" />
+    <Compile Include="Dao\NHibernateDaoFactory.cs" />
+    <Compile Include="Dao\PlaylistDao.cs" />
+    <Compile Include="Dao\PlaylistItemDao.cs" />
+    <Compile Include="Dao\ShareCodeDao.cs" />
+    <Compile Include="Dao\UserDao.cs" />
+    <Compile Include="Dao\VideoDao.cs" />
+    <Compile Include="Domain\AbstractDomainEntity.cs" />
+    <Compile Include="Domain\AbstractShareableEntity.cs" />
+    <Compile Include="Domain\Error.cs" />
+    <Compile Include="Domain\Interfaces\IAbstractDomainEntity.cs" />
+    <Compile Include="Domain\Interfaces\IDao.cs" />
+    <Compile Include="Domain\Interfaces\IDaoFactory.cs" />
+    <Compile Include="Domain\Interfaces\IErrorDao.cs" />
+    <Compile Include="Domain\Interfaces\IErrorManager.cs" />
+    <Compile Include="Domain\Interfaces\IManagerFactory.cs" />
+    <Compile Include="Domain\Interfaces\IPlaylistDao.cs" />
+    <Compile Include="Domain\Interfaces\IPlaylistItemDao.cs" />
+    <Compile Include="Domain\Interfaces\IPlaylistItemManager.cs" />
+    <Compile Include="Domain\Interfaces\IPlaylistManager.cs" />
+    <Compile Include="Domain\Interfaces\IShareableEntity.cs" />
+    <Compile Include="Domain\Interfaces\IShareCodeDao.cs" />
+    <Compile Include="Domain\Interfaces\IShareCodeManager.cs" />
+    <Compile Include="Domain\Interfaces\IUserDao.cs" />
+    <Compile Include="Domain\Interfaces\IUserManager.cs" />
+    <Compile Include="Domain\Interfaces\IVideoDao.cs" />
+    <Compile Include="Domain\Interfaces\IVideoManager.cs" />
+    <Compile Include="Domain\Managers\PlaylistItemManager.cs" />
+    <Compile Include="Domain\Managers\PlaylistManager.cs" />
+    <Compile Include="Domain\Managers\ShareCodeManager.cs" />
+    <Compile Include="Domain\Managers\UserManager.cs" />
+    <Compile Include="Domain\Managers\VideoManager.cs" />
+    <Compile Include="Domain\Playlist.cs" />
+    <Compile Include="Domain\PlaylistItem.cs" />
+    <Compile Include="Domain\ShareCode.cs" />
+    <Compile Include="Domain\User.cs" />
+    <Compile Include="Domain\Validators\ErrorValidator.cs" />
+    <Compile Include="Domain\Validators\PlaylistItemValidator.cs" />
+    <Compile Include="Domain\Validators\PlaylistValidator.cs" />
+    <Compile Include="Domain\Validators\ShareCodeValidator.cs" />
+    <Compile Include="Domain\Validators\UserValidator.cs" />
+    <Compile Include="Domain\Validators\VideoValidator.cs" />
+    <Compile Include="Domain\Video.cs" />
+    <Compile Include="Dto\ErrorDto.cs" />
+    <Compile Include="Dto\PlaylistDto.cs" />
+    <Compile Include="Dto\PlaylistItemDto.cs" />
+    <Compile Include="Dto\ShareCodeDto.cs" />
+    <Compile Include="Dto\UserDto.cs" />
+    <Compile Include="Dto\VideoDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Domain\Managers\ErrorManager.cs" />
+    <Compile Include="Domain\Managers\StreamusManager.cs" />
+    <Compile Include="Domain\Managers\StreamusManagerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -92,7 +196,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <PropertyGroup>
@@ -108,7 +211,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>28029</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

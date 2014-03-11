@@ -1,6 +1,9 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
 
-namespace Streamus_Web_API.App_Start
+namespace WebApplication1
 {
     public static class WebApiConfig
     {

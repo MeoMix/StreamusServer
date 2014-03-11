@@ -144,12 +144,6 @@
     <Compile Include="Manager Tests\VideoManagerTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Streamus\Streamus Server.csproj">
-      <Project>{6e1bb86c-18b6-469b-8caf-8df671a30906}</Project>
-      <Name>Streamus Server</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="hibernate.cfg.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -162,6 +156,12 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Streamus\Streamus Server.csproj">
+      <Project>{6e1bb86c-18b6-469b-8caf-8df671a30906}</Project>
+      <Name>Streamus Server</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
