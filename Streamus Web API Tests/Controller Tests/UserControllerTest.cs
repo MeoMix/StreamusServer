@@ -19,19 +19,12 @@ namespace Streamus_Web_API_Tests.Controller
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
         /// </summary>
-        [TestFixtureSetUp]
+        [SetUp]
         public new void TestFixtureSetUp()
         {
-            try
-            {
-                PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
-                UserController = new UserController(Logger, Session, ManagerFactory);
-                UserManager = ManagerFactory.GetUserManager();
-            }
-            catch (TypeInitializationException exception)
-            {
-                throw exception.InnerException;
-            }
+            PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
+            UserController = new UserController(Logger, Session, ManagerFactory);
+            UserManager = ManagerFactory.GetUserManager();
         }
 
         [Test]
@@ -84,8 +77,9 @@ namespace Streamus_Web_API_Tests.Controller
             const string googlePlusId = "109695597859594825120";
 
             var createdUserDto = UserController.Create();
+            createdUserDto.GooglePlusId = googlePlusId;
 
-            UserController.UpdateGooglePlusId(createdUserDto.Id, googlePlusId);
+            UserController.UpdateGooglePlusId(createdUserDto);
 
             User userFromDatabase = UserManager.Get(createdUserDto.Id);
 

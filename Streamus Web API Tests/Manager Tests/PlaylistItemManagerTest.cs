@@ -1,7 +1,6 @@
-﻿using FluentNHibernate.Visitors;
+﻿using FluentValidation;
 using NHibernate;
 using NUnit.Framework;
-using System;
 using Streamus_Web_API.Domain;
 using Streamus_Web_API.Domain.Interfaces;
 
@@ -18,32 +17,18 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
         private IVideoManager VideoManager;
 
         /// <summary>
-        ///     This code is only ran once for the given TestFixture.
-        /// </summary>
-        [TestFixtureSetUp]
-        public new void TestFixtureSetUp()
-        {
-            try
-            {
-                PlaylistItemManager = ManagerFactory.GetPlaylistItemManager();
-                PlaylistManager = ManagerFactory.GetPlaylistManager();
-                VideoManager = ManagerFactory.GetVideoManager();
-            }
-            catch (TypeInitializationException exception)
-            {
-                throw exception.InnerException;
-            }
-
-            //  Ensure that a User exists.
-            User = Helpers.CreateUser();
-        }
-
-        /// <summary>
         ///     This code runs before every test.
         /// </summary>
         [SetUp]
         public void SetupContext()
         {
+            PlaylistItemManager = ManagerFactory.GetPlaylistItemManager();
+            PlaylistManager = ManagerFactory.GetPlaylistManager();
+            VideoManager = ManagerFactory.GetVideoManager();
+
+            //  Ensure that a User exists.
+            User = Helpers.CreateUser();
+
             //  Make a new Playlist object each time to ensure no side-effects from previous test case.
             Playlist = User.CreateAndAddPlaylist();
             PlaylistManager.Save(Playlist);

@@ -18,25 +18,15 @@ namespace Streamus_Web_API_Tests.Controller
         private IPlaylistManager PlaylistManager;
         private IUserManager UserManager;
 
-        /// <summary>
-        ///     This code is only ran once for the given TestFixture.
-        /// </summary>
-        [TestFixtureSetUp]
+        [SetUp]
         public new void TestFixtureSetUp()
         {
-            try
-            {
-                PlaylistController = new PlaylistController(Logger, Session, ManagerFactory);
-                PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
+            PlaylistController = new PlaylistController(Logger, Session, ManagerFactory);
+            PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
 
-                ShareCodeManager = ManagerFactory.GetShareCodeManager();
-                UserManager = ManagerFactory.GetUserManager();
-                PlaylistManager = ManagerFactory.GetPlaylistManager();
-            }
-            catch (TypeInitializationException exception)
-            {
-                throw exception.InnerException;
-            }
+            ShareCodeManager = ManagerFactory.GetShareCodeManager();
+            UserManager = ManagerFactory.GetUserManager();
+            PlaylistManager = ManagerFactory.GetPlaylistManager();
         }
 
         [Test]
@@ -104,8 +94,10 @@ namespace Streamus_Web_API_Tests.Controller
             Playlist playlist = PlaylistManager.CopyAndSave(user.Playlists.First().Id);
             ShareCode shareCode = ShareCodeManager.GetShareCode(playlist);
 
+            ShareCodeRequestDto shareCodeRequestDto = new ShareCodeRequestDto(user.Id, shareCode.ShortId, shareCode.UrlFriendlyEntityTitle);
+
             //  Create a new playlist for the given user by loading up the playlist via sharecode.
-            var playlistDto = PlaylistController.CreateCopyByShareCode(shareCode.ShortId, shareCode.UrlFriendlyEntityTitle, user.Id);
+            var playlistDto = PlaylistController.CreateCopyByShareCode(shareCodeRequestDto);
 
             //  Make sure we actually get a Playlist DTO back from the Controller.
             Assert.NotNull(playlistDto);

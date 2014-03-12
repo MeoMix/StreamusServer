@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using Streamus_Web_API.Domain;
 using Streamus_Web_API.Domain.Interfaces;
-using System;
 
 namespace Streamus_Web_API_Tests.Tests.Manager_Tests
 {
@@ -13,17 +12,10 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
         /// </summary>
-        [TestFixtureSetUp]
+        [SetUp]
         public new void TestFixtureSetUp()
         {
-            try
-            {
-                UserDao = DaoFactory.GetUserDao();
-            }
-            catch (TypeInitializationException exception)
-            {
-                throw exception.InnerException;
-            }
+            UserDao = DaoFactory.GetUserDao();
         }
 
         [Test]

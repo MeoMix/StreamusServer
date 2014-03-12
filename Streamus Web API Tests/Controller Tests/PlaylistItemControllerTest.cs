@@ -15,21 +15,11 @@ namespace Streamus_Web_API_Tests.Controller
         private PlaylistItemController PlaylistItemController;
         private IPlaylistManager PlaylistManager;
 
-        /// <summary>
-        ///     This code is only ran once for the given TestFixture.
-        /// </summary>
-        [TestFixtureSetUp]
+        [SetUp]
         public new void TestFixtureSetUp()
         {
-            try
-            {
-                PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
-                PlaylistManager = ManagerFactory.GetPlaylistManager();
-            }
-            catch (TypeInitializationException exception)
-            {
-                throw exception.InnerException;
-            }
+            PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
+            PlaylistManager = ManagerFactory.GetPlaylistManager();
         }
 
         [Test]

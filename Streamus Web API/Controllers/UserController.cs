@@ -72,11 +72,11 @@ namespace Streamus_Web_API.Controllers
 
         //  TODO: There are better ways of implementing PATCH...
         [HttpPatch]
-        public IHttpActionResult UpdateGooglePlusId(User user)
+        public IHttpActionResult UpdateGooglePlusId(UserDto userDto)
         {            
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                UserManager.UpdateGooglePlusId(user.Id, user.GooglePlusId);
+                UserManager.UpdateGooglePlusId(userDto.Id, userDto.GooglePlusId);
 
                 transaction.Commit();
             }

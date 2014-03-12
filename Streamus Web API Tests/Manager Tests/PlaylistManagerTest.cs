@@ -17,24 +17,15 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
         /// </summary>
-        [TestFixtureSetUp]
+        [SetUp]
         public new void TestFixtureSetUp()
         {
-            IVideoManager videoManager;
-
-            try
-            {
-                PlaylistManager = ManagerFactory.GetPlaylistManager();
-                videoManager = ManagerFactory.GetVideoManager();
-            }
-            catch (TypeInitializationException exception)
-            {
-                throw exception.InnerException;
-            }
+            PlaylistManager = ManagerFactory.GetPlaylistManager();
 
             User = Helpers.CreateUser();
             Video = Helpers.CreateUnsavedVideoWithId();
 
+            IVideoManager videoManager = ManagerFactory.GetVideoManager();
             videoManager.Save(Video);
         }
 

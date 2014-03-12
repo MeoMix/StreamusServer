@@ -19,13 +19,13 @@ namespace Streamus_Web_API_Tests
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
         /// </summary>
-        [TestFixtureSetUp]
-        public void TestFixtureSetUp()
-        {
-            Configuration = new Configuration();
-            Configuration.Configure();
+        //[TestFixtureSetUp]
+        //public void TestFixtureSetUp()
+        //{
+        //    Configuration = new Configuration();
+        //    Configuration.Configure();
 
-            new SchemaExport(Configuration).Execute(false, true, false);
-        }
+        //    new SchemaExport(Configuration).Execute(false, true, false);
+        //}
     }
 }

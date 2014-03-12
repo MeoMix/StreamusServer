@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using Streamus_Web_API.Controllers;
 using Streamus_Web_API.Dto;
-using System;
 
 namespace Streamus_Web_API_Tests.Controller
 {
@@ -10,20 +9,10 @@ namespace Streamus_Web_API_Tests.Controller
     {
         private ErrorController ErrorController;
 
-        /// <summary>
-        ///     This code is only ran once for the given TestFixture.
-        /// </summary>
-        [TestFixtureSetUp]
+        [SetUp]
         public new void TestFixtureSetUp()
         {
-            try
-            {
-                ErrorController = new ErrorController(Logger, Session, ManagerFactory);
-            }
-            catch (TypeInitializationException exception)
-            {
-                throw exception.InnerException;
-            }
+            ErrorController = new ErrorController(Logger, Session, ManagerFactory);
         }
 
         [Test]
