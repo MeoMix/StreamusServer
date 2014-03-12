@@ -50,20 +50,6 @@ namespace Streamus_Web_API.Domain.Managers
             }
         }
 
-        public void Update(IEnumerable<PlaylistItem> playlistItems)
-        {
-            try
-            {
-                var playlistItemList = playlistItems.ToList();
-                playlistItemList.ForEach(DoUpdate);
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                throw;
-            }
-        }
-
         public void Update(PlaylistItem playlistItem)
         {
             try

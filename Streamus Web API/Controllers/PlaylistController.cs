@@ -90,12 +90,14 @@ namespace Streamus_Web_API.Controllers
             return Ok();
         }
 
-        [HttpPost, ActionName("UpdateTitle")]
-        public IHttpActionResult UpdateTitle(Guid playlistId, string title)
+        //  TODO: This isn't the best way to implement PATCH because the method has to know explicitly what
+        //  model properties changed rather than just merging the differences in, but it works for now.
+        [HttpPatch]
+        public IHttpActionResult UpdateTitle(PlaylistDto playlistDto)
         {
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                PlaylistManager.UpdateTitle(playlistId, title);
+                PlaylistManager.UpdateTitle(playlistDto.Id, playlistDto.Title);
 
                 transaction.Commit();
             }
@@ -103,24 +105,23 @@ namespace Streamus_Web_API.Controllers
             return Ok();
         }
 
-        //  TODO: Maybe this should be ShareCodeController's deal and not PlaylistController?
         /// <summary>
         ///     Retrieves a ShareCode relating to a Playlist, create a copy of the Playlist referenced by the ShareCode,
         ///     and return the copied Playlist.
         /// </summary>
         [HttpGet]
-        public PlaylistDto CreateCopyByShareCode(string shareCodeShortId, string urlFriendlyEntityTitle, Guid userId)
+        public PlaylistDto CreateCopyByShareCode(ShareCodeRequestDto shareCodeRequestDto)
         {
             PlaylistDto playlistDto;
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                ShareCode shareCode = ShareCodeManager.GetByShortIdAndEntityTitle(shareCodeShortId, urlFriendlyEntityTitle);
+                ShareCode shareCode = ShareCodeManager.GetByShortIdAndEntityTitle(shareCodeRequestDto.ShortId, shareCodeRequestDto.UrlFriendlyEntityTitle);
 
                 //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
                 Playlist playlistToCopy = PlaylistManager.Get(shareCode.EntityId);
 
-                User user = UserManager.Get(userId);
+                User user = UserManager.Get(shareCodeRequestDto.UserId);
 
                 var playlistCopy = new Playlist(playlistToCopy);
                 user.AddPlaylist(playlistCopy);

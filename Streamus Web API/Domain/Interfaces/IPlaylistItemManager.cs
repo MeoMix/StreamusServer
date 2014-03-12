@@ -9,7 +9,6 @@ namespace Streamus_Web_API.Domain.Interfaces
         void Delete(Guid itemId);
         void Save(IEnumerable<PlaylistItem> playlistItems);
         void Save(PlaylistItem playlistItem);
-        void Update(IEnumerable<PlaylistItem> playlistItems);
         void Update(PlaylistItem playlistItem);
     }
 }

@@ -21,16 +21,15 @@ namespace Streamus_Web_API.Controllers
             PlaylistManager = managerFactory.GetPlaylistManager();
         }
 
+        //  TODO: Revisit this. Maybe I'm making it way too hard on myself now that I don't have Folders? What else would need a share code?
         [HttpGet]
-        public ShareCodeDto GetShareCode(ShareableEntityType entityType, Guid entityId)
+        public ShareCodeDto GetShareCode(Guid playlistId)
         {
-            if (entityType != ShareableEntityType.Playlist)
-                throw new NotSupportedException("Only Playlist entityType can be shared currently.");
-
             ShareCodeDto shareCodeDto;
+
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                Playlist playlist = PlaylistManager.CopyAndSave(entityId);
+                Playlist playlist = PlaylistManager.CopyAndSave(playlistId);
                 ShareCode shareCode = ShareCodeManager.GetShareCode(playlist);
                 shareCodeDto = ShareCodeDto.Create(shareCode);
 

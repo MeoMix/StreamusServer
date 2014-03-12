@@ -7,7 +7,6 @@ namespace Streamus_Web_API.Dto
     public class ShareCodeDto
     {
         public Guid Id { get; set; }
-        //  TODO: Broke my naming convention should be entityType on client and not entity
         public ShareableEntityType EntityType { get; set; }
         public Guid EntityId { get; set; }
         public string ShortId { get; set; }

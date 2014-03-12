@@ -86,7 +86,6 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-
                 PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto, PlaylistManager);
                 PlaylistItemManager.Update(playlistItem);
 
@@ -95,36 +94,6 @@ namespace Streamus_Web_API.Controllers
             }
 
             return updatedPlaylistItemDto;
-        }
-
-        [HttpPut]
-        public IEnumerable<PlaylistItemDto> UpdateMultiple(List<PlaylistItemDto> playlistItemDtos)
-        {
-            List<PlaylistItemDto> savedPlaylistItemDtos;
-
-            int count = playlistItemDtos.Count;
-
-            if (count > 1000)
-            {
-                Session.SetBatchSize(count / 10);
-            }
-            else if (count > 3)
-            {
-                Session.SetBatchSize(count / 3);
-            }
-
-            using (ITransaction transaction = Session.BeginTransaction())
-            {
-                List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos, PlaylistManager);
-
-                PlaylistItemManager.Update(playlistItems);
-
-                savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
-
-                transaction.Commit();
-            }
-
-            return savedPlaylistItemDtos;
         }
 
         [HttpDelete]

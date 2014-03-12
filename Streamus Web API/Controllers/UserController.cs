@@ -70,12 +70,13 @@ namespace Streamus_Web_API.Controllers
             return userDto;
         }
 
-        [HttpPost]
-        public IHttpActionResult UpdateGooglePlusId(Guid userId, string googlePlusId)
+        //  TODO: There are better ways of implementing PATCH...
+        [HttpPatch]
+        public IHttpActionResult UpdateGooglePlusId(User user)
         {            
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                UserManager.UpdateGooglePlusId(userId, googlePlusId);
+                UserManager.UpdateGooglePlusId(user.Id, user.GooglePlusId);
 
                 transaction.Commit();
             }
