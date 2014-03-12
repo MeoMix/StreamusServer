@@ -90,7 +90,7 @@ namespace Streamus_Web_API.Controllers
             return Ok();
         }
 
-        [HttpPost]
+        [HttpPost, ActionName("UpdateTitle")]
         public IHttpActionResult UpdateTitle(Guid playlistId, string title)
         {
             using (ITransaction transaction = Session.BeginTransaction())

@@ -16,15 +16,18 @@ namespace Streamus_Web_API
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
+
+            InitializeApplication();
         }
         
         public static void InitializeApplication()
         {
             //NHibernateProfiler.Initialize();
 
+            //  I don't want $id, no need to support circular references: http://stackoverflow.com/questions/18355312/map-id-in-web-api-to-custom-id
             JsonMediaTypeFormatter jsonFormatter = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
-            jsonFormatter.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
-            
+            jsonFormatter.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.None;
+
             //  Convert sentence casing to camel casing when serializing to JSON.
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
