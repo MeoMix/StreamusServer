@@ -28,7 +28,7 @@ namespace Streamus.Dao
             //  You are responsible to bind and unbind an ISession instance with static methods of class CurrentSessionContext.
             configuration.SetProperty("current_session_context_class", "web");
             configuration.SetProperty("connection.isolation", "ReadUncommitted");
-            configuration.SetProperty(Environment.CommandTimeout, TimeSpan.FromSeconds(15).TotalSeconds.ToString());
+            //configuration.SetProperty(Environment.CommandTimeout, TimeSpan.FromSeconds(15).TotalSeconds.ToString());
 #if DEBUG
             configuration.SetProperty("default_schema", "[Streamus].[dbo]");
             configuration.SetProperty("generate_statistics", "true");
