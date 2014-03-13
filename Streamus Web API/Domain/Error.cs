@@ -1,10 +1,10 @@
 ﻿using System;
 using FluentValidation;
 using Streamus_Web_API.Domain.Validators;
-using Streamus_Web_API.Dto;
 
 namespace Streamus_Web_API.Domain
 {
+    //  TODO: Consider renaming this "ClientError" instead of "Error" to be more explicit and not conflict with Error namespace.
     public class Error : AbstractDomainEntity<Guid>
     {
         public virtual string Message { get; set; }
@@ -26,31 +26,21 @@ namespace Streamus_Web_API.Domain
             Architecture = string.Empty;
         }
 
-        //  TODO: Consider not coupling to Dto here and just pass in params or use constructor.
-        public static Error Create(ErrorDto errorDto)
+        public Error(string architecture, string clientVersion, int lineNumber, string message, string operatingSystem, string url)
+            : this()
         {
-            Error error = new Error
-                {
-                    Architecture = errorDto.Architecture,
-                    ClientVersion = errorDto.ClientVersion,
-                    Id = errorDto.Id,
-                    LineNumber = errorDto.LineNumber,
-                    Message = errorDto.Message,
-                    OperatingSystem = errorDto.OperatingSystem,
-                    TimeOccurred = errorDto.TimeOccurred,
-                    Url = errorDto.Url  
-                };
+            Architecture = architecture;
+            ClientVersion = clientVersion;
+            LineNumber = lineNumber;
+            Message = message;
+            OperatingSystem = operatingSystem;
+            Url = url;
 
-            if (error.Message.Length > 255)
+            if (Message.Length > 255)
             {
                 //  When receiving an error message from the client -- ensure it is a maximum of 255 characters before saving.
-                error.Message = string.Format("{0}...", error.Message.Substring(0, 252));
+                Message = string.Format("{0}...", Message.Substring(0, 252));
             }
-
-            //  When receiving an error message from the client -- set the TimeOccurred upon receiving the DTO from the client.
-            error.TimeOccurred = DateTime.Now;
-
-            return error;
         }
 
         public virtual void ValidateAndThrow()

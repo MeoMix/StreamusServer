@@ -2,7 +2,6 @@
 using FluentValidation;
 using Streamus_Web_API.Domain.Interfaces;
 using Streamus_Web_API.Domain.Validators;
-using Streamus_Web_API.Dto;
 
 namespace Streamus_Web_API.Domain
 {
@@ -31,29 +30,13 @@ namespace Streamus_Web_API.Domain
         public ShareCode(IShareableEntity shareableEntity)
             : this()
         {
-            if (shareableEntity is Playlist)
-            {
-                EntityType = ShareableEntityType.Playlist;
-            }
-
+            if (!(shareableEntity is Playlist))
+                throw new NotSupportedException("Only Playlists are shareable currently.");
+                
+            EntityType = ShareableEntityType.Playlist;
             EntityId = shareableEntity.Id;
             UrlFriendlyEntityTitle = shareableEntity.GetUrlFriendlyTitle();
             ShortId = shareableEntity.GetShortId();
-        }
-
-        //  TODO: Consider not coupling to Dto here and just pass in params or use constructor.
-        public static ShareCode Create(ShareCodeDto shareCodeDto)
-        {
-            ShareCode shareCode = new ShareCode
-                {
-                    EntityId = shareCodeDto.EntityId,
-                    EntityType = shareCodeDto.EntityType,
-                    Id = shareCodeDto.Id,
-                    ShortId = shareCodeDto.ShortId,
-                    UrlFriendlyEntityTitle = shareCodeDto.UrlFriendlyEntityTitle
-                };
-
-            return shareCode;
         }
 
         public virtual void ValidateAndThrow()

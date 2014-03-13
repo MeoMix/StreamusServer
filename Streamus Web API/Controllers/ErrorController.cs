@@ -23,8 +23,7 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                //  TODO: Do I want to stick with the 'Error' class if it conflicts?
-                Domain.Error error = Domain.Error.Create(errorDto);
+                Domain.Error error = new Domain.Error(errorDto.Architecture, errorDto.ClientVersion, errorDto.LineNumber, errorDto.Message, errorDto.OperatingSystem, errorDto.Url);
                 ErrorManager.Save(error);
 
                 savedErrorDto = ErrorDto.Create(error);

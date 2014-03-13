@@ -2,7 +2,6 @@
 using FluentValidation;
 using Streamus_Web_API.Domain.Interfaces;
 using Streamus_Web_API.Domain.Validators;
-using Streamus_Web_API.Dto;
 
 namespace Streamus_Web_API.Domain
 {
@@ -27,13 +26,6 @@ namespace Streamus_Web_API.Domain
             Title = title;
             Duration = duration;
             Author = author;
-        }
-
-        //  TODO: Consider not coupling to Dto here and just pass in params or use constructor.
-        public static Video Create(VideoDto videoDto)
-        {
-            Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
-            return video;
         }
 
         public virtual void ValidateAndThrow()

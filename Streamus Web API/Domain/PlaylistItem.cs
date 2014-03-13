@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using FluentValidation;
-using Streamus_Web_API.Domain.Interfaces;
+﻿using FluentValidation;
 using Streamus_Web_API.Domain.Validators;
-using Streamus_Web_API.Dto;
+using System;
 
 namespace Streamus_Web_API.Domain
 {
@@ -39,27 +35,15 @@ namespace Streamus_Web_API.Domain
             Video = playlistItem.Video;
         }
 
-        //  TODO: Consider not coupling to Dto here and just pass in params or use constructor.
-        public static PlaylistItem Create(PlaylistItemDto playlistItemDto, IPlaylistManager playlistManager)
+        public PlaylistItem(string cid, Guid id, int sequence, string title, Playlist playlist, Video video)
+            : this()
         {
-            PlaylistItem playlistItem = new PlaylistItem
-                {
-                    Cid = playlistItemDto.Cid,
-                    Id = playlistItemDto.Id,
-                    Playlist = playlistManager.Get(playlistItemDto.PlaylistId),
-                    Sequence = playlistItemDto.Sequence,
-                    Title = playlistItemDto.Title,
-                    Video = Video.Create(playlistItemDto.Video)
-                };
-
-            return playlistItem;
-        }
-
-        //  TODO: Consider not coupling to Dto here and just pass in params or use constructor.
-        public static List<PlaylistItem> Create(IEnumerable<PlaylistItemDto> playlistItemDtos, IPlaylistManager playlistManager)
-        {
-            List<PlaylistItem> playlistItems = new List<PlaylistItem>(playlistItemDtos.Select(pid => Create(pid, playlistManager)));
-            return playlistItems;
+            Cid = cid;
+            Id = id;
+            Sequence = sequence;
+            Title = title;
+            Playlist = playlist;
+            Video = video;
         }
 
         public virtual void ValidateAndThrow()

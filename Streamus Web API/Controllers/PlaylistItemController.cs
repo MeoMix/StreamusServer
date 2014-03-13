@@ -29,7 +29,10 @@ namespace Streamus_Web_API.Controllers
 
             using(ITransaction transaction = Session.BeginTransaction())
             {
-                PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto, PlaylistManager);
+                VideoDto videoDto = playlistItemDto.Video;
+                Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
+                Playlist playlist = PlaylistManager.Get(playlistItemDto.PlaylistId);
+                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Cid, playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video);
 
                 playlistItem.Playlist.AddItem(playlistItem);
 
@@ -61,7 +64,15 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                List<PlaylistItem> playlistItems = PlaylistItem.Create(playlistItemDtos, PlaylistManager);
+                List<PlaylistItem> playlistItems = new List<PlaylistItem>();
+
+                foreach (PlaylistItemDto playlistItemDto in playlistItemDtos)
+                {
+                    Video video = new Video(playlistItemDto.Video.Id, playlistItemDto.Video.Title, playlistItemDto.Video.Duration, playlistItemDto.Video.Author);
+                    Playlist playlist = PlaylistManager.Get(playlistItemDto.PlaylistId);
+
+                    playlistItems.Add(new PlaylistItem(playlistItemDto.Cid, playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
+                }
 
                 //  Split items into their respective playlists and then save on each.
                 foreach (var playlistGrouping in playlistItems.GroupBy(i => i.Playlist))
@@ -86,7 +97,10 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                PlaylistItem playlistItem = PlaylistItem.Create(playlistItemDto, PlaylistManager);
+                VideoDto videoDto = playlistItemDto.Video;
+                Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
+                Playlist playlist = PlaylistManager.Get(playlistItemDto.PlaylistId);
+                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Cid, playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video);
                 PlaylistItemManager.Update(playlistItem);
 
                 updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);

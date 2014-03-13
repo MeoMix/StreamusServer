@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
-using Streamus_Web_API.Domain.Interfaces;
 using Streamus_Web_API.Domain.Validators;
-using Streamus_Web_API.Dto;
 
 namespace Streamus_Web_API.Domain
 {
@@ -35,27 +33,13 @@ namespace Streamus_Web_API.Domain
             Copy(playlist);
         }
 
-        //  TODO: Consider not coupling to Dto here and just pass in params or use constructor.
-        public static Playlist Create(PlaylistDto playlistDto, IUserManager userManager, IPlaylistManager playlistManager)
+        public Playlist(Guid id, int sequence, string title, User user)
+            : this()
         {
-            Playlist playlist = new Playlist
-                {
-                    Id = playlistDto.Id,
-                    Items = PlaylistItem.Create(playlistDto.Items, playlistManager),
-                    Sequence = playlistDto.Sequence,
-                    Title = playlistDto.Title,
-                    User = userManager.Get(playlistDto.UserId)
-                };
-
-            //  TODO: This seems unnecessary...
-            //  TODO: I could probably leverage backbone's CID property to have the items know of their playlist. Or maybe I should just enforce adding client-side before saving?
-            //  If an unsaved playlist comes from the client with items already in it, the items will not know their playlist's ID.
-            //  So, re-map to the playlist as appropriate.
-            List<PlaylistItem> improperlyAddedItems = playlist.Items.Where(i => i.Playlist == null).ToList();
-            improperlyAddedItems.ForEach(i => playlist.Items.Remove(i));
-            playlist.AddItems(improperlyAddedItems);
-
-            return playlist;
+            Id = id;
+            Sequence = sequence;
+            Title = title;
+            User = user;
         }
 
         public virtual void Copy(Playlist playlist)

@@ -29,7 +29,17 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                Playlist playlist = Playlist.Create(playlistDto, UserManager, PlaylistManager);
+                User user = UserManager.Get(playlistDto.UserId);
+
+                Playlist playlist = new Playlist(playlistDto.Id, playlistDto.Sequence, playlistDto.Title, user);
+
+                foreach (PlaylistItemDto playlistItemDto in playlistDto.Items)
+                {
+                    Video video = new Video(playlistItemDto.Video.Id, playlistItemDto.Video.Title, playlistItemDto.Video.Duration, playlistItemDto.Video.Author);
+                    
+                    playlist.AddItem(new PlaylistItem(playlistItemDto.Cid, playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
+                }
+
                 playlist.User.AddPlaylist(playlist);
 
                 //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
@@ -52,7 +62,17 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                Playlist playlist = Playlist.Create(playlistDto, UserManager, PlaylistManager);
+                User user = UserManager.Get(playlistDto.UserId);
+
+                Playlist playlist = new Playlist(playlistDto.Id, playlistDto.Sequence, playlistDto.Title, user);
+
+                foreach (PlaylistItemDto playlistItemDto in playlistDto.Items)
+                {
+                    Video video = new Video(playlistItemDto.Video.Id, playlistItemDto.Video.Title, playlistItemDto.Video.Duration, playlistItemDto.Video.Author);
+
+                    playlist.AddItem(new PlaylistItem(playlistItemDto.Cid, playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
+                }
+
                 PlaylistManager.Update(playlist);
 
                 updatedPlaylistDto = PlaylistDto.Create(playlist);
