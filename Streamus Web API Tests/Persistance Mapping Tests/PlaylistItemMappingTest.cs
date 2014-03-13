@@ -33,7 +33,6 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
                 Session.Save(video);
                 var playlistItem = new PlaylistItem
                     {
-                        Cid = "cid",
                         Playlist = playlist2,
                         Video = video,
                         Sequence = 300,

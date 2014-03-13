@@ -15,9 +15,6 @@ namespace Streamus_Web_API.Dto
         public string Title { get; set; }
         public VideoDto Video { get; set; }
 
-        //  TODO: Still necessary? I thought Backbone wouldn't drop a property if it wasn't found in response request?
-        public string Cid { get; set; }
-
         public PlaylistItemDto()
         {
             Id = Guid.Empty;

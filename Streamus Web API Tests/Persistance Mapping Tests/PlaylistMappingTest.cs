@@ -24,7 +24,6 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
 
                 var playlistItem = new PlaylistItem
                     {
-                        Cid = "cid",
                         Playlist = playlist2,
                         Video = new Video(),
                         Sequence = 200,

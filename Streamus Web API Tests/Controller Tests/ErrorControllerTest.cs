@@ -23,7 +23,7 @@ namespace Streamus_Web_API_Tests.Controller
         public void POST_error_Should_route_to_ErrorController_Create_method()
         {
             // setups
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost/error/");
+            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost/Error/");
             var config = new HttpConfiguration();
 
             // act

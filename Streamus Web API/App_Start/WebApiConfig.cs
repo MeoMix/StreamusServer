@@ -7,6 +7,8 @@ namespace Streamus_Web_API.App_Start
         //  TODO: Create test cases for custom routing.
         public static void Register(HttpConfiguration config)
         {
+
+
             //  TODO: These methods break RESTful practices. How can I fix?
             // Web API configuration and services
             config.Routes.MapHttpRoute("UpdateTitle", "Playlist/UpdateTitle/{playlistDto}");
@@ -15,6 +17,16 @@ namespace Streamus_Web_API.App_Start
             config.Routes.MapHttpRoute("GetShareCode", "ShareCode/GetShareCode/{playlistId}");
    
             //  TODO: Kinda odd this one says no params when it actually takes a List. If I specify a param it conflicts with the other POST though.
+            config.Routes.MapHttpRoute(
+                name: "Create",
+                routeTemplate: "PlaylistItem",
+                defaults: new
+                {
+                    controller = "PlaylistItem",
+                    action = "Create"
+                }
+            );
+            
             config.Routes.MapHttpRoute(
                 name: "CreateMultiple",
                 routeTemplate: "PlaylistItem/CreateMultiple",
@@ -25,12 +37,17 @@ namespace Streamus_Web_API.App_Start
                     }
             );
 
+            //config.MapHttpAttributeRoutes();
+
+
+
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
 
+            //config.EnsureInitialized();
         }
     }
 }

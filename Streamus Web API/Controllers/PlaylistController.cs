@@ -37,7 +37,7 @@ namespace Streamus_Web_API.Controllers
                 {
                     Video video = new Video(playlistItemDto.Video.Id, playlistItemDto.Video.Title, playlistItemDto.Video.Duration, playlistItemDto.Video.Author);
                     
-                    playlist.AddItem(new PlaylistItem(playlistItemDto.Cid, playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
+                    playlist.AddItem(new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
                 }
 
                 playlist.User.AddPlaylist(playlist);
@@ -70,7 +70,7 @@ namespace Streamus_Web_API.Controllers
                 {
                     Video video = new Video(playlistItemDto.Video.Id, playlistItemDto.Video.Title, playlistItemDto.Video.Duration, playlistItemDto.Video.Author);
 
-                    playlist.AddItem(new PlaylistItem(playlistItemDto.Cid, playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
+                    playlist.AddItem(new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
                 }
 
                 PlaylistManager.Update(playlist);

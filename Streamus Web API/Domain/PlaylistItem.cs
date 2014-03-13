@@ -11,9 +11,6 @@ namespace Streamus_Web_API.Domain
         public virtual string Title { get; set; }
         public virtual Video Video { get; set; }
 
-        //  Not written to the database. Used for client to tell who is who after a save.
-        public virtual string Cid { get; set; }
-
         public PlaylistItem()
         {
             Id = Guid.Empty;
@@ -35,10 +32,9 @@ namespace Streamus_Web_API.Domain
             Video = playlistItem.Video;
         }
 
-        public PlaylistItem(string cid, Guid id, int sequence, string title, Playlist playlist, Video video)
+        public PlaylistItem(Guid id, int sequence, string title, Playlist playlist, Video video)
             : this()
         {
-            Cid = cid;
             Id = id;
             Sequence = sequence;
             Title = title;

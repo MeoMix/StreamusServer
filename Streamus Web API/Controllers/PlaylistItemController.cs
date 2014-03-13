@@ -10,6 +10,7 @@ using System.Linq;
 
 namespace Streamus_Web_API.Controllers
 {
+    //[RoutePrefix("PlaylistItem")]
     public class PlaylistItemController : StreamusController
     {
         private readonly IPlaylistManager PlaylistManager;
@@ -22,6 +23,9 @@ namespace Streamus_Web_API.Controllers
             PlaylistItemManager = managerFactory.GetPlaylistItemManager();
         }
 
+        //  TODO: This has a bug if I attempt to save just 1 playlistItemDto it doesn't know which route to go to.
+        //[ActionName("Create")]
+        //[Route("{playlistItemDto}")]
         [HttpPost]
         public PlaylistItemDto Create(PlaylistItemDto playlistItemDto)
         {
@@ -32,7 +36,7 @@ namespace Streamus_Web_API.Controllers
                 VideoDto videoDto = playlistItemDto.Video;
                 Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
                 Playlist playlist = PlaylistManager.Get(playlistItemDto.PlaylistId);
-                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Cid, playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video);
+                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video);
 
                 playlistItem.Playlist.AddItem(playlistItem);
 
@@ -46,6 +50,8 @@ namespace Streamus_Web_API.Controllers
             return savedPlaylistItemDto;
         }
 
+        //[ActionName("CreateMultiple")]
+        //[Route("{playlistItemDtos}")]
         [HttpPost]
         public IEnumerable<PlaylistItemDto> CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
@@ -71,7 +77,7 @@ namespace Streamus_Web_API.Controllers
                     Video video = new Video(playlistItemDto.Video.Id, playlistItemDto.Video.Title, playlistItemDto.Video.Duration, playlistItemDto.Video.Author);
                     Playlist playlist = PlaylistManager.Get(playlistItemDto.PlaylistId);
 
-                    playlistItems.Add(new PlaylistItem(playlistItemDto.Cid, playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
+                    playlistItems.Add(new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
                 }
 
                 //  Split items into their respective playlists and then save on each.
@@ -100,7 +106,7 @@ namespace Streamus_Web_API.Controllers
                 VideoDto videoDto = playlistItemDto.Video;
                 Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
                 Playlist playlist = PlaylistManager.Get(playlistItemDto.PlaylistId);
-                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Cid, playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video);
+                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video);
                 PlaylistItemManager.Update(playlistItem);
 
                 updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
