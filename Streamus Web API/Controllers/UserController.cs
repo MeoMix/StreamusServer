@@ -8,6 +8,7 @@ using System.Web.Http;
 
 namespace Streamus_Web_API.Controllers
 {
+    [RoutePrefix("User")]
     public class UserController : StreamusController
     {
         private readonly IUserManager UserManager;
@@ -22,6 +23,7 @@ namespace Streamus_Web_API.Controllers
         ///     Creates a new User object and writes it to the database.
         /// </summary>
         /// <returns>The newly created User</returns>
+        [Route("")]
         [HttpPost]
         public UserDto Create()
         {
@@ -37,7 +39,8 @@ namespace Streamus_Web_API.Controllers
 
             return userDto;
         }
-
+        
+        [Route("{id:guid}")]
         [HttpGet]
         public UserDto Get(Guid id)
         {
@@ -54,6 +57,7 @@ namespace Streamus_Web_API.Controllers
             return userDto;
         }
 
+        [Route("GetByGooglePlusId/{googlePlusId}")]
         [HttpGet]
         public UserDto GetByGooglePlusId(string googlePlusId)
         {
@@ -70,7 +74,7 @@ namespace Streamus_Web_API.Controllers
             return userDto;
         }
 
-        //  TODO: There are better ways of implementing PATCH...
+        [Route("UpdateGooglePlusId")]
         [HttpPatch]
         public IHttpActionResult UpdateGooglePlusId(UserDto userDto)
         {            

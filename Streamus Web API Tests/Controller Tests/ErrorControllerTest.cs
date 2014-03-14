@@ -1,8 +1,4 @@
-﻿using System.Net.Http;
-using System.Web.Http;
-using FluentAssertions;
-using NUnit.Framework;
-using Streamus_Web_API.App_Start;
+﻿using NUnit.Framework;
 using Streamus_Web_API.Controllers;
 using Streamus_Web_API.Dto;
 
@@ -17,22 +13,6 @@ namespace Streamus_Web_API_Tests.Controller
         public new void TestFixtureSetUp()
         {
             ErrorController = new ErrorController(Logger, Session, ManagerFactory);
-        }
-
-        [Test]
-        public void POST_error_Should_route_to_ErrorController_Create_method()
-        {
-            // setups
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost/Error/");
-            var config = new HttpConfiguration();
-
-            // act
-            WebApiConfig.Register(config);
-            var route = Helpers.RouteRequest(config, request);
-
-            // asserts
-            route.Controller.Should().Be<ErrorController>();
-            route.Action.Should().Be("Create");
         }
 
         [Test]

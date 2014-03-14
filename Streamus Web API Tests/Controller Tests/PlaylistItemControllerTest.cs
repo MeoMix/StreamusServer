@@ -1,12 +1,4 @@
-﻿using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web.Http;
-using FluentAssertions;
-using NUnit.Framework;
-using Streamus_Web_API.App_Start;
+﻿using NUnit.Framework;
 using Streamus_Web_API.Controllers;
 using Streamus_Web_API.Domain;
 using Streamus_Web_API.Domain.Interfaces;
@@ -28,40 +20,6 @@ namespace Streamus_Web_API_Tests.Controller
         {
             PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
             PlaylistManager = ManagerFactory.GetPlaylistManager();
-        }
-
-        [Test]
-        public void POST_PlaylistItem_Should_route_to_PlaylistItemController_Create_method()
-        { 
-            // setups
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost/PlaylistItem/");
-
-            var config = new HttpConfiguration();
-
-            // act
-            WebApiConfig.Register(config);
-            var route = Helpers.RouteRequest(config, request);
-
-            // asserts
-            route.Controller.Should().Be<PlaylistItemController>();
-            route.Action.Should().Be("Create");
-        }
-
-        [Test]
-        public void POST_CreateMultiple_PlaylistItem_Should_route_to_PlaylistItemController_CreateMultiple_method()
-        {
-            // setups
-            var request = new HttpRequestMessage(HttpMethod.Post, "http://localhost/PlaylistItem/CreateMultiple");
-
-            var config = new HttpConfiguration();
-
-            // act
-            WebApiConfig.Register(config);
-            var route = Helpers.RouteRequest(config, request);
-
-            // asserts
-            route.Controller.Should().Be<PlaylistItemController>();
-            route.Action.Should().Be("CreateMultiple");
         }
 
         [Test]

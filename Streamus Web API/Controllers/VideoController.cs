@@ -1,9 +1,11 @@
-﻿using NHibernate;
+﻿using System.Web.Http;
+using NHibernate;
 using Streamus_Web_API.Domain.Interfaces;
 using log4net;
 
 namespace Streamus_Web_API.Controllers
 {
+    [RoutePrefix("Video")]
     public class VideoController : StreamusController
     {
         private readonly IVideoManager VideoManager;

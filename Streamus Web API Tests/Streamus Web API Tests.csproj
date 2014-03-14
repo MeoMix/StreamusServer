@@ -139,6 +139,11 @@
     <Compile Include="Persistance Mapping Tests\VideoMappingTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResetDatabase.cs" />
+    <Compile Include="Routing Tests\ErrorRoutingTest.cs" />
+    <Compile Include="Routing Tests\PlaylistItemRoutingTest.cs" />
+    <Compile Include="Routing Tests\PlaylistRoutingTest.cs" />
+    <Compile Include="Routing Tests\ShareCodeRoutingTest.cs" />
+    <Compile Include="Routing Tests\UserRoutingTest.cs" />
     <Compile Include="StreamusTest.cs" />
   </ItemGroup>
   <ItemGroup>

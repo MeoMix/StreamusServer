@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Streamus_Web_API.Controllers
 {
-    //[RoutePrefix("PlaylistItem")]
+    [RoutePrefix("PlaylistItem")]
     public class PlaylistItemController : StreamusController
     {
         private readonly IPlaylistManager PlaylistManager;
@@ -23,9 +23,7 @@ namespace Streamus_Web_API.Controllers
             PlaylistItemManager = managerFactory.GetPlaylistItemManager();
         }
 
-        //  TODO: This has a bug if I attempt to save just 1 playlistItemDto it doesn't know which route to go to.
-        //[ActionName("Create")]
-        //[Route("{playlistItemDto}")]
+        [Route("")]
         [HttpPost]
         public PlaylistItemDto Create(PlaylistItemDto playlistItemDto)
         {
@@ -50,8 +48,7 @@ namespace Streamus_Web_API.Controllers
             return savedPlaylistItemDto;
         }
 
-        //[ActionName("CreateMultiple")]
-        //[Route("{playlistItemDtos}")]
+        [Route("CreateMultiple")]
         [HttpPost]
         public IEnumerable<PlaylistItemDto> CreateMultiple(List<PlaylistItemDto> playlistItemDtos)
         {
@@ -95,7 +92,8 @@ namespace Streamus_Web_API.Controllers
 
             return savedPlaylistItemDtos;
         }
-
+        
+        [Route("")]
         [HttpPut]
         public PlaylistItemDto Update(PlaylistItemDto playlistItemDto)
         {
@@ -116,6 +114,7 @@ namespace Streamus_Web_API.Controllers
             return updatedPlaylistItemDto;
         }
 
+        [Route("{id:guid}")]
         [HttpDelete]
         public IHttpActionResult Delete(Guid id)
         {

@@ -6,6 +6,7 @@ using NHibernate;
 
 namespace Streamus_Web_API.Controllers
 {
+    [RoutePrefix("Error")]
     public class ErrorController : StreamusController
     {
         private readonly IErrorManager ErrorManager;
@@ -16,6 +17,7 @@ namespace Streamus_Web_API.Controllers
             ErrorManager = managerFactory.GetErrorManager();
         }
 
+        [Route("")]
         [HttpPost, Throttle(Name = "ClientErrorThrottle", Message = "You must wait {n} seconds before accessing logging another error.", Seconds = 60)]
         public ErrorDto Create(ErrorDto errorDto)
         {

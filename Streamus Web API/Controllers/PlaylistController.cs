@@ -8,6 +8,7 @@ using System.Web.Http;
 
 namespace Streamus_Web_API.Controllers
 {
+    [RoutePrefix("Playlist")]
     public class PlaylistController : StreamusController
     {
         private readonly IPlaylistManager PlaylistManager;
@@ -21,7 +22,8 @@ namespace Streamus_Web_API.Controllers
             UserManager = managerFactory.GetUserManager();
             ShareCodeManager = managerFactory.GetShareCodeManager();
         }
-
+        
+        [Route("")]
         [HttpPost]
         public PlaylistDto Create(PlaylistDto playlistDto)
         {
@@ -55,6 +57,7 @@ namespace Streamus_Web_API.Controllers
             return savedPlaylistDto;
         }
 
+        [Route("")]
         [HttpPut]
         public PlaylistDto Update(PlaylistDto playlistDto)
         {
@@ -82,7 +85,8 @@ namespace Streamus_Web_API.Controllers
 
             return updatedPlaylistDto;
         }
-
+        
+        [Route("{id:guid}")]
         [HttpGet]
         public PlaylistDto Get(Guid id)
         {
@@ -98,6 +102,7 @@ namespace Streamus_Web_API.Controllers
             return playlistDto;
         }
 
+        [Route("{id:guid}")]
         [HttpDelete]
         public IHttpActionResult Delete(Guid id)
         {            
@@ -110,8 +115,7 @@ namespace Streamus_Web_API.Controllers
             return Ok();
         }
 
-        //  TODO: This isn't the best way to implement PATCH because the method has to know explicitly what
-        //  model properties changed rather than just merging the differences in, but it works for now.
+        [Route("UpdateTitle")]
         [HttpPatch]
         public IHttpActionResult UpdateTitle(PlaylistDto playlistDto)
         {
@@ -129,6 +133,7 @@ namespace Streamus_Web_API.Controllers
         ///     Retrieves a ShareCode relating to a Playlist, create a copy of the Playlist referenced by the ShareCode,
         ///     and return the copied Playlist.
         /// </summary>
+        [Route("CreateCopyByShareCode")]
         [HttpGet]
         public PlaylistDto CreateCopyByShareCode(ShareCodeRequestDto shareCodeRequestDto)
         {

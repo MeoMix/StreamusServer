@@ -1,14 +1,14 @@
-﻿using System.Web.Http;
-using System.Web.Http.Results;
+﻿using log4net;
+using NHibernate;
 using Streamus_Web_API.Domain;
 using Streamus_Web_API.Domain.Interfaces;
 using Streamus_Web_API.Dto;
-using log4net;
-using NHibernate;
 using System;
+using System.Web.Http;
 
 namespace Streamus_Web_API.Controllers
 {
+    [RoutePrefix("ShareCode")]
     public class ShareCodeController : StreamusController
     {
         private readonly IShareCodeManager ShareCodeManager;
@@ -22,6 +22,7 @@ namespace Streamus_Web_API.Controllers
         }
 
         //  TODO: Revisit this. Maybe I'm making it way too hard on myself now that I don't have Folders? What else would need a share code?
+        [Route("GetShareCode/{playlistId:guid}")]
         [HttpGet]
         public ShareCodeDto GetShareCode(Guid playlistId)
         {
