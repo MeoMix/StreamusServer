@@ -10,7 +10,7 @@ namespace Streamus_Web_API.Dao
     /// </summary>
     public class NHibernateDaoFactory : IDaoFactory
     {
-        private IErrorDao ErrorDao;
+        private IClientErrorDao ClientErrorDao;
         private IPlaylistDao PlaylistDao;
         private IPlaylistItemDao PlaylistItemDao;
         private IShareCodeDao ShareCodeDao;
@@ -25,9 +25,9 @@ namespace Streamus_Web_API.Dao
             Session = session;
         }
 
-        public IErrorDao GetErrorDao()
+        public IClientErrorDao GetErrorDao()
         {
-            return ErrorDao ?? (ErrorDao = new ErrorDao(Session));
+            return ClientErrorDao ?? (ClientErrorDao = new ClientErrorDao(Session));
         }
 
         public IPlaylistDao GetPlaylistDao()

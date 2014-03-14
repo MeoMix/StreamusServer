@@ -9,7 +9,7 @@ namespace Streamus_Web_API.Domain.Managers
         private readonly ILog Logger;
         private readonly IDaoFactory DaoFactory;
 
-        private IErrorManager ErrorManager;
+        private IClientErrorManager ClientErrorManager;
         private IPlaylistItemManager PlaylistItemManager;
         private IPlaylistManager PlaylistManager;
         private IShareCodeManager ShareCodeManager;
@@ -25,9 +25,9 @@ namespace Streamus_Web_API.Domain.Managers
             DaoFactory = daoFactory;
         }
 
-        public IErrorManager GetErrorManager()
+        public IClientErrorManager GetErrorManager()
         {
-            return ErrorManager ?? (ErrorManager = new ErrorManager(Logger, DaoFactory.GetErrorDao()));
+            return ClientErrorManager ?? (ClientErrorManager = new ClientErrorManager(Logger, DaoFactory.GetErrorDao()));
         }
 
         public IPlaylistItemManager GetPlaylistItemManager()

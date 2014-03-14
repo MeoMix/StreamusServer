@@ -4,8 +4,7 @@ using Streamus_Web_API.Domain.Validators;
 
 namespace Streamus_Web_API.Domain
 {
-    //  TODO: Consider renaming this "ClientError" instead of "Error" to be more explicit and not conflict with Error namespace.
-    public class Error : AbstractDomainEntity<Guid>
+    public class ClientError : AbstractDomainEntity<Guid>
     {
         public virtual string Message { get; set; }
         public virtual int LineNumber { get; set; }
@@ -15,7 +14,7 @@ namespace Streamus_Web_API.Domain
         public virtual string OperatingSystem { get; set; }
         public virtual string Architecture { get; set; }
 
-        public Error()
+        public ClientError()
         {
             Message = string.Empty;
             LineNumber = -1;
@@ -26,7 +25,7 @@ namespace Streamus_Web_API.Domain
             Architecture = string.Empty;
         }
 
-        public Error(string architecture, string clientVersion, int lineNumber, string message, string operatingSystem, string url)
+        public ClientError(string architecture, string clientVersion, int lineNumber, string message, string operatingSystem, string url)
             : this()
         {
             Architecture = architecture;
@@ -38,14 +37,14 @@ namespace Streamus_Web_API.Domain
 
             if (Message.Length > 255)
             {
-                //  When receiving an error message from the client -- ensure it is a maximum of 255 characters before saving.
+                //  Ensure that client error message is a maximum of 255 characters before saving.
                 Message = string.Format("{0}...", Message.Substring(0, 252));
             }
         }
 
         public virtual void ValidateAndThrow()
         {
-            var validator = new ErrorValidator();
+            var validator = new ClientErrorValidator();
             validator.ValidateAndThrow(this);
         }
     }

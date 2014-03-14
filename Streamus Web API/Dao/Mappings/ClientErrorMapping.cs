@@ -4,9 +4,9 @@ using Streamus_Web_API.Domain;
 
 namespace Streamus_Web_API.Dao.Mappings
 {
-    public class ErrorMapping : ClassMap<Error>
+    public class ClientErrorMapping : ClassMap<ClientError>
     {
-        public ErrorMapping()
+        public ClientErrorMapping()
         {
             Table("[Errors]");
 

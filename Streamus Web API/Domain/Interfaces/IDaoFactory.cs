@@ -5,7 +5,7 @@
     /// </summary>
     public interface IDaoFactory
     {
-        IErrorDao GetErrorDao();
+        IClientErrorDao GetErrorDao();
         IPlaylistDao GetPlaylistDao();
         IPlaylistItemDao GetPlaylistItemDao();
         IShareCodeDao GetShareCodeDao();

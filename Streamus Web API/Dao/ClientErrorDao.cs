@@ -4,9 +4,9 @@ using Streamus_Web_API.Domain.Interfaces;
 
 namespace Streamus_Web_API.Dao
 {
-    public class ErrorDao : AbstractNHibernateDao<Error>, IErrorDao
+    public class ClientErrorDao : AbstractNHibernateDao<ClientError>, IClientErrorDao
     {
-        public ErrorDao(ISession session)
+        public ClientErrorDao(ISession session)
             : base(session)
         {
             

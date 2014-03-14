@@ -21,7 +21,6 @@ namespace Streamus_Web_API.Controllers
             PlaylistManager = managerFactory.GetPlaylistManager();
         }
 
-        //  TODO: Revisit this. Maybe I'm making it way too hard on myself now that I don't have Folders? What else would need a share code?
         [Route("GetShareCode/{playlistId:guid}")]
         [HttpGet]
         public ShareCodeDto GetShareCode(Guid playlistId)

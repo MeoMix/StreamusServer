@@ -128,7 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\ClientErrorController.cs" />
     <Compile Include="Controllers\PlaylistController.cs" />
     <Compile Include="Controllers\PlaylistItemController.cs" />
     <Compile Include="Controllers\ShareCodeController.cs" />
@@ -138,8 +138,8 @@
     <Compile Include="Controllers\VideoController.cs" />
     <Compile Include="Dao\AbstractNHibernateDao.cs" />
     <Compile Include="Dao\AutofacRegistrations.cs" />
-    <Compile Include="Dao\ErrorDao.cs" />
-    <Compile Include="Dao\Mappings\ErrorMapping.cs" />
+    <Compile Include="Dao\ClientErrorDao.cs" />
+    <Compile Include="Dao\Mappings\ClientErrorMapping.cs" />
     <Compile Include="Dao\Mappings\PlaylistItemMapping.cs" />
     <Compile Include="Dao\Mappings\PlaylistMapping.cs" />
     <Compile Include="Dao\Mappings\ShareCodeMapping.cs" />
@@ -154,12 +154,12 @@
     <Compile Include="Dao\VideoDao.cs" />
     <Compile Include="Domain\AbstractDomainEntity.cs" />
     <Compile Include="Domain\AbstractShareableEntity.cs" />
-    <Compile Include="Domain\Error.cs" />
+    <Compile Include="Domain\ClientError.cs" />
     <Compile Include="Domain\Interfaces\IAbstractDomainEntity.cs" />
     <Compile Include="Domain\Interfaces\IDao.cs" />
     <Compile Include="Domain\Interfaces\IDaoFactory.cs" />
-    <Compile Include="Domain\Interfaces\IErrorDao.cs" />
-    <Compile Include="Domain\Interfaces\IErrorManager.cs" />
+    <Compile Include="Domain\Interfaces\IClientErrorDao.cs" />
+    <Compile Include="Domain\Interfaces\IClientErrorManager.cs" />
     <Compile Include="Domain\Interfaces\IManagerFactory.cs" />
     <Compile Include="Domain\Interfaces\IPlaylistDao.cs" />
     <Compile Include="Domain\Interfaces\IPlaylistItemDao.cs" />
@@ -181,7 +181,7 @@
     <Compile Include="Domain\PlaylistItem.cs" />
     <Compile Include="Domain\ShareCode.cs" />
     <Compile Include="Domain\User.cs" />
-    <Compile Include="Domain\Validators\ErrorValidator.cs" />
+    <Compile Include="Domain\Validators\ClientErrorValidator.cs" />
     <Compile Include="Domain\Validators\PlaylistItemValidator.cs" />
     <Compile Include="Domain\Validators\PlaylistValidator.cs" />
     <Compile Include="Domain\Validators\ShareCodeValidator.cs" />
@@ -189,7 +189,7 @@
     <Compile Include="Domain\Validators\VideoValidator.cs" />
     <Compile Include="Domain\Video.cs" />
     <Compile Include="Dto\ShareCodeRequestDto.cs" />
-    <Compile Include="Dto\ErrorDto.cs" />
+    <Compile Include="Dto\ClientErrorDto.cs" />
     <Compile Include="Dto\PlaylistDto.cs" />
     <Compile Include="Dto\PlaylistItemDto.cs" />
     <Compile Include="Dto\ShareCodeDto.cs" />
@@ -198,7 +198,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Domain\Managers\ErrorManager.cs" />
+    <Compile Include="Domain\Managers\ClientErrorManager.cs" />
     <Compile Include="Domain\Managers\StreamusManager.cs" />
     <Compile Include="Domain\Managers\StreamusManagerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

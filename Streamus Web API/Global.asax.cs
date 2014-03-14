@@ -46,7 +46,7 @@ namespace Streamus_Web_API
         /// </summary>
         public static void CreateAutoMapperMaps()
         {
-            Mapper.CreateMap<Error, ErrorDto>();
+            Mapper.CreateMap<ClientError, ClientErrorDto>();
 
             Mapper.CreateMap<Playlist, PlaylistDto>();
             Mapper.CreateMap<PlaylistItem, PlaylistItemDto>();

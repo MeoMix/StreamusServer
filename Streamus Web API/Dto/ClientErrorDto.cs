@@ -3,7 +3,7 @@ using Streamus_Web_API.Domain;
 
 namespace Streamus_Web_API.Dto
 {
-    public class ErrorDto
+    public class ClientErrorDto
     {
         public string Message { get; set; }
         public int LineNumber { get; set; }
@@ -12,7 +12,7 @@ namespace Streamus_Web_API.Dto
         public string OperatingSystem { get; set; }
         public string Architecture { get; set; }
 
-        public ErrorDto()
+        public ClientErrorDto()
         {
             Message = string.Empty;
             Architecture = string.Empty;
@@ -22,10 +22,10 @@ namespace Streamus_Web_API.Dto
             ClientVersion = string.Empty;
         }
 
-        public static ErrorDto Create(Error error)
+        public static ClientErrorDto Create(ClientError clientError)
         {
-            ErrorDto errorDto = Mapper.Map<Error, ErrorDto>(error);
-            return errorDto;
+            ClientErrorDto clientErrorDto = Mapper.Map<ClientError, ClientErrorDto>(clientError);
+            return clientErrorDto;
         }
     }
 }

@@ -6,7 +6,7 @@ using System;
 namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
 {
     [TestFixture]
-    public class ErrorMappingTest : StreamusTest
+    public class ClientErrorMappingTest : StreamusTest
     {
         [Test]
         public void ShouldMap()
@@ -15,7 +15,7 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
             {
                 var sampleOccurenceTime = DateTime.Today;
 
-                new PersistenceSpecification<Error>(Session)
+                new PersistenceSpecification<ClientError>(Session)
                     .CheckProperty(e => e.LineNumber, 1)
                     .CheckProperty(e => e.Message, "testmessage")
                     .CheckProperty(e => e.OperatingSystem, "operating system")

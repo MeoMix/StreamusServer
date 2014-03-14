@@ -2,7 +2,7 @@
 {
     public interface IManagerFactory
     {
-        IErrorManager GetErrorManager();
+        IClientErrorManager GetErrorManager();
         IPlaylistItemManager GetPlaylistItemManager();
         IPlaylistManager GetPlaylistManager();
         IShareCodeManager GetShareCodeManager();

@@ -117,8 +117,7 @@ namespace Streamus_Web_API.Domain.Managers
 
                 if (playlistToCopy == null)
                 {
-                    string errorMessage = string.Format("No playlist found with id: {0}", id);
-                    throw new ApplicationException(errorMessage);
+                    throw new ApplicationException(string.Format("No playlist found with id: {0}", id));
                 }
 
                 copiedPlaylist = new Playlist(playlistToCopy);

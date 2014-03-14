@@ -8,9 +8,9 @@ using System.Web.Http;
 namespace Streamus_Web_API_Tests.Routing_Tests
 {
     [TestFixture]
-    public class ErrorRoutingTest : StreamusTest
+    public class ClientErrorRoutingTest : StreamusTest
     {
-        private const string RoutePrefix = "http://localhost/Error/";
+        private const string RoutePrefix = "http://localhost/ClientError/";
 
         [Test]
         public void POST_error_Should_route_to_ErrorController_Create_method()
@@ -21,7 +21,7 @@ namespace Streamus_Web_API_Tests.Routing_Tests
             WebApiConfig.Register(config);
             var route = Helpers.RouteRequest(config, request);
 
-            route.Controller.Should().Be<ErrorController>();
+            route.Controller.Should().Be<ClientErrorController>();
             route.Action.Should().Be("Create");
         }
     }
