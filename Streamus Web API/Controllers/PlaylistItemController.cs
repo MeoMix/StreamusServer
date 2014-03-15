@@ -116,15 +116,13 @@ namespace Streamus_Web_API.Controllers
 
         [Route("{id:guid}")]
         [HttpDelete]
-        public IHttpActionResult Delete(Guid id)
+        public void Delete(Guid id)
         {
             using (ITransaction transaction = Session.BeginTransaction())
             {
                 PlaylistItemManager.Delete(id);
                 transaction.Commit();
             }
-
-            return Ok();
         }
     }
 }

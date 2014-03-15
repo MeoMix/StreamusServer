@@ -17,7 +17,10 @@ namespace Streamus_Web_API.Dao.Mappings
             //  Only update properties which have changed.
             DynamicUpdate();
 
-            HasMany(p => p.Items).Inverse().Fetch.Join().Cascade.AllDeleteOrphan().KeyColumn("PlaylistId");
+            HasMany(p => p.Items)
+                .Inverse()
+                .Fetch.Join()
+                .Cascade.AllDeleteOrphan().KeyColumn("PlaylistId");
 
             References(p => p.User).Column("UserId");
         }

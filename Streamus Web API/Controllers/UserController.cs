@@ -76,7 +76,7 @@ namespace Streamus_Web_API.Controllers
 
         [Route("UpdateGooglePlusId")]
         [HttpPatch]
-        public IHttpActionResult UpdateGooglePlusId(UserDto userDto)
+        public void UpdateGooglePlusId(UserDto userDto)
         {            
             using (ITransaction transaction = Session.BeginTransaction())
             {
@@ -84,8 +84,6 @@ namespace Streamus_Web_API.Controllers
 
                 transaction.Commit();
             }
-
-            return Ok();
         }
 
     }

@@ -104,20 +104,18 @@ namespace Streamus_Web_API.Controllers
 
         [Route("{id:guid}")]
         [HttpDelete]
-        public IHttpActionResult Delete(Guid id)
+        public void Delete(Guid id)
         {            
             using (ITransaction transaction = Session.BeginTransaction())
             {
                 PlaylistManager.Delete(id);
                 transaction.Commit();
             }
-
-            return Ok();
         }
 
         [Route("UpdateTitle")]
         [HttpPatch]
-        public IHttpActionResult UpdateTitle(PlaylistDto playlistDto)
+        public void UpdateTitle(PlaylistDto playlistDto)
         {
             using (ITransaction transaction = Session.BeginTransaction())
             {
@@ -125,8 +123,6 @@ namespace Streamus_Web_API.Controllers
 
                 transaction.Commit();
             }
-
-            return Ok();
         }
 
         /// <summary>
