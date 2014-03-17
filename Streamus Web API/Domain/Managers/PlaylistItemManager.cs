@@ -111,16 +111,7 @@ namespace Streamus_Web_API.Domain.Managers
             playlistItem.ValidateAndThrow();
             playlistItem.Video.ValidateAndThrow();
 
-            PlaylistItem knownPlaylistItem = PlaylistItemDao.Get(playlistItem.Id);
-
-            if (knownPlaylistItem == null)
-            {
-                PlaylistItemDao.Update(playlistItem);
-            }
-            else
-            {
-                PlaylistItemDao.Merge(playlistItem);
-            }
+            PlaylistItemDao.Update(playlistItem);
         }
     }
 }

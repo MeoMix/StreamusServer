@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using Streamus_Web_API.Domain;
 using Streamus_Web_API.Domain.Interfaces;
-using System;
 
 namespace Streamus_Web_API_Tests.Tests.Manager_Tests
 {
@@ -12,7 +11,6 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
         private IPlaylistManager PlaylistManager;
 
         private User User { get; set; }
-        private Video Video { get; set; }
 
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
@@ -23,10 +21,6 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
             PlaylistManager = ManagerFactory.GetPlaylistManager();
 
             User = Helpers.CreateUser();
-            Video = Helpers.CreateUnsavedVideoWithId();
-
-            IVideoManager videoManager = ManagerFactory.GetVideoManager();
-            videoManager.Save(Video);
         }
 
         [Test]

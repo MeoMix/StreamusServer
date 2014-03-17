@@ -27,19 +27,6 @@ namespace Streamus_Web_API_Tests.Routing_Tests
         }
 
         [Test]
-        public void PUT_Should_route_to_PlaylistController_Update_method()
-        {
-            var request = new HttpRequestMessage(HttpMethod.Put, RoutePrefix);
-            var config = new HttpConfiguration();
-
-            WebApiConfig.Register(config);
-            var route = Helpers.RouteRequest(config, request);
-
-            route.Controller.Should().Be<PlaylistController>();
-            route.Action.Should().Be("Update");
-        }
-
-        [Test]
         public void GET_Should_route_to_PlaylistController_Get_method()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, RoutePrefix + Guid.NewGuid());

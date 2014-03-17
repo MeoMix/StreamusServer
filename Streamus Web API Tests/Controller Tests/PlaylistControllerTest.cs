@@ -38,6 +38,18 @@ namespace Streamus_Web_API_Tests.Controller
         }
 
         [Test]
+        public void DeletePlaylist_PlaylistHasItemsInIt_PlaylistDeletedSuccessfully()
+        {
+            User user = Helpers.CreateUser();
+            Playlist playlist = user.Playlists.First();
+
+            Helpers.CreateItemInPlaylist(playlist);
+            Helpers.CreateItemInPlaylist(playlist);
+
+            PlaylistController.Delete(playlist.Id);
+        }
+
+        [Test]
         public void DeletePlaylist_NextToBigPlaylist_NoStackOverflowException()
         {
             User user = Helpers.CreateUser();
@@ -107,5 +119,27 @@ namespace Streamus_Web_API_Tests.Controller
             //  Make sure that the created playlist was cascade added to the User
             Assert.That(userFromDatabase.Playlists.Count(p => p.Id == playlistDto.Id) == 1);
         }
+
+        //[Test]
+        //public void CreatePlaylist_PlaylistHasItemsInIt_UserDoesntHaveExtraPlaylistReferences()
+        //{
+        //    User user = Helpers.CreateUser();
+        //    PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
+
+        //    playlistDto.Items.Add(Helpers.CreatePlaylistItemDto());
+        //    playlistDto.Items.Add(Helpers.CreatePlaylistItemDto());
+        //    playlistDto.Items.Add(Helpers.CreatePlaylistItemDto());
+        //    playlistDto.Items.Add(Helpers.CreatePlaylistItemDto());
+
+        //    var createdPlaylistDto = PlaylistController.Create(playlistDto);
+
+        //    //  Make sure we actually get a Playlist DTO back from the Controller.
+        //    Assert.NotNull(createdPlaylistDto);
+
+        //    User userFromDatabase = UserManager.Get(createdPlaylistDto.UserId);
+
+        //    //  Make sure that the created playlist was cascade added to the User
+        //    Assert.That(userFromDatabase.Playlists.Count(p => p.Id == createdPlaylistDto.Id) == 1);
+        //}
     }
 }

@@ -33,13 +33,12 @@ namespace Streamus_Web_API.Domain
             Copy(playlist);
         }
 
-        public Playlist(Guid id, int sequence, string title, User user)
+        public Playlist(Guid id, int sequence, string title)
             : this()
         {
             Id = id;
             Sequence = sequence;
             Title = title;
-            User = user;
         }
 
         public virtual void Copy(Playlist playlist)

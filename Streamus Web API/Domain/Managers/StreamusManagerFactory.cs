@@ -14,7 +14,6 @@ namespace Streamus_Web_API.Domain.Managers
         private IPlaylistManager PlaylistManager;
         private IShareCodeManager ShareCodeManager;
         private IUserManager UserManager;
-        private IVideoManager VideoManager;
 
         public StreamusManagerFactory(ILog logger, IDaoFactory daoFactory)
         {
@@ -48,11 +47,6 @@ namespace Streamus_Web_API.Domain.Managers
         public IUserManager GetUserManager()
         {
             return UserManager ?? (UserManager = new UserManager(Logger, DaoFactory.GetUserDao()));
-        }
-
-        public IVideoManager GetVideoManager()
-        {
-            return VideoManager ?? (VideoManager = new VideoManager(Logger, DaoFactory.GetVideoDao()));
         }
     }
 }

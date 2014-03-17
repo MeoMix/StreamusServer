@@ -135,7 +135,6 @@
     <Compile Include="Controllers\StreamusController.cs" />
     <Compile Include="Controllers\ThrottleAttribute.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Controllers\VideoController.cs" />
     <Compile Include="Dao\AbstractNHibernateDao.cs" />
     <Compile Include="Dao\AutofacRegistrations.cs" />
     <Compile Include="Dao\ClientErrorDao.cs" />
@@ -171,12 +170,10 @@
     <Compile Include="Domain\Interfaces\IUserDao.cs" />
     <Compile Include="Domain\Interfaces\IUserManager.cs" />
     <Compile Include="Domain\Interfaces\IVideoDao.cs" />
-    <Compile Include="Domain\Interfaces\IVideoManager.cs" />
     <Compile Include="Domain\Managers\PlaylistItemManager.cs" />
     <Compile Include="Domain\Managers\PlaylistManager.cs" />
     <Compile Include="Domain\Managers\ShareCodeManager.cs" />
     <Compile Include="Domain\Managers\UserManager.cs" />
-    <Compile Include="Domain\Managers\VideoManager.cs" />
     <Compile Include="Domain\Playlist.cs" />
     <Compile Include="Domain\PlaylistItem.cs" />
     <Compile Include="Domain\ShareCode.cs" />

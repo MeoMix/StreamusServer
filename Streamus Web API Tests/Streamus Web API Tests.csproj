@@ -131,7 +131,6 @@
     <Compile Include="Manager Tests\PlaylistManagerTest.cs" />
     <Compile Include="Manager Tests\ShareCodeManagerTest.cs" />
     <Compile Include="Manager Tests\UserManagerTest.cs" />
-    <Compile Include="Manager Tests\VideoManagerTest.cs" />
     <Compile Include="Persistance Mapping Tests\ClientErrorMappingTest.cs" />
     <Compile Include="Persistance Mapping Tests\PlaylistItemMappingTest.cs" />
     <Compile Include="Persistance Mapping Tests\PlaylistMappingTest.cs" />

@@ -32,13 +32,12 @@ namespace Streamus_Web_API.Domain
             Video = playlistItem.Video;
         }
 
-        public PlaylistItem(Guid id, int sequence, string title, Playlist playlist, Video video)
+        public PlaylistItem(Guid id, int sequence, string title, Video video)
             : this()
         {
             Id = id;
             Sequence = sequence;
             Title = title;
-            Playlist = playlist;
             Video = video;
         }
 

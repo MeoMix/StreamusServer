@@ -51,18 +51,7 @@ namespace Streamus_Web_API.Domain.Managers
             try
             {
                 playlist.ValidateAndThrow();
-
-                //  TODO: Is this necessary still? Seems odd to me.
-                Playlist knownPlaylist = PlaylistDao.Get(playlist.Id);
-
-                if (knownPlaylist == null)
-                {
-                    PlaylistDao.Update(playlist);
-                }
-                else
-                {
-                    PlaylistDao.Merge(playlist);
-                }
+                PlaylistDao.Update(playlist);
             }
             catch (Exception exception)
             {

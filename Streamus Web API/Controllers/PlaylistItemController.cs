@@ -34,9 +34,9 @@ namespace Streamus_Web_API.Controllers
                 VideoDto videoDto = playlistItemDto.Video;
                 Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
                 Playlist playlist = PlaylistManager.Get(playlistItemDto.PlaylistId);
-                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video);
 
-                playlistItem.Playlist.AddItem(playlistItem);
+                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, video);
+                playlist.AddItem(playlistItem);
 
                 PlaylistItemManager.Save(playlistItem);
 
@@ -67,25 +67,30 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                List<PlaylistItem> playlistItems = new List<PlaylistItem>();
-
-                foreach (PlaylistItemDto playlistItemDto in playlistItemDtos)
-                {
-                    Video video = new Video(playlistItemDto.Video.Id, playlistItemDto.Video.Title, playlistItemDto.Video.Duration, playlistItemDto.Video.Author);
-                    Playlist playlist = PlaylistManager.Get(playlistItemDto.PlaylistId);
-
-                    playlistItems.Add(new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
-                }
+                List<PlaylistItem> savedPlaylistItems = new List<PlaylistItem>();
 
                 //  Split items into their respective playlists and then save on each.
-                foreach (var playlistGrouping in playlistItems.GroupBy(i => i.Playlist))
+                foreach (var playlistGrouping in playlistItemDtos.GroupBy(pid => pid.PlaylistId))
                 {
-                    List<PlaylistItem> groupingItems = playlistGrouping.ToList();
-                    playlistGrouping.Key.AddItems(groupingItems);
-                    PlaylistItemManager.Save(groupingItems);
+                    List<PlaylistItemDto> groupedPlaylistItemDtos = playlistGrouping.ToList();
+                    Playlist playlist = PlaylistManager.Get(playlistGrouping.Key);
+
+                    foreach (var playlistItemDto in groupedPlaylistItemDtos)
+                    {
+                        VideoDto videoDto = playlistItemDto.Video;
+                        Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
+
+                        PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, video);
+                        playlist.AddItem(playlistItem);
+
+                        savedPlaylistItems.Add(playlistItem);
+                    }
+
                 }
 
-                savedPlaylistItemDtos = PlaylistItemDto.Create(playlistItems);
+                PlaylistItemManager.Save(savedPlaylistItems);
+
+                savedPlaylistItemDtos = PlaylistItemDto.Create(savedPlaylistItems);
 
                 transaction.Commit();
             }
@@ -101,10 +106,11 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                VideoDto videoDto = playlistItemDto.Video;
-                Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
-                Playlist playlist = PlaylistManager.Get(playlistItemDto.PlaylistId);
-                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video);
+                PlaylistItem playlistItem = PlaylistItemManager.Get(playlistItemDto.Id);
+
+                playlistItem.Title = playlistItemDto.Title;
+                playlistItem.Sequence = playlistItemDto.Sequence;
+
                 PlaylistItemManager.Update(playlistItem);
 
                 updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);

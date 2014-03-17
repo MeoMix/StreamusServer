@@ -30,7 +30,8 @@ namespace Streamus_Web_API.Domain
                 {
                     User = this
                 };
-            Playlists.Add(playlist);
+
+            AddPlaylist(playlist);
 
             return playlist;
         }

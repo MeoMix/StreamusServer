@@ -20,7 +20,6 @@ namespace Streamus_Web_API.Dao.Mappings
 
             HasMany(u => u.Playlists)
                 .Inverse()
-                .Fetch.Join()
                 .Cascade.AllDeleteOrphan()
                 .KeyColumn("UserId");
         }

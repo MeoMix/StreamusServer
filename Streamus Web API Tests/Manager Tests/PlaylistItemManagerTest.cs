@@ -14,7 +14,6 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
 
         private IPlaylistItemManager PlaylistItemManager;
         private IPlaylistManager PlaylistManager;
-        private IVideoManager VideoManager;
 
         /// <summary>
         ///     This code runs before every test.
@@ -24,8 +23,7 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
         {
             PlaylistItemManager = ManagerFactory.GetPlaylistItemManager();
             PlaylistManager = ManagerFactory.GetPlaylistManager();
-            VideoManager = ManagerFactory.GetVideoManager();
-
+      
             //  Ensure that a User exists.
             User = Helpers.CreateUser();
 
@@ -41,10 +39,6 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
         public void CreateItem_NoVideoExists_VideoAndItemCreated()
         {
             PlaylistItem playlistItem = Helpers.CreateItemInPlaylist(Playlist);
-
-            //  Ensure that the Video was created.
-            Video videoFromDatabase = VideoManager.Get(playlistItem.Video.Id);
-            Assert.NotNull(videoFromDatabase);
 
             //  Ensure that the PlaylistItem was created.
             PlaylistItem itemFromDatabase = PlaylistItemManager.Get(playlistItem.Id);
@@ -62,36 +56,36 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
         ///     Create a new PlaylistItem with a Video whose ID is in the database.
         ///     No update should happen to the Video as it is immutable.
         /// </summary>
-        [Test]
-        public void CreateItem_VideoAlreadyExists_ItemCreatedVideoNotUpdated()
-        {
-            Video videoNotInDatabase = Helpers.CreateUnsavedVideoWithId();
+        //[Test]
+        //public void CreateItem_VideoAlreadyExists_ItemCreatedVideoNotUpdated()
+        //{
+        //    Video videoNotInDatabase = Helpers.CreateUnsavedVideoWithId();
 
-            VideoManager.Save(videoNotInDatabase);
+        //    VideoManager.Save(videoNotInDatabase);
 
-            //  Change the title for videoInDatabase to check that cascade-update does not affect title. Videos are immutable.
-            const string videoTitle = "A video title";
-            Video videoInDatabase = Helpers.CreateUnsavedVideoWithId(titleOverride: videoTitle);
+        //    //  Change the title for videoInDatabase to check that cascade-update does not affect title. Videos are immutable.
+        //    const string videoTitle = "A video title";
+        //    Video videoInDatabase = Helpers.CreateUnsavedVideoWithId(titleOverride: videoTitle);
 
-            //  Create a new PlaylistItem and write it to the database.
-            string title = videoInDatabase.Title;
-            var playlistItem = new PlaylistItem(title, videoInDatabase);
+        //    //  Create a new PlaylistItem and write it to the database.
+        //    string title = videoInDatabase.Title;
+        //    var playlistItem = new PlaylistItem(title, videoInDatabase);
 
-            Playlist.AddItem(playlistItem);
+        //    Playlist.AddItem(playlistItem);
 
-            PlaylistItemManager.Save(playlistItem);
+        //    PlaylistItemManager.Save(playlistItem);
 
-            //  Ensure that the Video was NOT updated by comparing the new title to the old one.
-            Video videoFromDatabase = VideoManager.Get(videoNotInDatabase.Id);
-            Assert.AreNotEqual(videoFromDatabase.Title, videoTitle);
+        //    //  Ensure that the Video was NOT updated by comparing the new title to the old one.
+        //    Video videoFromDatabase = VideoManager.Get(videoNotInDatabase.Id);
+        //    Assert.AreNotEqual(videoFromDatabase.Title, videoTitle);
 
-            //  Ensure that the PlaylistItem was created.
-            PlaylistItem itemFromDatabase = PlaylistItemManager.Get(playlistItem.Id);
-            Assert.NotNull(itemFromDatabase);
+        //    //  Ensure that the PlaylistItem was created.
+        //    PlaylistItem itemFromDatabase = PlaylistItemManager.Get(playlistItem.Id);
+        //    Assert.NotNull(itemFromDatabase);
 
-            //  Should have a sequence number after saving for sure.
-            Assert.GreaterOrEqual(itemFromDatabase.Sequence, 0);
-        }
+        //    //  Should have a sequence number after saving for sure.
+        //    Assert.GreaterOrEqual(itemFromDatabase.Sequence, 0);
+        //}
 
         [Test]
         public void CreateItem_NotAddedToPlaylistBeforeSave_ItemNotAdded()

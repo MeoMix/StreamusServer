@@ -7,6 +7,5 @@
         IPlaylistManager GetPlaylistManager();
         IShareCodeManager GetShareCodeManager();
         IUserManager GetUserManager();
-        IVideoManager GetVideoManager();
     }
 }

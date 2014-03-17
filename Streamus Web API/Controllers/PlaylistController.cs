@@ -33,16 +33,17 @@ namespace Streamus_Web_API.Controllers
             {
                 User user = UserManager.Get(playlistDto.UserId);
 
-                Playlist playlist = new Playlist(playlistDto.Id, playlistDto.Sequence, playlistDto.Title, user);
+                Playlist playlist = new Playlist(playlistDto.Id, playlistDto.Sequence, playlistDto.Title);
+                user.AddPlaylist(playlist);
 
                 foreach (PlaylistItemDto playlistItemDto in playlistDto.Items)
                 {
-                    Video video = new Video(playlistItemDto.Video.Id, playlistItemDto.Video.Title, playlistItemDto.Video.Duration, playlistItemDto.Video.Author);
-                    
-                    playlist.AddItem(new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
-                }
+                    VideoDto videoDto = playlistItemDto.Video;
+                    Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
+                    PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, video);
 
-                playlist.User.AddPlaylist(playlist);
+                    playlist.AddItem(playlistItem);
+                }
 
                 //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
                 playlist.ValidateAndThrow();
@@ -55,35 +56,6 @@ namespace Streamus_Web_API.Controllers
             }
 
             return savedPlaylistDto;
-        }
-
-        [Route("")]
-        [HttpPut]
-        public PlaylistDto Update(PlaylistDto playlistDto)
-        {
-            PlaylistDto updatedPlaylistDto;
-
-            using (ITransaction transaction = Session.BeginTransaction())
-            {
-                User user = UserManager.Get(playlistDto.UserId);
-
-                Playlist playlist = new Playlist(playlistDto.Id, playlistDto.Sequence, playlistDto.Title, user);
-
-                foreach (PlaylistItemDto playlistItemDto in playlistDto.Items)
-                {
-                    Video video = new Video(playlistItemDto.Video.Id, playlistItemDto.Video.Title, playlistItemDto.Video.Duration, playlistItemDto.Video.Author);
-
-                    playlist.AddItem(new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlist, video));
-                }
-
-                PlaylistManager.Update(playlist);
-
-                updatedPlaylistDto = PlaylistDto.Create(playlist);
-
-                transaction.Commit();
-            }
-
-            return updatedPlaylistDto;
         }
         
         [Route("{id:guid}")]
