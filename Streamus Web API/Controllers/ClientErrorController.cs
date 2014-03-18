@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using Streamus_Web_API.Domain;
 using Streamus_Web_API.Domain.Interfaces;
 using Streamus_Web_API.Dto;
 using log4net;
@@ -14,7 +15,7 @@ namespace Streamus_Web_API.Controllers
         public ClientErrorController(ILog logger, ISession session, IManagerFactory managerFactory)
             : base(logger, session)
         {
-            ClientClientErrorManager = managerFactory.GetErrorManager();
+            ClientClientErrorManager = managerFactory.GetErrorManager(session);
         }
 
         [Route("")]
@@ -25,7 +26,7 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                Domain.ClientError clientError = new Domain.ClientError(clientErrorDto.Architecture, clientErrorDto.ClientVersion, clientErrorDto.LineNumber, clientErrorDto.Message, clientErrorDto.OperatingSystem, clientErrorDto.Url);
+                ClientError clientError = new ClientError(clientErrorDto.Architecture, clientErrorDto.ClientVersion, clientErrorDto.LineNumber, clientErrorDto.Message, clientErrorDto.OperatingSystem, clientErrorDto.Url);
                 ClientClientErrorManager.Save(clientError);
 
                 savedErrorDto = ClientErrorDto.Create(clientError);

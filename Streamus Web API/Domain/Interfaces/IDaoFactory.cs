@@ -1,15 +1,17 @@
-﻿namespace Streamus_Web_API.Domain.Interfaces
+﻿using NHibernate;
+
+namespace Streamus_Web_API.Domain.Interfaces
 {
     /// <summary>
     /// Provides an interface for retrieving DAO objects
     /// </summary>
     public interface IDaoFactory
     {
-        IClientErrorDao GetErrorDao();
-        IPlaylistDao GetPlaylistDao();
-        IPlaylistItemDao GetPlaylistItemDao();
-        IShareCodeDao GetShareCodeDao();
-        IUserDao GetUserDao();
-        IVideoDao GetVideoDao();
+        IClientErrorDao GetErrorDao(ISession session);
+        IPlaylistDao GetPlaylistDao(ISession session);
+        IPlaylistItemDao GetPlaylistItemDao(ISession session);
+        IShareCodeDao GetShareCodeDao(ISession session);
+        IUserDao GetUserDao(ISession session);
+        IVideoDao GetVideoDao(ISession session);
     }
 }

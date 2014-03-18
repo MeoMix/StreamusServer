@@ -16,7 +16,7 @@ namespace Streamus_Web_API.Controllers
         public UserController(ILog logger, ISession session, IManagerFactory managerFactory)
             : base(logger, session)
         {
-            UserManager = managerFactory.GetUserManager();
+            UserManager = managerFactory.GetUserManager(session);
         }
 
         /// <summary>

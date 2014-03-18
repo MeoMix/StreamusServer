@@ -16,7 +16,7 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
         [SetUp]
         public new void TestFixtureSetUp()
         {
-            UserDao = DaoFactory.GetUserDao();
+            UserDao = DaoFactory.GetUserDao(Session);
         }
 
         [Test]

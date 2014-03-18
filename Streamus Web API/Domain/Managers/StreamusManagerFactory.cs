@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using NHibernate;
+using log4net;
 using Streamus_Web_API.Domain.Interfaces;
 using System;
 
@@ -24,29 +25,29 @@ namespace Streamus_Web_API.Domain.Managers
             DaoFactory = daoFactory;
         }
 
-        public IClientErrorManager GetErrorManager()
+        public IClientErrorManager GetErrorManager(ISession session)
         {
-            return ClientErrorManager ?? (ClientErrorManager = new ClientErrorManager(Logger, DaoFactory.GetErrorDao()));
+            return ClientErrorManager ?? (ClientErrorManager = new ClientErrorManager(Logger, DaoFactory.GetErrorDao(session)));
         }
 
-        public IPlaylistItemManager GetPlaylistItemManager()
+        public IPlaylistItemManager GetPlaylistItemManager(ISession session)
         {
-            return PlaylistItemManager ?? (PlaylistItemManager = new PlaylistItemManager(Logger, DaoFactory.GetPlaylistItemDao(), DaoFactory.GetVideoDao()));
+            return PlaylistItemManager ?? (PlaylistItemManager = new PlaylistItemManager(Logger, DaoFactory.GetPlaylistItemDao(session), DaoFactory.GetVideoDao(session)));
         }
 
-        public IPlaylistManager GetPlaylistManager()
+        public IPlaylistManager GetPlaylistManager(ISession session)
         {
-            return PlaylistManager ?? (PlaylistManager = new PlaylistManager(Logger, DaoFactory.GetPlaylistDao(), DaoFactory.GetVideoDao()));
+            return PlaylistManager ?? (PlaylistManager = new PlaylistManager(Logger, DaoFactory.GetPlaylistDao(session), DaoFactory.GetVideoDao(session)));
         }
 
-        public IShareCodeManager GetShareCodeManager()
+        public IShareCodeManager GetShareCodeManager(ISession session)
         {
-            return ShareCodeManager ?? (ShareCodeManager = new ShareCodeManager(Logger, DaoFactory.GetShareCodeDao()));
+            return ShareCodeManager ?? (ShareCodeManager = new ShareCodeManager(Logger, DaoFactory.GetShareCodeDao(session)));
         }
 
-        public IUserManager GetUserManager()
+        public IUserManager GetUserManager(ISession session)
         {
-            return UserManager ?? (UserManager = new UserManager(Logger, DaoFactory.GetUserDao()));
+            return UserManager ?? (UserManager = new UserManager(Logger, DaoFactory.GetUserDao(session)));
         }
     }
 }

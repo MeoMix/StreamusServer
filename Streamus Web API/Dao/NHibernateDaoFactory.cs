@@ -1,5 +1,4 @@
-﻿using System;
-using NHibernate;
+﻿using NHibernate;
 using Streamus_Web_API.Domain.Interfaces;
 
 namespace Streamus_Web_API.Dao
@@ -16,43 +15,35 @@ namespace Streamus_Web_API.Dao
         private IShareCodeDao ShareCodeDao;
         private IUserDao UserDao;
         private IVideoDao VideoDao;
-        private readonly ISession Session;
 
-        public NHibernateDaoFactory(ISession session)
+        public IClientErrorDao GetErrorDao(ISession session)
         {
-            if (session == null) throw new NullReferenceException("session");
-
-            Session = session;
+            return ClientErrorDao ?? (ClientErrorDao = new ClientErrorDao(session));
         }
 
-        public IClientErrorDao GetErrorDao()
+        public IPlaylistDao GetPlaylistDao(ISession session)
         {
-            return ClientErrorDao ?? (ClientErrorDao = new ClientErrorDao(Session));
+            return PlaylistDao ?? (PlaylistDao = new PlaylistDao(session));
         }
 
-        public IPlaylistDao GetPlaylistDao()
+        public IPlaylistItemDao GetPlaylistItemDao(ISession session)
         {
-            return PlaylistDao ?? (PlaylistDao = new PlaylistDao(Session));
+            return PlaylistItemDao ?? (PlaylistItemDao = new PlaylistItemDao(session));
         }
 
-        public IPlaylistItemDao GetPlaylistItemDao()
+        public IShareCodeDao GetShareCodeDao(ISession session)
         {
-            return PlaylistItemDao ?? (PlaylistItemDao = new PlaylistItemDao(Session));
+            return ShareCodeDao ?? (ShareCodeDao = new ShareCodeDao(session));
         }
 
-        public IShareCodeDao GetShareCodeDao()
+        public IUserDao GetUserDao(ISession session)
         {
-            return ShareCodeDao ?? (ShareCodeDao = new ShareCodeDao(Session));
+            return UserDao ?? (UserDao = new UserDao(session));
         }
 
-        public IUserDao GetUserDao()
+        public IVideoDao GetVideoDao(ISession session)
         {
-            return UserDao ?? (UserDao = new UserDao(Session));
-        }
-
-        public IVideoDao GetVideoDao()
-        {
-            return VideoDao ?? (VideoDao = new VideoDao(Session));
+            return VideoDao ?? (VideoDao = new VideoDao(session));
         }
     }
 }

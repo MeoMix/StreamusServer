@@ -17,8 +17,8 @@ namespace Streamus_Web_API.Controllers
         public ShareCodeController(ILog logger, ISession session, IManagerFactory managerFactory)
             : base(logger, session)
         {
-            ShareCodeManager = managerFactory.GetShareCodeManager();
-            PlaylistManager = managerFactory.GetPlaylistManager();
+            ShareCodeManager = managerFactory.GetShareCodeManager(session);
+            PlaylistManager = managerFactory.GetPlaylistManager(session);
         }
 
         [Route("GetShareCode/{playlistId:guid}")]

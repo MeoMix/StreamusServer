@@ -4,6 +4,7 @@ using System.Web.Http.Controllers;
 using System.Web.Http.Dispatcher;
 using System.Web.Http.Hosting;
 using System.Web.Http.Routing;
+using NHibernate;
 using NSubstitute;
 using Streamus_Web_API.Domain;
 using Streamus_Web_API.Domain.Interfaces;
@@ -22,10 +23,10 @@ namespace Streamus_Web_API_Tests
         private readonly IUserManager UserManager;
         private readonly IPlaylistItemManager PlaylistItemManager;
 
-        public Helpers(IManagerFactory managerFactory)
+        public Helpers(ISession session, IManagerFactory managerFactory)
         {
-            UserManager = managerFactory.GetUserManager();
-            PlaylistItemManager = managerFactory.GetPlaylistItemManager();
+            UserManager = managerFactory.GetUserManager(session);
+            PlaylistItemManager = managerFactory.GetPlaylistItemManager(session);
         }
 
         /// <summary>

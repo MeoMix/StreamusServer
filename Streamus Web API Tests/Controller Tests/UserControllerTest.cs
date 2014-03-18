@@ -24,7 +24,7 @@ namespace Streamus_Web_API_Tests.Controller
         {
             PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
             UserController = new UserController(Logger, Session, ManagerFactory);
-            UserManager = ManagerFactory.GetUserManager();
+            UserManager = ManagerFactory.GetUserManager(Session);
         }
 
         [Test]

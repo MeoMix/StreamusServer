@@ -19,7 +19,7 @@ namespace Streamus_Web_API_Tests.Controller
         public new void TestFixtureSetUp()
         {
             PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
-            PlaylistManager = ManagerFactory.GetPlaylistManager();
+            PlaylistManager = ManagerFactory.GetPlaylistManager(Session);
         }
 
         [Test]

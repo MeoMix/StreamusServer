@@ -34,7 +34,7 @@ namespace Streamus_Web_API_Tests
             Session = (ISession)Scope.GetService(typeof(ISession));
             ManagerFactory = (IManagerFactory)Scope.GetService(typeof(IManagerFactory));
 
-            Helpers = new Helpers(ManagerFactory);
+            Helpers = new Helpers(Session, ManagerFactory);
         }
 
         [TearDown]

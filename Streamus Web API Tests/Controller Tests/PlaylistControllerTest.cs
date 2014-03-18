@@ -24,9 +24,9 @@ namespace Streamus_Web_API_Tests.Controller
             PlaylistController = new PlaylistController(Logger, Session, ManagerFactory);
             PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
 
-            ShareCodeManager = ManagerFactory.GetShareCodeManager();
-            UserManager = ManagerFactory.GetUserManager();
-            PlaylistManager = ManagerFactory.GetPlaylistManager();
+            ShareCodeManager = ManagerFactory.GetShareCodeManager(Session);
+            UserManager = ManagerFactory.GetUserManager(Session);
+            PlaylistManager = ManagerFactory.GetPlaylistManager(Session);
         }
 
         [Test]

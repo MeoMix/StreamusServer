@@ -21,8 +21,8 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
         [SetUp]
         public void SetupContext()
         {
-            PlaylistItemManager = ManagerFactory.GetPlaylistItemManager();
-            PlaylistManager = ManagerFactory.GetPlaylistManager();
+            PlaylistItemManager = ManagerFactory.GetPlaylistItemManager(Session);
+            PlaylistManager = ManagerFactory.GetPlaylistManager(Session);
       
             //  Ensure that a User exists.
             User = Helpers.CreateUser();

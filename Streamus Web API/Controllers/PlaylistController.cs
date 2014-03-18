@@ -18,9 +18,9 @@ namespace Streamus_Web_API.Controllers
         public PlaylistController(ILog logger, ISession session, IManagerFactory managerFactory)
             : base(logger, session)
         {
-            PlaylistManager = managerFactory.GetPlaylistManager();
-            UserManager = managerFactory.GetUserManager();
-            ShareCodeManager = managerFactory.GetShareCodeManager();
+            PlaylistManager = managerFactory.GetPlaylistManager(session);
+            UserManager = managerFactory.GetUserManager(session);
+            ShareCodeManager = managerFactory.GetShareCodeManager(session);
         }
         
         [Route("")]

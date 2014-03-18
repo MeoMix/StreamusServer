@@ -1,11 +1,13 @@
-﻿namespace Streamus_Web_API.Domain.Interfaces
+﻿using NHibernate;
+
+namespace Streamus_Web_API.Domain.Interfaces
 {
     public interface IManagerFactory
     {
-        IClientErrorManager GetErrorManager();
-        IPlaylistItemManager GetPlaylistItemManager();
-        IPlaylistManager GetPlaylistManager();
-        IShareCodeManager GetShareCodeManager();
-        IUserManager GetUserManager();
+        IClientErrorManager GetErrorManager(ISession session);
+        IPlaylistItemManager GetPlaylistItemManager(ISession session);
+        IPlaylistManager GetPlaylistManager(ISession session);
+        IShareCodeManager GetShareCodeManager(ISession session);
+        IUserManager GetUserManager(ISession session);
     }
 }
