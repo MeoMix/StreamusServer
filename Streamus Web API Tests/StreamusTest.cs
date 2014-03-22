@@ -1,4 +1,6 @@
-﻿using log4net;
+﻿using System.Net.Http;
+using Streamus_Web_API.Dao;
+using log4net;
 using NHibernate;
 using NUnit.Framework;
 using Streamus_Web_API;
@@ -16,7 +18,7 @@ namespace Streamus_Web_API_Tests
         protected Helpers Helpers;
         protected ISession Session;
 
-        private IDependencyScope Scope;
+        private HttpRequestMessage HttpRequestMessage;
 
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
@@ -27,12 +29,18 @@ namespace Streamus_Web_API_Tests
         [SetUp]
         public void SetUp()
         {
-            Scope = GlobalConfiguration.Configuration.DependencyResolver.BeginScope();
+            HttpConfiguration httpConfiguration = new HttpConfiguration();
+            AutofacRegistrations.RegisterAndSetResolver(httpConfiguration);
 
-            Logger = (ILog)Scope.GetService(typeof(ILog));
-            DaoFactory = (IDaoFactory)Scope.GetService(typeof(IDaoFactory));
-            Session = (ISession)Scope.GetService(typeof(ISession));
-            ManagerFactory = (IManagerFactory)Scope.GetService(typeof(IManagerFactory));
+            HttpRequestMessage = new HttpRequestMessage();
+            HttpRequestMessage.SetConfiguration(httpConfiguration);
+
+            IDependencyScope dependencyScope = HttpRequestMessage.GetDependencyScope();
+
+            Logger = (ILog)dependencyScope.GetService(typeof(ILog));
+            DaoFactory = (IDaoFactory)dependencyScope.GetService(typeof(IDaoFactory));
+            Session = (ISession)dependencyScope.GetService(typeof(ISession));
+            ManagerFactory = (IManagerFactory)dependencyScope.GetService(typeof(IManagerFactory));
 
             Helpers = new Helpers(Session, ManagerFactory);
         }
@@ -40,7 +48,7 @@ namespace Streamus_Web_API_Tests
         [TearDown]
         public void TearDown()
         {
-            Scope.Dispose(); 
+            HttpRequestMessage.Dispose();
         }
     }
 }

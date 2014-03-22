@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Streamus_Web_API.App_Start;
@@ -19,7 +20,7 @@ namespace Streamus_Web_API
 
             InitializeApplication();
         }
-        
+
         public static void InitializeApplication()
         {
             //NHibernateProfiler.Initialize();
@@ -33,8 +34,6 @@ namespace Streamus_Web_API
 
             //  Serialize JSON null as an empty string. Having a null string is never useful and should be avoided.
             jsonFormatter.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Populate;
-
-            AutofacRegistrations.RegisterAndSetResolver();
 
             CreateAutoMapperMaps();
         }
