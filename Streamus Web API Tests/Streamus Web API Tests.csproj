@@ -135,7 +135,6 @@
     <Compile Include="Persistance Mapping Tests\PlaylistItemMappingTest.cs" />
     <Compile Include="Persistance Mapping Tests\PlaylistMappingTest.cs" />
     <Compile Include="Persistance Mapping Tests\UserMappingTest.cs" />
-    <Compile Include="Persistance Mapping Tests\VideoMappingTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResetDatabase.cs" />
     <Compile Include="Routing Tests\ClientErrorRoutingTest.cs" />

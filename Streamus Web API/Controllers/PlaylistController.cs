@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using System.Linq;
+using log4net;
 using NHibernate;
 using Streamus_Web_API.Domain;
 using Streamus_Web_API.Domain.Interfaces;
@@ -36,14 +37,7 @@ namespace Streamus_Web_API.Controllers
                 Playlist playlist = new Playlist(playlistDto.Id, playlistDto.Sequence, playlistDto.Title);
                 user.AddPlaylist(playlist);
 
-                foreach (PlaylistItemDto playlistItemDto in playlistDto.Items)
-                {
-                    VideoDto videoDto = playlistItemDto.Video;
-                    Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
-                    PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, video);
-
-                    playlist.AddItem(playlistItem);
-                }
+                playlist.AddItems(playlistDto.Items.Select(dto => new PlaylistItem(dto.Id, dto.Sequence, dto.Title, dto.SourceId, dto.SourceType, dto.SourceTitle, dto.Duration, dto.Author)));
 
                 //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
                 playlist.ValidateAndThrow();

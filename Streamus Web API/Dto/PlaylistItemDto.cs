@@ -10,16 +10,24 @@ namespace Streamus_Web_API.Dto
         public Guid PlaylistId { get; set; }
         public Guid Id { get; set; }
         public int Sequence { get; set; }
-
-        //  Store Title on PlaylistItem as well as on Video because user might want to rename PlaylistItem.
         public string Title { get; set; }
-        public VideoDto Video { get; set; }
+        public string SourceId { get; set; }
+        public SourceType SourceType { get; set; }
+        public string SourceTitle { get; set; }
+        public int Duration { get; set; }
+        public string Author { get; set; }
+        public bool HighDefinition { get; set; }
 
         public PlaylistItemDto()
         {
             Id = Guid.Empty;
             Title = string.Empty;
             Sequence = -1;
+            SourceId = string.Empty;
+            Title = string.Empty;
+            Author = string.Empty;
+            SourceType = SourceType.None;
+            SourceTitle = string.Empty;
         }
 
         public static PlaylistItemDto Create(PlaylistItem playlistItem)

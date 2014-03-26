@@ -52,8 +52,7 @@ namespace Streamus_Web_API
             Mapper.CreateMap<ShareCode, ShareCodeDto>();
 
             Mapper.CreateMap<User, UserDto>();
-            Mapper.CreateMap<Video, VideoDto>();
-
+     
             Mapper.AssertConfigurationIsValid();
         }
     }

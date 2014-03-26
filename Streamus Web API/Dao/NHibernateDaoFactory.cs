@@ -14,7 +14,6 @@ namespace Streamus_Web_API.Dao
         private IPlaylistItemDao PlaylistItemDao;
         private IShareCodeDao ShareCodeDao;
         private IUserDao UserDao;
-        private IVideoDao VideoDao;
 
         public IClientErrorDao GetErrorDao(ISession session)
         {
@@ -39,11 +38,6 @@ namespace Streamus_Web_API.Dao
         public IUserDao GetUserDao(ISession session)
         {
             return UserDao ?? (UserDao = new UserDao(session));
-        }
-
-        public IVideoDao GetVideoDao(ISession session)
-        {
-            return VideoDao ?? (VideoDao = new VideoDao(session));
         }
     }
 }

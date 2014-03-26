@@ -32,12 +32,12 @@ namespace Streamus_Web_API.Domain.Managers
 
         public IPlaylistItemManager GetPlaylistItemManager(ISession session)
         {
-            return PlaylistItemManager ?? (PlaylistItemManager = new PlaylistItemManager(Logger, DaoFactory.GetPlaylistItemDao(session), DaoFactory.GetVideoDao(session)));
+            return PlaylistItemManager ?? (PlaylistItemManager = new PlaylistItemManager(Logger, DaoFactory.GetPlaylistItemDao(session)));
         }
 
         public IPlaylistManager GetPlaylistManager(ISession session)
         {
-            return PlaylistManager ?? (PlaylistManager = new PlaylistManager(Logger, DaoFactory.GetPlaylistDao(session), DaoFactory.GetVideoDao(session)));
+            return PlaylistManager ?? (PlaylistManager = new PlaylistManager(Logger, DaoFactory.GetPlaylistDao(session)));
         }
 
         public IShareCodeManager GetShareCodeManager(ISession session)

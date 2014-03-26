@@ -12,6 +12,5 @@ namespace Streamus_Web_API.Domain.Interfaces
         IPlaylistItemDao GetPlaylistItemDao(ISession session);
         IShareCodeDao GetShareCodeDao(ISession session);
         IUserDao GetUserDao(ISession session);
-        IVideoDao GetVideoDao(ISession session);
     }
 }

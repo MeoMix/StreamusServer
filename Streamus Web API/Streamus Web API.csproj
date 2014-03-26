@@ -143,17 +143,16 @@
     <Compile Include="Dao\Mappings\PlaylistMapping.cs" />
     <Compile Include="Dao\Mappings\ShareCodeMapping.cs" />
     <Compile Include="Dao\Mappings\UserMapping.cs" />
-    <Compile Include="Dao\Mappings\VideoMapping.cs" />
     <Compile Include="Dao\NHibernateConfiguration.cs" />
     <Compile Include="Dao\NHibernateDaoFactory.cs" />
     <Compile Include="Dao\PlaylistDao.cs" />
     <Compile Include="Dao\PlaylistItemDao.cs" />
     <Compile Include="Dao\ShareCodeDao.cs" />
     <Compile Include="Dao\UserDao.cs" />
-    <Compile Include="Dao\VideoDao.cs" />
     <Compile Include="Domain\AbstractDomainEntity.cs" />
     <Compile Include="Domain\AbstractShareableEntity.cs" />
     <Compile Include="Domain\ClientError.cs" />
+    <Compile Include="Domain\SourceType.cs" />
     <Compile Include="Domain\Interfaces\IAbstractDomainEntity.cs" />
     <Compile Include="Domain\Interfaces\IDao.cs" />
     <Compile Include="Domain\Interfaces\IDaoFactory.cs" />
@@ -169,7 +168,6 @@
     <Compile Include="Domain\Interfaces\IShareCodeManager.cs" />
     <Compile Include="Domain\Interfaces\IUserDao.cs" />
     <Compile Include="Domain\Interfaces\IUserManager.cs" />
-    <Compile Include="Domain\Interfaces\IVideoDao.cs" />
     <Compile Include="Domain\Managers\PlaylistItemManager.cs" />
     <Compile Include="Domain\Managers\PlaylistManager.cs" />
     <Compile Include="Domain\Managers\ShareCodeManager.cs" />
@@ -183,15 +181,12 @@
     <Compile Include="Domain\Validators\PlaylistValidator.cs" />
     <Compile Include="Domain\Validators\ShareCodeValidator.cs" />
     <Compile Include="Domain\Validators\UserValidator.cs" />
-    <Compile Include="Domain\Validators\VideoValidator.cs" />
-    <Compile Include="Domain\Video.cs" />
     <Compile Include="Dto\ShareCodeRequestDto.cs" />
     <Compile Include="Dto\ClientErrorDto.cs" />
     <Compile Include="Dto\PlaylistDto.cs" />
     <Compile Include="Dto\PlaylistItemDto.cs" />
     <Compile Include="Dto\ShareCodeDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
-    <Compile Include="Dto\VideoDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

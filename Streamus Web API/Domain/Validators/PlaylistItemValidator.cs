@@ -7,7 +7,6 @@ namespace Streamus_Web_API.Domain.Validators
         public PlaylistItemValidator()
         {
             RuleFor(playlistItem => playlistItem.Playlist).NotNull();
-            RuleFor(playlistItem => playlistItem.Video).NotNull();
             RuleFor(playlistItem => playlistItem.Sequence).GreaterThanOrEqualTo(0);
         }
     }

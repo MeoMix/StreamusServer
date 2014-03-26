@@ -1,6 +1,6 @@
-﻿using NHibernate.Cfg;
-using NHibernate.Tool.hbm2ddl;
+﻿using NHibernate.Tool.hbm2ddl;
 using NUnit.Framework;
+using Streamus_Web_API.Dao;
 
 namespace Streamus_Web_API_Tests
 {
@@ -14,18 +14,13 @@ namespace Streamus_Web_API_Tests
     [TestFixture]
     public class ResetDatabase
     {
-        private Configuration Configuration { get; set; }
-
         /// <summary>
         ///     This code is only ran once for the given TestFixture.
         /// </summary>
-        //[TestFixtureSetUp]
-        //public void TestFixtureSetUp()
-        //{
-        //    Configuration = new Configuration();
-        //    Configuration.Configure();
-
-        //    new SchemaExport(Configuration).Execute(false, true, false);
-        //}
+        [TestFixtureSetUp]
+        public void TestFixtureSetUp()
+        {
+            new SchemaExport((new NHibernateConfiguration()).Configure().BuildConfiguration()).Execute(false, true, false);
+        }
     }
 }

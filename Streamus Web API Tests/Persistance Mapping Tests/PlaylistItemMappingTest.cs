@@ -21,20 +21,13 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
                         Sequence = 200,
                     };
 
-                var video = new Video
-                    {
-                        Id = "some id",
-                        Author = "video author",
-                        Duration = 90,
-                        HighDefinition = true,
-                        Title = "my video",
-                    };
-
-                Session.Save(video);
                 var playlistItem = new PlaylistItem
                     {
                         Playlist = playlist2,
-                        Video = video,
+                        SourceId = "some id",
+                        Author = "author",
+                        Duration = 90,
+                        HighDefinition = true,
                         Sequence = 300,
                         Title = "My playlist item",
                     };
@@ -51,8 +44,6 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
                 Assert.That(savedPlaylistItem.Title, Is.EqualTo("My playlist item"));
                 Assert.That(savedPlaylistItem.Id, Is.Not.EqualTo(Guid.Empty));
                 Assert.That(savedPlaylistItem.Sequence, Is.EqualTo(300));
-
-                Assert.That(savedPlaylistItem.Video, Is.EqualTo(playlistItem.Video));
 
                 transaction.Rollback();
             }
