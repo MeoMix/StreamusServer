@@ -181,6 +181,7 @@
     <Compile Include="Domain\Validators\PlaylistValidator.cs" />
     <Compile Include="Domain\Validators\ShareCodeValidator.cs" />
     <Compile Include="Domain\Validators\UserValidator.cs" />
+    <Compile Include="Dto\SongDto.cs" />
     <Compile Include="Dto\ShareCodeRequestDto.cs" />
     <Compile Include="Dto\ClientErrorDto.cs" />
     <Compile Include="Dto\PlaylistDto.cs" />

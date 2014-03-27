@@ -1,9 +1,7 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Streamus_Web_API.App_Start;
-using Streamus_Web_API.Dao;
 using Streamus_Web_API.Domain;
 using Streamus_Web_API.Dto;
 using System.Net.Http.Formatting;
@@ -48,7 +46,17 @@ namespace Streamus_Web_API
             Mapper.CreateMap<ClientError, ClientErrorDto>();
 
             Mapper.CreateMap<Playlist, PlaylistDto>();
-            Mapper.CreateMap<PlaylistItem, PlaylistItemDto>();
+            Mapper.CreateMap<PlaylistItem, PlaylistItemDto>()
+                  .ForMember(dest => dest.Song, opt => opt.ResolveUsing(src => new SongDto
+                      {
+                          Author = src.Author,
+                          Duration = src.Duration,
+                          HighDefinition = src.HighDefinition,
+                          Id = src.SongId,
+                          Title = src.SongTitle,
+                          Type = src.SongType
+                      }));
+
             Mapper.CreateMap<ShareCode, ShareCodeDto>();
 
             Mapper.CreateMap<User, UserDto>();
