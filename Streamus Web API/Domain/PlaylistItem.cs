@@ -10,32 +10,32 @@ namespace Streamus_Web_API.Domain
         public virtual int Sequence { get; set; }
         public virtual string Title { get; set; }
 
-        public virtual string SourceId { get; set; }
-        public virtual SourceType SourceType { get; set; }
+        public virtual string SongId { get; set; }
+        public virtual SongType SongType { get; set; }
+        public virtual string SongTitle { get; set; }
         public virtual int Duration { get; set; }
         public virtual string Author { get; set; }
         public virtual bool HighDefinition { get; set; }
-        public virtual string SourceTitle { get; set; }
 
         public PlaylistItem()
         {
             Id = Guid.Empty;
             Title = string.Empty;
             Sequence = -1;
-            SourceId = string.Empty;
+            SongId = string.Empty;
             Title = string.Empty;
             Author = string.Empty;
-            SourceType = SourceType.None;
-            SourceTitle = string.Empty;
+            SongType = SongType.None;
+            SongTitle = string.Empty;
         }
 
-        public PlaylistItem(string title, string sourceId, SourceType sourceType, string sourceTitle, int duration, string author)
+        public PlaylistItem(string title, string songId, SongType songType, string songTitle, int duration, string author)
             : this()
         {
             Title = title;
-            SourceId = sourceId;
-            SourceType = sourceType;
-            SourceTitle = sourceTitle;
+            SongId = songId;
+            SongType = songType;
+            SongTitle = songTitle;
             Duration = duration;
             Author = author;
         }
@@ -44,14 +44,14 @@ namespace Streamus_Web_API.Domain
             : this()
         {
             Title = playlistItem.Title;
-            SourceId = playlistItem.SourceId;
+            SongId = playlistItem.SongId;
             Author = playlistItem.Author;
-            SourceType = playlistItem.SourceType;
-            SourceTitle = playlistItem.SourceTitle;
+            SongType = playlistItem.SongType;
+            SongTitle = playlistItem.SongTitle;
         }
 
-        public PlaylistItem(Guid id, int sequence, string title, string sourceId, SourceType sourceType, string sourceTitle, int duration, string author)
-            : this(title, sourceId, sourceType, sourceTitle, duration, author)
+        public PlaylistItem(Guid id, int sequence, string title, string songId, SongType songType, string songTitle, int duration, string author)
+            : this(title, songId, songType, songTitle, duration, author)
         {
             Id = id;
             Sequence = sequence;

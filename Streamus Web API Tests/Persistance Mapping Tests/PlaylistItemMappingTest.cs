@@ -24,7 +24,7 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
                 var playlistItem = new PlaylistItem
                     {
                         Playlist = playlist2,
-                        SourceId = "some id",
+                        SongId = "some id",
                         Author = "author",
                         Duration = 90,
                         HighDefinition = true,

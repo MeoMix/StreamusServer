@@ -11,9 +11,9 @@ namespace Streamus_Web_API.Dto
         public Guid Id { get; set; }
         public int Sequence { get; set; }
         public string Title { get; set; }
-        public string SourceId { get; set; }
-        public SourceType SourceType { get; set; }
-        public string SourceTitle { get; set; }
+        public string SongId { get; set; }
+        public SongType SongType { get; set; }
+        public string SongTitle { get; set; }
         public int Duration { get; set; }
         public string Author { get; set; }
         public bool HighDefinition { get; set; }
@@ -23,11 +23,11 @@ namespace Streamus_Web_API.Dto
             Id = Guid.Empty;
             Title = string.Empty;
             Sequence = -1;
-            SourceId = string.Empty;
+            SongId = string.Empty;
             Title = string.Empty;
             Author = string.Empty;
-            SourceType = SourceType.None;
-            SourceTitle = string.Empty;
+            SongType = SongType.None;
+            SongTitle = string.Empty;
         }
 
         public static PlaylistItemDto Create(PlaylistItem playlistItem)

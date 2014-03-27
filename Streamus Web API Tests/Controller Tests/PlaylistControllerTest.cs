@@ -72,9 +72,9 @@ namespace Streamus_Web_API_Tests.Controller
             PlaylistController.Delete(firstPlaylistId);
         }
 
-        public static List<List<PlaylistItemDto>> Split(List<PlaylistItemDto> source, int splitSize)
+        public static List<List<PlaylistItemDto>> Split(List<PlaylistItemDto> playlistItemDtos, int splitSize)
         {
-            return source
+            return playlistItemDtos
                 .Select((x, i) => new { Index = i, Value = x })
                 .GroupBy(x => x.Index / splitSize)
                 .Select(x => x.Select(v => v.Value).ToList())

@@ -19,10 +19,10 @@ namespace Streamus_Web_API.Dao.Mappings
             Map(e => e.Sequence).Not.Nullable();
             Map(e => e.Author).Not.Nullable();
             Map(e => e.Duration).Not.Nullable();
-            Map(e => e.SourceId).Not.Nullable();
+            Map(e => e.SongId).Not.Nullable();
             Map(e => e.HighDefinition).Not.Nullable();
-            Map(e => e.SourceType).Not.Nullable();
-            Map(e => e.SourceTitle).Not.Nullable();
+            Map(e => e.SongType).Not.Nullable();
+            Map(e => e.SongTitle).Not.Nullable();
 
             References(p => p.Playlist).Column("PlaylistId");
         }

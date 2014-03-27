@@ -6,7 +6,7 @@ using Streamus_Web_API.Domain.Validators;
 
 namespace Streamus_Web_API.Domain
 {
-    public enum SourceType
+    public enum SongType
     {
         None = 0,
         YouTube = 1,

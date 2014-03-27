@@ -152,7 +152,7 @@
     <Compile Include="Domain\AbstractDomainEntity.cs" />
     <Compile Include="Domain\AbstractShareableEntity.cs" />
     <Compile Include="Domain\ClientError.cs" />
-    <Compile Include="Domain\SourceType.cs" />
+    <Compile Include="Domain\SongType.cs" />
     <Compile Include="Domain\Interfaces\IAbstractDomainEntity.cs" />
     <Compile Include="Domain\Interfaces\IDao.cs" />
     <Compile Include="Domain\Interfaces\IDaoFactory.cs" />

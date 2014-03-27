@@ -53,7 +53,7 @@ namespace Streamus_Web_API_Tests
             //  Create a random video ID to ensure the Video doesn't exist in the database currently.
             string randomVideoId = videoIdOverride == string.Empty ? Guid.NewGuid().ToString().Substring(0, 11) : videoIdOverride;
             string title = titleOverride == string.Empty ? string.Format("Video {0}", randomVideoId) : titleOverride;
-            var playlistItem = new PlaylistItem(title, randomVideoId, SourceType.YouTube, title, 999, "Author");
+            var playlistItem = new PlaylistItem(title, randomVideoId, SongType.YouTube, title, 999, "Author");
 
             return playlistItem;
         }
