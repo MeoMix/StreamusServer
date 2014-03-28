@@ -91,6 +91,18 @@ namespace Streamus_Web_API.Controllers
             }
         }
 
+        [Route("UpdateSequence")]
+        [HttpPatch]
+        public void UpdateSequence(PlaylistDto playlistDto)
+        {
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                PlaylistManager.UpdateSequence(playlistDto.Id, playlistDto.Sequence);
+
+                transaction.Commit();
+            }
+        }
+
         /// <summary>
         ///     Retrieves a ShareCode relating to a Playlist, create a copy of the Playlist referenced by the ShareCode,
         ///     and return the copied Playlist.

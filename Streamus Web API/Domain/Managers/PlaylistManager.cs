@@ -89,6 +89,22 @@ namespace Streamus_Web_API.Domain.Managers
             }
         }
 
+        public void UpdateSequence(Guid playlistId, int seqeunce)
+        {
+            try
+            {
+                Playlist playlist = Get(playlistId);
+                playlist.Sequence = seqeunce;
+
+                Update(playlist);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+        }
+
         /// <summary>
         /// Copy a playlist. Useful for sharing.
         /// </summary>

@@ -57,13 +57,11 @@ namespace Streamus_Web_API.Controllers
             int count = playlistItemDtos.Count;
 
             if (count > 1000)
-            {
                 Session.SetBatchSize(count / 10);
-            }
-            else if (count > 3)
-            {
-                Session.SetBatchSize(count / 3);
-            }
+            else if (count > 500)
+                Session.SetBatchSize(count / 5);
+            else if (count > 2)
+                Session.SetBatchSize(count / 2);
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
@@ -96,6 +94,7 @@ namespace Streamus_Web_API.Controllers
             return savedPlaylistItemDtos;
         }
         
+        //  TODO: When does this get called???
         [Route("")]
         [HttpPut]
         public PlaylistItemDto Update(PlaylistItemDto playlistItemDto)
@@ -116,6 +115,18 @@ namespace Streamus_Web_API.Controllers
             }
 
             return updatedPlaylistItemDto;
+        }
+
+        [Route("UpdateSequence")]
+        [HttpPatch]
+        public void UpdateSequence(PlaylistItemDto playlistItemDto)
+        {
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                PlaylistItemManager.UpdateSequence(playlistItemDto.Id, playlistItemDto.Sequence);
+
+                transaction.Commit();
+            }
         }
 
         [Route("{id:guid}")]
