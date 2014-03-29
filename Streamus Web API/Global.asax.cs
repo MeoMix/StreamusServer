@@ -22,7 +22,7 @@ namespace Streamus_Web_API
 
         public static void InitializeApplication()
         {
-            NHibernateProfiler.Initialize();
+            //NHibernateProfiler.Initialize();
 
             //  I don't want $id, no need to support circular references: http://stackoverflow.com/questions/18355312/map-id-in-web-api-to-custom-id
             JsonMediaTypeFormatter jsonFormatter = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
