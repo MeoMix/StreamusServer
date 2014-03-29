@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using HibernatingRhinos.Profiler.Appender.NHibernate;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Streamus_Web_API.App_Start;
