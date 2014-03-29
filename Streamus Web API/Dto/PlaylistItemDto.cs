@@ -11,6 +11,8 @@ namespace Streamus_Web_API.Dto
         public Guid Id { get; set; }
         public int Sequence { get; set; }
         public string Title { get; set; }
+        //  Client ID is used to associate a DTO with a client-side entity which wasn't saved before sending to the server.
+        public string Cid { get; set; }
         public SongDto Song { get; set; }
 
         public PlaylistItemDto()
@@ -19,6 +21,7 @@ namespace Streamus_Web_API.Dto
             Title = string.Empty;
             Sequence = -1;
             Title = string.Empty;
+            Cid = string.Empty;
         }
 
         public static PlaylistItemDto Create(PlaylistItem playlistItem)

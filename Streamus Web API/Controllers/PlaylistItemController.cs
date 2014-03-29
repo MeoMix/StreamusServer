@@ -35,7 +35,7 @@ namespace Streamus_Web_API.Controllers
 
                 SongDto songDto = playlistItemDto.Song;
 
-                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
+                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title,  playlistItemDto.Cid, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
                 playlist.AddItem(playlistItem);
 
                 PlaylistItemManager.Save(playlistItem);
@@ -76,7 +76,7 @@ namespace Streamus_Web_API.Controllers
                     foreach (var playlistItemDto in groupedPlaylistItemDtos)
                     {
                         SongDto songDto = playlistItemDto.Song;
-                        PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
+                        PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlistItemDto.Cid, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
                         playlist.AddItem(playlistItem);
 
                         savedPlaylistItems.Add(playlistItem);

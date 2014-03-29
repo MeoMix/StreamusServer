@@ -37,7 +37,7 @@ namespace Streamus_Web_API.Controllers
                 Playlist playlist = new Playlist(playlistDto.Id, playlistDto.Sequence, playlistDto.Title);
                 user.AddPlaylist(playlist);
 
-                playlist.AddItems(playlistDto.Items.Select(dto => new PlaylistItem(dto.Id, dto.Sequence, dto.Title, dto.Song.Id, dto.Song.Type, dto.Song.Title, dto.Song.Duration, dto.Song.Author)));
+                playlist.AddItems(playlistDto.Items.Select(dto => new PlaylistItem(dto.Id, dto.Sequence, dto.Title, dto.Cid, dto.Song.Id, dto.Song.Type, dto.Song.Title, dto.Song.Duration, dto.Song.Author)));
 
                 //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
                 playlist.ValidateAndThrow();

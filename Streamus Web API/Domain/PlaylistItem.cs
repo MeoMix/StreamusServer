@@ -16,6 +16,10 @@ namespace Streamus_Web_API.Domain
         public virtual int Duration { get; set; }
         public virtual string Author { get; set; }
         public virtual bool HighDefinition { get; set; }
+        
+        //  TODO: I don't think the Domain layer should know about this. It should be dumb to a client existing.
+        //  Client ID is used to associate a DTO with a client-side entity which wasn't saved before sending to the server.
+        public virtual string Cid { get; set; }
 
         public PlaylistItem()
         {
@@ -27,9 +31,10 @@ namespace Streamus_Web_API.Domain
             Author = string.Empty;
             SongType = SongType.None;
             SongTitle = string.Empty;
+            Cid = string.Empty;
         }
 
-        public PlaylistItem(string title, string songId, SongType songType, string songTitle, int duration, string author)
+        public PlaylistItem(string title, string cid, string songId, SongType songType, string songTitle, int duration, string author)
             : this()
         {
             Title = title;
@@ -38,6 +43,7 @@ namespace Streamus_Web_API.Domain
             SongTitle = songTitle;
             Duration = duration;
             Author = author;
+            Cid = cid;
         }
 
         public PlaylistItem(PlaylistItem playlistItem)
@@ -48,10 +54,11 @@ namespace Streamus_Web_API.Domain
             Author = playlistItem.Author;
             SongType = playlistItem.SongType;
             SongTitle = playlistItem.SongTitle;
+            Cid = playlistItem.Cid;
         }
 
-        public PlaylistItem(Guid id, int sequence, string title, string songId, SongType songType, string songTitle, int duration, string author)
-            : this(title, songId, songType, songTitle, duration, author)
+        public PlaylistItem(Guid id, int sequence, string title, string cid, string songId, SongType songType, string songTitle, int duration, string author)
+            : this(title, cid, songId, songType, songTitle, duration, author)
         {
             Id = id;
             Sequence = sequence;
