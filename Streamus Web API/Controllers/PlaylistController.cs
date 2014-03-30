@@ -108,7 +108,7 @@ namespace Streamus_Web_API.Controllers
         ///     and return the copied Playlist.
         /// </summary>
         [Route("CreateCopyByShareCode")]
-        [HttpGet]
+        [HttpPost]
         public PlaylistDto CreateCopyByShareCode(ShareCodeRequestDto shareCodeRequestDto)
         {
             PlaylistDto playlistDto;
