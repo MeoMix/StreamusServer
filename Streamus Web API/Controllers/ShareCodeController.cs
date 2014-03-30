@@ -21,7 +21,7 @@ namespace Streamus_Web_API.Controllers
             PlaylistManager = managerFactory.GetPlaylistManager(session);
         }
 
-        [Route("GetShareCode/{playlistId:guid}")]
+        [Route("GetShareCode")]
         [HttpGet]
         public ShareCodeDto GetShareCode(Guid playlistId)
         {
