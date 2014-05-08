@@ -56,13 +56,15 @@ namespace Streamus_Web_API_Tests.Controller
         public void GetUserWithBulkPlaylistItems_UserCreatedWithLotsOfItems_UserHasOnePlaylist()
         {
             var createdUserDto = UserController.Create();
-
+            
             const int numItemsToCreate = 2000;
 
             Guid playlistId = createdUserDto.Playlists.First().Id;
             List<PlaylistItemDto> playlistItemDtos = Helpers.CreatePlaylistItemsDto(numItemsToCreate, playlistId);
 
             PlaylistItemController.CreateMultiple(playlistItemDtos);
+
+            Session.Clear();
 
             User userFromDatabase = UserManager.Get(createdUserDto.Id);
 

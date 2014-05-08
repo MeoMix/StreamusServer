@@ -1,6 +1,6 @@
-using System;
 using FluentNHibernate.Mapping;
 using Streamus_Web_API.Domain;
+using System;
 
 namespace Streamus_Web_API.Dao.Mappings
 {
@@ -9,6 +9,8 @@ namespace Streamus_Web_API.Dao.Mappings
         public UserMapping()
         {
             Table("[Users]");
+
+            Not.LazyLoad();
 
             Id(e => e.Id).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
@@ -20,6 +22,8 @@ namespace Streamus_Web_API.Dao.Mappings
 
             HasMany(u => u.Playlists)
                 .Inverse()
+                //  100% of the time a user is loaded their playlists are sent back to the server, so it's OK to do this.
+                .Not.LazyLoad()
                 .Cascade.AllDeleteOrphan()
                 .KeyColumn("UserId");
         }
