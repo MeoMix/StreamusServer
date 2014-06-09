@@ -33,7 +33,7 @@ namespace Streamus_Web_API.Dao
             configuration.SetProperty("default_schema", "[Streamus].[dbo]");
             configuration.SetProperty("generate_statistics", "true");
 #else
-            configuration.SetProperty("default_schema", "[db896d0fe754cd4f46b3d0a2c301552bd6].[dbo]");
+            configuration.SetProperty("default_schema", "[dbo]");
 #endif
         }
     }
