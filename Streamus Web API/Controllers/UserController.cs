@@ -25,19 +25,19 @@ namespace Streamus_Web_API.Controllers
         /// <returns>The newly created User</returns>
         [Route("")]
         [HttpPost]
-        public UserDto Create()
+        public UserDto Create(UserDto userDto)
         {
-            UserDto userDto;
+            UserDto createdUserDto;
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                User user = UserManager.CreateUser();
-                userDto = UserDto.Create(user);
+                User user = UserManager.CreateUser(userDto.GooglePlusId);
+                createdUserDto = UserDto.Create(user);
 
                 transaction.Commit();
             }
 
-            return userDto;
+            return createdUserDto;
         }
         
         [Route("{id:guid}")]
@@ -57,7 +57,7 @@ namespace Streamus_Web_API.Controllers
             return userDto;
         }
 
-        [Route("GetByGooglePlusId/{googlePlusId}")]
+        [Route("GetByGooglePlusId")]
         [HttpGet]
         public UserDto GetByGooglePlusId(string googlePlusId)
         {
@@ -84,6 +84,23 @@ namespace Streamus_Web_API.Controllers
 
                 transaction.Commit();
             }
+        }
+
+        [Route("HasLinkedGoogleAccount")]
+        [HttpGet]
+        public bool HasLinkedGoogleAccount(string googlePlusId)
+        {
+            bool hasLinkedGoogleAccount;
+
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                User user = UserManager.GetByGooglePlusId(googlePlusId);
+                hasLinkedGoogleAccount = user != null;
+
+                transaction.Commit();
+            }
+
+            return hasLinkedGoogleAccount;
         }
 
     }

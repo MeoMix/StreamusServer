@@ -48,7 +48,7 @@ namespace Streamus_Web_API.Domain.Managers
             }
         }
 
-        public void UpdateSequence(Guid playlistItemId, int seqeunce)
+        public void UpdateSequence(Guid playlistItemId, double seqeunce)
         {
             try
             {

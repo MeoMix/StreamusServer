@@ -89,7 +89,7 @@ namespace Streamus_Web_API.Domain.Managers
             }
         }
 
-        public void UpdateSequence(Guid playlistId, int seqeunce)
+        public void UpdateSequence(Guid playlistId, double seqeunce)
         {
             try
             {

@@ -27,10 +27,12 @@ namespace Streamus_Web_API_Tests.Controller
             UserManager = ManagerFactory.GetUserManager(Session);
         }
 
+        //  TODO: Test case for user w/ GooglePlusID
+
         [Test]
         public void CreateUser_UserDoesNotExist_UserCreated()
         {
-            var createdUserDto = UserController.Create();
+            var createdUserDto = UserController.Create(new UserDto());
 
             User userFromDatabase = UserManager.Get(createdUserDto.Id);
             Assert.That(userFromDatabase != null);
@@ -55,7 +57,7 @@ namespace Streamus_Web_API_Tests.Controller
         [Test]
         public void GetUserWithBulkPlaylistItems_UserCreatedWithLotsOfItems_UserHasOnePlaylist()
         {
-            var createdUserDto = UserController.Create();
+            var createdUserDto = UserController.Create(new UserDto());
             
             const int numItemsToCreate = 2000;
 
@@ -72,16 +74,15 @@ namespace Streamus_Web_API_Tests.Controller
             Assert.That(userFromDatabase.Playlists.First().Items.Count() == numItemsToCreate);
         }
 
-        //  TODO: GooglePlusID should be immutable.
         [Test]
         public void UpdateUserGooglePlusId_NoGooglePlusIdSet_GooglePlusIdSetSuccessfully()
         {
             const string googlePlusId = "109695597859594825120";
 
-            var createdUserDto = UserController.Create();
-            createdUserDto.GooglePlusId = googlePlusId;
-
-            UserController.UpdateGooglePlusId(createdUserDto);
+            var createdUserDto = UserController.Create(new UserDto
+                {
+                    GooglePlusId = googlePlusId
+                });
 
             User userFromDatabase = UserManager.Get(createdUserDto.Id);
 

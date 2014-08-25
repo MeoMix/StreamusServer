@@ -11,7 +11,7 @@ namespace Streamus_Web_API.Dto
         public string Title { get; set; }
         public Guid UserId { get; set; }
         public List<PlaylistItemDto> Items { get; set; }
-        public int Sequence { get; set; }
+        public double Sequence { get; set; }
 
         public PlaylistDto()
         {

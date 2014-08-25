@@ -20,7 +20,7 @@ namespace Streamus_Web_API_Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            //new SchemaExport((new NHibernateConfiguration()).Configure().BuildConfiguration()).Execute(false, true, false);
+            new SchemaExport((new NHibernateConfiguration()).Configure().BuildConfiguration()).Execute(false, true, false);
         }
     }
 }

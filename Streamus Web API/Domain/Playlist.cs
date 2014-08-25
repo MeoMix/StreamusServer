@@ -11,7 +11,7 @@ namespace Streamus_Web_API.Domain
         public virtual User User { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public virtual ICollection<PlaylistItem> Items { get; set; }
-        public virtual int Sequence { get; set; }
+        public virtual double Sequence { get; set; }
 
         public Playlist()
         {
@@ -33,7 +33,7 @@ namespace Streamus_Web_API.Domain
             Copy(playlist);
         }
 
-        public Playlist(Guid id, int sequence, string title)
+        public Playlist(Guid id, double sequence, string title)
             : this()
         {
             Id = id;

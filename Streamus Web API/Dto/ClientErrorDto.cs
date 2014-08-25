@@ -11,6 +11,7 @@ namespace Streamus_Web_API.Dto
         public string ClientVersion { get; set; }
         public string OperatingSystem { get; set; }
         public string Architecture { get; set; }
+        public string Stack { get; set; }
 
         public ClientErrorDto()
         {
@@ -20,6 +21,7 @@ namespace Streamus_Web_API.Dto
             LineNumber = -1;
             Url = string.Empty;
             ClientVersion = string.Empty;
+            Stack = string.Empty;
         }
 
         public static ClientErrorDto Create(ClientError clientError)

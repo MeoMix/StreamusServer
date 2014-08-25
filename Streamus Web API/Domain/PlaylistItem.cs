@@ -7,7 +7,7 @@ namespace Streamus_Web_API.Domain
     public class PlaylistItem : AbstractDomainEntity<Guid>
     {
         public virtual Playlist Playlist { get; set; }
-        public virtual int Sequence { get; set; }
+        public virtual double Sequence { get; set; }
         public virtual string Title { get; set; }
 
         public virtual string SongId { get; set; }
@@ -58,7 +58,7 @@ namespace Streamus_Web_API.Domain
             Duration = playlistItem.Duration;
         }
 
-        public PlaylistItem(Guid id, int sequence, string title, string cid, string songId, SongType songType, string songTitle, int duration, string author)
+        public PlaylistItem(Guid id, double sequence, string title, string cid, string songId, SongType songType, string songTitle, int duration, string author)
             : this(title, cid, songId, songType, songTitle, duration, author)
         {
             Id = id;

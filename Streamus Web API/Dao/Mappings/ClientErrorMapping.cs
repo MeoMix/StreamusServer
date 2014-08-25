@@ -22,6 +22,7 @@ namespace Streamus_Web_API.Dao.Mappings
             Map(e => e.TimeOccurred).Not.Nullable();
             Map(e => e.OperatingSystem).Not.Nullable();
             Map(e => e.Architecture).Not.Nullable();
+            Map(e => e.Stack).Not.Nullable();
         }
     }
 }
