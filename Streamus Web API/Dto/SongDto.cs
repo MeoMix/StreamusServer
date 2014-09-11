@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using AutoMapper;
-using Streamus_Web_API.Domain;
+﻿using Streamus_Web_API.Domain;
 
 namespace Streamus_Web_API.Dto
 {
@@ -12,7 +9,6 @@ namespace Streamus_Web_API.Dto
         public string Title { get; set; }
         public int Duration { get; set; }
         public string Author { get; set; }
-        public bool HighDefinition { get; set; }
 
         public SongDto()
         {

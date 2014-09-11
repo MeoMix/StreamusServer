@@ -51,7 +51,6 @@ namespace Streamus_Web_API
                       {
                           Author = src.Author,
                           Duration = src.Duration,
-                          HighDefinition = src.HighDefinition,
                           Id = src.SongId,
                           Title = src.SongTitle,
                           Type = src.SongType

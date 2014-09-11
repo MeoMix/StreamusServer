@@ -27,7 +27,6 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
                         SongId = "some id",
                         Author = "author",
                         Duration = 90,
-                        HighDefinition = true,
                         Sequence = 300,
                         Title = "My playlist item",
                     };
