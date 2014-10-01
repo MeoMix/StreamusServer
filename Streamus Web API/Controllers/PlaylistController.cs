@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using log4net;
+﻿using log4net;
 using NHibernate;
 using Streamus_Web_API.Domain;
 using Streamus_Web_API.Domain.Interfaces;
 using Streamus_Web_API.Dto;
 using System;
+using System.Collections.Generic;
 using System.Web.Http;
 
 namespace Streamus_Web_API.Controllers
@@ -34,16 +34,21 @@ namespace Streamus_Web_API.Controllers
             {
                 User user = UserManager.Get(playlistDto.UserId);
 
-                Playlist playlist = new Playlist(playlistDto.Id, playlistDto.Sequence, playlistDto.Title);
+                Playlist playlist = new Playlist(playlistDto.Id);
+                playlistDto.SetPatchableProperties(playlist);
+
                 user.AddPlaylist(playlist);
 
-                playlist.AddItems(playlistDto.Items.Select(dto => new PlaylistItem(dto.Id, dto.Sequence, dto.Title, dto.Cid, dto.Song.Id, dto.Song.Type, dto.Song.Title, dto.Song.Duration, dto.Song.Author)));
-
-                //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
-                playlist.ValidateAndThrow();
+                List<PlaylistItem> playlistItems = new List<PlaylistItem>();
+                foreach (PlaylistItemDto dto in playlistDto.Items)
+                {
+                    PlaylistItem playlistItem = new PlaylistItem(dto.Id, dto.Title, dto.Cid, dto.Song.Id, dto.Song.Type, dto.Song.Title, dto.Song.Duration, dto.Song.Author);
+                    dto.SetPatchableProperties(playlistItem);
+                    playlistItems.Add(playlistItem);
+                }
+                playlist.AddItems(playlistItems);
 
                 PlaylistManager.Save(playlist);
-
                 savedPlaylistDto = PlaylistDto.Create(playlist);
 
                 transaction.Commit();
@@ -79,25 +84,15 @@ namespace Streamus_Web_API.Controllers
             }
         }
 
-        [Route("UpdateTitle")]
+        [Route("{id:guid}")]
         [HttpPatch]
-        public void UpdateTitle(PlaylistDto playlistDto)
+        public void Patch(Guid id, PlaylistDto playlistDto)
         {
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                PlaylistManager.UpdateTitle(playlistDto.Id, playlistDto.Title);
-
-                transaction.Commit();
-            }
-        }
-
-        [Route("UpdateSequence")]
-        [HttpPatch]
-        public void UpdateSequence(PlaylistDto playlistDto)
-        {
-            using (ITransaction transaction = Session.BeginTransaction())
-            {
-                PlaylistManager.UpdateSequence(playlistDto.Id, playlistDto.Sequence);
+                Playlist playlist = PlaylistManager.Get(id);
+                playlistDto.SetPatchableProperties(playlist);
+                PlaylistManager.Update(playlist);
 
                 transaction.Commit();
             }

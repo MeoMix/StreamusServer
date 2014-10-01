@@ -14,9 +14,9 @@ namespace Streamus_Web_API_Tests.Routing_Tests
         private const string RoutePrefix = "http://localhost/ShareCode/";
 
         [Test]
-        public void POST_error_Should_route_to_ErrorController_Create_method()
+        public void GET_GetShareCode_Should_route_to_ShareCodeController_GetShareCode_method()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, RoutePrefix + "GetShareCode/" + Guid.NewGuid());
+            var request = new HttpRequestMessage(HttpMethod.Get, RoutePrefix + "GetShareCode/?playlistId=" + Guid.NewGuid());
             var config = new HttpConfiguration();
 
             WebApiConfig.Register(config);

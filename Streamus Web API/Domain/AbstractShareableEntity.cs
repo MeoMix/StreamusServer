@@ -5,7 +5,6 @@ using Streamus_Web_API.Domain.Interfaces;
 
 namespace Streamus_Web_API.Domain
 {
-    //[DataContract]
     public abstract class AbstractShareableDomainEntity : AbstractDomainEntity<Guid>, IShareableEntity
     {
         public virtual string Title { get; set; }

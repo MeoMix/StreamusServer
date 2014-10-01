@@ -56,7 +56,7 @@ namespace Streamus_Web_API_Tests.Controller
 
             Guid firstPlaylistId = user.Playlists.First().Id;
 
-            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
+            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id, "Title");
 
             var createdPlaylistDto = PlaylistController.Create(playlistDto);
 
@@ -85,7 +85,7 @@ namespace Streamus_Web_API_Tests.Controller
         public void CreatePlaylist_PlaylistDoesntExist_PlaylistCreated()
         {
             User user = Helpers.CreateUser();
-            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
+            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id, "Title");
 
             var createdPlaylistDto = PlaylistController.Create(playlistDto);
 
@@ -96,6 +96,41 @@ namespace Streamus_Web_API_Tests.Controller
 
             //  Make sure that the created playlist was cascade added to the User
             Assert.That(userFromDatabase.Playlists.Count(p => p.Id == createdPlaylistDto.Id) == 1);
+        }
+
+        [Test]
+        public void PatchPlaylist_TitleNotProvided_TitleNotModified()
+        {
+            User user = Helpers.CreateUser();
+            const double newSequence = 5;
+
+            PlaylistDto playlistDto = new PlaylistDto { Sequence = newSequence };
+
+            Playlist playlist = user.Playlists.First();
+
+            string originalPlaylistTitle = playlist.Title;
+
+            PlaylistController.Patch(playlist.Id, playlistDto);
+
+            Assert.AreEqual(playlist.Title, originalPlaylistTitle);
+            Assert.AreEqual(playlist.Sequence, newSequence);
+        }
+
+        [Test]
+        public void PatchPlaylist_SequenceNotProvided_SequenceNotModified()
+        {
+            User user = Helpers.CreateUser();
+            const string newTitle = "Hello World";
+            PlaylistDto playlistDto = new PlaylistDto { Title = newTitle };
+
+            Playlist playlist = user.Playlists.First();
+
+            double originalPlaylistSequence = playlist.Sequence;
+
+            PlaylistController.Patch(playlist.Id, playlistDto);
+
+            Assert.AreEqual(playlist.Sequence, originalPlaylistSequence);
+            Assert.AreEqual(playlist.Title, newTitle);
         }
 
         [Test]

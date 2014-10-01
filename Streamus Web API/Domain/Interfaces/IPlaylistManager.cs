@@ -9,7 +9,5 @@ namespace Streamus_Web_API.Domain.Interfaces
         void Save(Playlist playlist);
         void Update(Playlist playlist);
         void Delete(Guid id);
-        void UpdateTitle(Guid playlistId, string title);
-        void UpdateSequence(Guid playlistId, double sequence);
     }
 }

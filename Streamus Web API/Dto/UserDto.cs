@@ -15,7 +15,6 @@ namespace Streamus_Web_API.Dto
         public UserDto()
         {
             Name = string.Empty;
-            GooglePlusId = string.Empty;
             Playlists = new List<PlaylistDto>();
         }
 
@@ -23,6 +22,12 @@ namespace Streamus_Web_API.Dto
         {
             UserDto userDto = Mapper.Map<User, UserDto>(user);
             return userDto;
+        }
+
+        public void SetPatchableProperties(User user)
+        {
+            if (GooglePlusId != null)
+                user.GooglePlusId = GooglePlusId;
         }
     }
 }

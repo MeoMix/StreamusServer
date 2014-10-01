@@ -12,7 +12,7 @@ namespace Streamus_Web_API.Domain.Interfaces
         User CreateUser(string googlePlusId = "");
 
         void Save(User user);
-        void UpdateGooglePlusId(Guid userId, string googlePlusId);
+        void Update(User user);
 
         User Get(Guid userId);
         User GetByGooglePlusId(string googlePlusId);

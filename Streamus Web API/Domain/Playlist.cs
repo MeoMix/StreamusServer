@@ -21,6 +21,12 @@ namespace Streamus_Web_API.Domain
             Sequence = -1;
         }
 
+        public Playlist(Guid id)
+            : this()
+        {
+            Id = id;
+        }
+
         public Playlist(string title)
             : this()
         {
@@ -37,8 +43,8 @@ namespace Streamus_Web_API.Domain
             : this()
         {
             Id = id;
-            Sequence = sequence;
             Title = title;
+            Sequence = sequence; 
         }
 
         public virtual void Copy(Playlist playlist)
@@ -98,6 +104,5 @@ namespace Streamus_Web_API.Domain
             var validator = new PlaylistValidator();
             validator.ValidateAndThrow(this);
         }
-
     }
 }

@@ -101,11 +101,12 @@ namespace Streamus_Web_API.Domain.Managers
             }
         }
 
-        public void UpdateGooglePlusId(Guid userId, string googlePlusId)
+        public void Update(User user)
         {
             try
             {
-                UserDao.UpdateGooglePlusId(userId, googlePlusId);
+                user.ValidateAndThrow();
+                UserDao.Update(user);
             }
             catch (Exception exception)
             {
@@ -113,6 +114,5 @@ namespace Streamus_Web_API.Domain.Managers
                 throw;
             }
         }
-
     }
 }

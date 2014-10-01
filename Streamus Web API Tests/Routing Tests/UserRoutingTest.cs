@@ -27,7 +27,7 @@ namespace Streamus_Web_API_Tests.Routing_Tests
         }
 
         [Test]
-        public void HttpGet_Should_route_to_UserController_Get_method()
+        public void GET_Should_route_to_UserController_Get_method()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, RoutePrefix + Guid.NewGuid());
             var config = new HttpConfiguration();
@@ -40,9 +40,9 @@ namespace Streamus_Web_API_Tests.Routing_Tests
         }
 
         [Test]
-        public void HttpGet_GetByGooglePlusId_Should_route_to_UserController_GetByGooglePlusId_method()
+        public void GET_GetByGooglePlusId_Should_route_to_UserController_GetByGooglePlusId_method()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, RoutePrefix + "GetByGooglePlusId/" + "12345");
+            var request = new HttpRequestMessage(HttpMethod.Get, RoutePrefix + "GetByGooglePlusId/" + "?googlePlusId=109695597859594825120");
             var config = new HttpConfiguration();
 
             WebApiConfig.Register(config);
@@ -53,16 +53,29 @@ namespace Streamus_Web_API_Tests.Routing_Tests
         }
 
         [Test]
-        public void HttpPatch_UpdateGooglePlusId_Should_route_to_UserController_UpdateGooglePlusId_method()
+        public void PATCH_Should_route_to_UserController_Patch_method()
         {
-            var request = new HttpRequestMessage(new HttpMethod("PATCH"), RoutePrefix + "UpdateGooglePlusId/");
+            var request = new HttpRequestMessage(new HttpMethod("PATCH"), RoutePrefix + Guid.NewGuid());
             var config = new HttpConfiguration();
 
             WebApiConfig.Register(config);
             var route = Helpers.RouteRequest(config, request);
 
             route.Controller.Should().Be<UserController>();
-            route.Action.Should().Be("UpdateGooglePlusId");
+            route.Action.Should().Be("Patch");
+        }
+
+        [Test]
+        public void POST_MergeByGooglePlusId_Should_route_to_UserController_MergeByGooglePlusId_method()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, RoutePrefix + "MergeByGooglePlusId/?id=" + Guid.NewGuid() + "&googlePlusId=109695597859594825120");
+            var config = new HttpConfiguration();
+
+            WebApiConfig.Register(config);
+            var route = Helpers.RouteRequest(config, request);
+
+            route.Controller.Should().Be<UserController>();
+            route.Action.Should().Be("MergeByGooglePlusId");
         }
     }
 }

@@ -48,22 +48,6 @@ namespace Streamus_Web_API.Domain.Managers
             }
         }
 
-        public void UpdateSequence(Guid playlistItemId, double seqeunce)
-        {
-            try
-            {
-                PlaylistItem playlistItem = Get(playlistItemId);
-                playlistItem.Sequence = seqeunce;
-
-                DoUpdate(playlistItem);
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                throw;
-            }
-        }
-
         public void Update(PlaylistItem playlistItem)
         {
             try

@@ -65,5 +65,13 @@ namespace Streamus_Web_API.Domain
             playlist.User = this;
             Playlists.Add(playlist);
         }
+
+        public virtual void MergeUser(User user)
+        {
+            foreach (Playlist playlist in user.Playlists.Where(p => p.Items.Count > 0))
+            {
+                Playlists.Add(new Playlist(playlist));
+            }
+        }
     }
 }

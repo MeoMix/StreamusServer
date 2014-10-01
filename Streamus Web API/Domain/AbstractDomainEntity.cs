@@ -40,6 +40,5 @@ namespace Streamus_Web_API.Domain
 
             return other.Id.Equals(Id);
         }
-
     }
 }

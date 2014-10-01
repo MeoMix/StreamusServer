@@ -77,8 +77,8 @@ namespace Streamus_Web_API_Tests.Controller
         [Test]
         public void UpdateUserGooglePlusId_NoGooglePlusIdSet_GooglePlusIdSetSuccessfully()
         {
-            const string googlePlusId = "109695597859594825120";
-
+            string googlePlusId = Helpers.GetRandomGooglePlusId();
+                                         
             var createdUserDto = UserController.Create(new UserDto
                 {
                     GooglePlusId = googlePlusId
@@ -87,6 +87,45 @@ namespace Streamus_Web_API_Tests.Controller
             User userFromDatabase = UserManager.Get(createdUserDto.Id);
 
             Assert.That(userFromDatabase.Playlists.Count == createdUserDto.Playlists.Count);
+        }
+
+        [Test]
+        public void HasLinkedGoogleAccount_GoogleIdDoesNotExist_ReturnsFalse()
+        {
+            string googlePlusId = Helpers.GetRandomGooglePlusId();
+
+            bool hasLinkedGooglePlusId = UserController.HasLinkedGoogleAccount(googlePlusId);
+
+            Assert.That(hasLinkedGooglePlusId == false);
+        }
+
+        [Test]
+        public void PatchUser_GooglePlusIdProvided_GooglePlusIdModified()
+        {
+            User user = Helpers.CreateUser();
+            string newGooglePlusId = Helpers.GetRandomGooglePlusId();
+
+            UserDto userDto = new UserDto {GooglePlusId = newGooglePlusId};
+            UserController.Patch(user.Id, userDto);
+
+            Assert.AreEqual(user.GooglePlusId, newGooglePlusId);
+        }
+
+        [Test]
+        public void MergeUser_TwoAccountsExist_DataMerged()
+        {
+            User user = Helpers.CreateUser();
+            user.CreateAndAddPlaylist();
+            user.GooglePlusId = Helpers.GetRandomGooglePlusId();
+            UserManager.Update(user);
+
+            User newUser = Helpers.CreateUser();
+            Playlist createdPlaylist = newUser.CreateAndAddPlaylist();
+            Helpers.CreateItemInPlaylist(createdPlaylist);
+
+            UserDto mergedUserDto = UserController.MergeByGooglePlusId(newUser.Id, user.GooglePlusId);
+
+            Assert.AreEqual(mergedUserDto.Playlists.Count, 3);
         }
     }
 }

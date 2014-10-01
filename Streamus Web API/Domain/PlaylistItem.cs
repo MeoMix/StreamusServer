@@ -58,11 +58,10 @@ namespace Streamus_Web_API.Domain
             Sequence = playlistItem.Sequence;
         }
 
-        public PlaylistItem(Guid id, double sequence, string title, string cid, string songId, SongType songType, string songTitle, int duration, string author)
+        public PlaylistItem(Guid id, string title, string cid, string songId, SongType songType, string songTitle, int duration, string author)
             : this(title, cid, songId, songType, songTitle, duration, author)
         {
             Id = id;
-            Sequence = sequence;
         }
 
         public virtual void ValidateAndThrow()

@@ -64,15 +64,24 @@ namespace Streamus_Web_API_Tests
             return user;
         }
 
+        public string GetRandomGooglePlusId()
+        {
+            Random randNum = new Random();
+            string googlePlusId = string.Join("", Enumerable.Repeat(0, 21).Select(i => randNum.Next(0, 9)).ToArray());
+
+            return googlePlusId;
+        }
+
         /// <summary>
         ///     Generate a PlaylistDto which has the User as its parent.
         /// </summary>
         /// <returns></returns>
-        public PlaylistDto CreatePlaylistDto(Guid userIdOverride)
+        public PlaylistDto CreatePlaylistDto(Guid userIdOverride, string title)
         {
             var playlistDto = new PlaylistDto
             {
-                UserId = userIdOverride
+                UserId = userIdOverride,
+                Title = title
             };
 
             return playlistDto;

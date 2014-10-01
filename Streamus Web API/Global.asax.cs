@@ -30,8 +30,9 @@ namespace Streamus_Web_API
             //  Convert sentence casing to camel casing when serializing to JSON.
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
+            //  TODO: I need this disabled to properly handle PATCH requests.
             //  Serialize JSON null as an empty string. Having a null string is never useful and should be avoided.
-            jsonFormatter.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Populate;
+            //jsonFormatter.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Populate;
 
             CreateAutoMapperMaps();
         }

@@ -31,7 +31,7 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                User user = UserManager.CreateUser(userDto.GooglePlusId);
+                User user = UserManager.CreateUser(userDto.GooglePlusId ?? string.Empty);
                 createdUserDto = UserDto.Create(user);
 
                 transaction.Commit();
@@ -74,13 +74,39 @@ namespace Streamus_Web_API.Controllers
             return userDto;
         }
 
-        [Route("UpdateGooglePlusId")]
+        [Route("MergeByGooglePlusId")]
+        [HttpPost]
+        public UserDto MergeByGooglePlusId(Guid id, string googlePlusId)
+        {
+            UserDto userDto;
+
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                User googlePlusUser = UserManager.GetByGooglePlusId(googlePlusId);
+                User user = UserManager.Get(id);
+
+                googlePlusUser.MergeUser(user);
+
+                UserManager.Update(googlePlusUser);
+
+                userDto = UserDto.Create(googlePlusUser);
+
+                transaction.Commit();
+            }
+
+            return userDto;
+        }
+
+        [Route("{id:guid}")]
         [HttpPatch]
-        public void UpdateGooglePlusId(UserDto userDto)
+        public void Patch(Guid id, UserDto userDto)
         {            
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                UserManager.UpdateGooglePlusId(userDto.Id, userDto.GooglePlusId);
+                User user = UserManager.Get(id);
+
+                userDto.SetPatchableProperties(user);
+                UserManager.Update(user);
 
                 transaction.Commit();
             }
@@ -102,6 +128,5 @@ namespace Streamus_Web_API.Controllers
 
             return hasLinkedGoogleAccount;
         }
-
     }
 }

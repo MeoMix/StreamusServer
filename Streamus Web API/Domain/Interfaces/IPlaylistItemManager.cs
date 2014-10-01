@@ -10,6 +10,5 @@ namespace Streamus_Web_API.Domain.Interfaces
         void Save(IEnumerable<PlaylistItem> playlistItems);
         void Save(PlaylistItem playlistItem);
         void Update(PlaylistItem playlistItem);
-        void UpdateSequence(Guid playlistId, double sequence);
     }
 }

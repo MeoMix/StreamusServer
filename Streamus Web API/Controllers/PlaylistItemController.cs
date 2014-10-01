@@ -35,7 +35,9 @@ namespace Streamus_Web_API.Controllers
 
                 SongDto songDto = playlistItemDto.Song;
 
-                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title,  playlistItemDto.Cid, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
+                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Title,  playlistItemDto.Cid, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
+                playlistItemDto.SetPatchableProperties(playlistItem);
+
                 playlist.AddItem(playlistItem);
 
                 PlaylistItemManager.Save(playlistItem);
@@ -76,12 +78,14 @@ namespace Streamus_Web_API.Controllers
                     foreach (var playlistItemDto in groupedPlaylistItemDtos)
                     {
                         SongDto songDto = playlistItemDto.Song;
-                        PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, playlistItemDto.Cid, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
+
+                        PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Title, playlistItemDto.Cid, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
+                        playlistItemDto.SetPatchableProperties(playlistItem);
+                        
                         playlist.AddItem(playlistItem);
 
                         savedPlaylistItems.Add(playlistItem);
                     }
-
                 }
 
                 PlaylistItemManager.Save(savedPlaylistItems);
@@ -93,37 +97,16 @@ namespace Streamus_Web_API.Controllers
 
             return savedPlaylistItemDtos;
         }
-        
-        //  TODO: When does this get called???
-        [Route("")]
-        [HttpPut]
-        public PlaylistItemDto Update(PlaylistItemDto playlistItemDto)
-        {
-            PlaylistItemDto updatedPlaylistItemDto;
 
-            using (ITransaction transaction = Session.BeginTransaction())
-            {
-                PlaylistItem playlistItem = PlaylistItemManager.Get(playlistItemDto.Id);
-
-                playlistItem.Title = playlistItemDto.Title;
-                playlistItem.Sequence = playlistItemDto.Sequence;
-
-                PlaylistItemManager.Update(playlistItem);
-
-                updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
-                transaction.Commit();
-            }
-
-            return updatedPlaylistItemDto;
-        }
-
-        [Route("UpdateSequence")]
+        [Route("{id:guid}")]
         [HttpPatch]
-        public void UpdateSequence(PlaylistItemDto playlistItemDto)
+        public void Patch(Guid id, PlaylistItemDto playlistItemDto)
         {
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                PlaylistItemManager.UpdateSequence(playlistItemDto.Id, playlistItemDto.Sequence);
+                PlaylistItem playlistItem = PlaylistItemManager.Get(id);
+                playlistItemDto.SetPatchableProperties(playlistItem);
+                PlaylistItemManager.Update(playlistItem);
 
                 transaction.Commit();
             }

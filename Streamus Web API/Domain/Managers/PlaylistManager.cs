@@ -73,38 +73,6 @@ namespace Streamus_Web_API.Domain.Managers
             }
         }
 
-        public void UpdateTitle(Guid playlistId, string title)
-        {
-            try
-            {
-                Playlist playlist = Get(playlistId);
-                playlist.Title = title;
-
-                Update(playlist);
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                throw;
-            }
-        }
-
-        public void UpdateSequence(Guid playlistId, double seqeunce)
-        {
-            try
-            {
-                Playlist playlist = Get(playlistId);
-                playlist.Sequence = seqeunce;
-
-                Update(playlist);
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                throw;
-            }
-        }
-
         /// <summary>
         /// Copy a playlist. Useful for sharing.
         /// </summary>
