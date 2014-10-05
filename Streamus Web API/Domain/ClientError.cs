@@ -14,6 +14,7 @@ namespace Streamus_Web_API.Domain
         public virtual string OperatingSystem { get; set; }
         public virtual string Architecture { get; set; }
         public virtual string Stack { get; set; }
+        public virtual string BrowserVersion { get; set; }
 
         public const int MaxMessageLength = 255;
         public const int MaxStackLength = 2000;
@@ -32,14 +33,16 @@ namespace Streamus_Web_API.Domain
             OperatingSystem = string.Empty;
             Architecture = string.Empty;
             Stack = string.Empty;
+            BrowserVersion = string.Empty;
         }
 
-        public ClientError(string architecture, string clientVersion, int lineNumber, string message, string operatingSystem, string url, string stack)
+        public ClientError(string architecture, string clientVersion, int lineNumber, string browserVersion, string message, string operatingSystem, string url, string stack)
             : this()
         {
             Architecture = architecture;
             ClientVersion = clientVersion;
             LineNumber = lineNumber;
+            BrowserVersion = browserVersion;
             Message = message;
             OperatingSystem = operatingSystem;
             Url = url;
