@@ -6,6 +6,7 @@ namespace Streamus_Web_API.Domain
 {
     public class ClientError : AbstractDomainEntity<Guid>
     {
+        public virtual string UserId { get; set; }
         public virtual string Message { get; set; }
         public virtual int LineNumber { get; set; }
         public virtual string Url { get; set; }
@@ -16,7 +17,7 @@ namespace Streamus_Web_API.Domain
         public virtual string Stack { get; set; }
         public virtual string BrowserVersion { get; set; }
 
-        public const int MaxMessageLength = 255;
+        public const int MaxMessageLength = 2000;
         public const int MaxStackLength = 2000;
         public const int MaxClientVersionLength = 255;
         public const int MaxUrlLength = 255;
@@ -25,6 +26,7 @@ namespace Streamus_Web_API.Domain
 
         public ClientError()
         {
+            UserId = string.Empty;
             Message = string.Empty;
             LineNumber = LineNumberDefault;
             Url = string.Empty;
@@ -36,9 +38,10 @@ namespace Streamus_Web_API.Domain
             BrowserVersion = string.Empty;
         }
 
-        public ClientError(string architecture, string clientVersion, int lineNumber, string browserVersion, string message, string operatingSystem, string url, string stack)
+        public ClientError(string userId, string architecture, string clientVersion, int lineNumber, string browserVersion, string message, string operatingSystem, string url, string stack)
             : this()
         {
+            UserId = userId;
             Architecture = architecture;
             ClientVersion = clientVersion;
             LineNumber = lineNumber;

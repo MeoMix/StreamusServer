@@ -26,7 +26,7 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                ClientError clientError = new ClientError(clientErrorDto.Architecture, clientErrorDto.ClientVersion, clientErrorDto.LineNumber, clientErrorDto.BrowserVersion, clientErrorDto.Message, clientErrorDto.OperatingSystem, clientErrorDto.Url, clientErrorDto.Stack);
+                ClientError clientError = new ClientError(clientErrorDto.UserId, clientErrorDto.Architecture, clientErrorDto.ClientVersion, clientErrorDto.LineNumber, clientErrorDto.BrowserVersion, clientErrorDto.Message, clientErrorDto.OperatingSystem, clientErrorDto.Url, clientErrorDto.Stack);
                 ClientClientErrorManager.Save(clientError);
 
                 savedErrorDto = ClientErrorDto.Create(clientError);
