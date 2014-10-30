@@ -6,7 +6,7 @@ namespace Streamus_Web_API.Domain
 {
     public class ClientError : AbstractDomainEntity<Guid>
     {
-        public virtual string UserId { get; set; }
+        public virtual string InstanceId { get; set; }
         public virtual string Message { get; set; }
         public virtual int LineNumber { get; set; }
         public virtual string Url { get; set; }
@@ -26,7 +26,7 @@ namespace Streamus_Web_API.Domain
 
         public ClientError()
         {
-            UserId = string.Empty;
+            InstanceId = string.Empty;
             Message = string.Empty;
             LineNumber = LineNumberDefault;
             Url = string.Empty;
@@ -38,10 +38,10 @@ namespace Streamus_Web_API.Domain
             BrowserVersion = string.Empty;
         }
 
-        public ClientError(string userId, string architecture, string clientVersion, int lineNumber, string browserVersion, string message, string operatingSystem, string url, string stack)
+        public ClientError(string instanceId, string architecture, string clientVersion, int lineNumber, string browserVersion, string message, string operatingSystem, string url, string stack)
             : this()
         {
-            UserId = userId;
+            InstanceId = instanceId;
             Architecture = architecture;
             ClientVersion = clientVersion;
             LineNumber = lineNumber;

@@ -24,6 +24,7 @@ namespace Streamus_Web_API.Dao.Mappings
             Map(e => e.Architecture).Not.Nullable();
             Map(e => e.Stack).Not.Nullable();
             Map(e => e.BrowserVersion).Not.Nullable();
+            Map(e => e.InstanceId).Not.Nullable();
         }
     }
 }

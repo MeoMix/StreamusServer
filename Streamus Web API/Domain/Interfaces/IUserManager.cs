@@ -13,6 +13,8 @@ namespace Streamus_Web_API.Domain.Interfaces
 
         void Save(User user);
         void Update(User user);
+        User MergeByGooglePlusId(Guid id, string googlePlusId);
+        User MergeAllByGooglePlusId(string googlePlusId);
 
         User Get(Guid userId);
         User GetByGooglePlusId(string googlePlusId);

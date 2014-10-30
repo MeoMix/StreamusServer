@@ -38,7 +38,7 @@ Installation
 Deployment
 ========
 
-The server is hosted on http://www.appharbor.com. AppHarbor has a hook into the solution which will detect commits to the master branch. AppHarbor will build the solution, run test cases and, if successful, hot swap the server out with a new version. All connection string information is automatically handled by AppHarbor.
+The server is hosted on AWS. To deploy, publish the solution to AWS via Visual Studio. Note that the web.config file will not be overidden as to not misconfigure the database connection strings.
 
 License
 =======

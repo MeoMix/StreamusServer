@@ -58,9 +58,9 @@ namespace Streamus_Web_API_Tests
             return playlistItem;
         }
 
-        public User CreateUser()
+        public User CreateUser(string googlePlusId = "")
         {
-            User user = UserManager.CreateUser();
+            User user = UserManager.CreateUser(googlePlusId);
             return user;
         }
 

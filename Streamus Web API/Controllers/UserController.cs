@@ -82,13 +82,7 @@ namespace Streamus_Web_API.Controllers
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                User googlePlusUser = UserManager.GetByGooglePlusId(googlePlusId);
-                User user = UserManager.Get(id);
-
-                googlePlusUser.MergeUser(user);
-
-                UserManager.Update(googlePlusUser);
-
+                User googlePlusUser = UserManager.MergeByGooglePlusId(id, googlePlusId);
                 userDto = UserDto.Create(googlePlusUser);
 
                 transaction.Commit();

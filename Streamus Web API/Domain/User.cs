@@ -70,7 +70,7 @@ namespace Streamus_Web_API.Domain
         {
             foreach (Playlist playlist in user.Playlists.Where(p => p.Items.Count > 0))
             {
-                Playlists.Add(new Playlist(playlist));
+                AddPlaylist(new Playlist(playlist));
             }
         }
     }

@@ -5,7 +5,7 @@ namespace Streamus_Web_API.Dto
 {
     public class ClientErrorDto
     {
-        public string UserId { get; set; }
+        public string InstanceId { get; set; }
         public string Message { get; set; }
         public int LineNumber { get; set; }
         public string Url { get; set; }
@@ -17,7 +17,7 @@ namespace Streamus_Web_API.Dto
 
         public ClientErrorDto()
         {
-            UserId = string.Empty;
+            InstanceId = string.Empty;
             Message = string.Empty;
             Architecture = string.Empty;
             OperatingSystem = string.Empty;

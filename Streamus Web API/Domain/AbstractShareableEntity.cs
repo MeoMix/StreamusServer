@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Streamus_Web_API.Domain.Interfaces;
@@ -53,6 +54,9 @@ namespace Streamus_Web_API.Domain
         //  Inspired by: http://stackoverflow.com/questions/3275242/how-do-you-remove-invalid-characters-when-creating-a-friendly-url-ie-how-do-you
         public static string Slugify(string text)
         {
+            IdnMapping idnMapping = new IdnMapping();
+            text = idnMapping.GetAscii(text);
+
             text = RemoveAccent(text).ToLower();
 
             //  Remove all invalid characters.  

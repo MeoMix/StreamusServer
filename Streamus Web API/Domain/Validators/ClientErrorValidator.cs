@@ -6,7 +6,7 @@ namespace Streamus_Web_API.Domain.Validators
     {
         public ClientErrorValidator()
         {
-            RuleFor(clientError => clientError.UserId).NotNull();
+            RuleFor(clientError => clientError.InstanceId).NotNull();
             RuleFor(clientError => clientError.Message).NotNull().Length(0, ClientError.MaxMessageLength);
             RuleFor(clientError => clientError.LineNumber).GreaterThan(ClientError.LineNumberDefault);
             RuleFor(clientError => clientError.ClientVersion).NotNull().Length(0, ClientError.MaxClientVersionLength);

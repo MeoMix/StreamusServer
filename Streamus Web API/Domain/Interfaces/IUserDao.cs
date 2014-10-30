@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Streamus_Web_API.Domain.Interfaces
 {
@@ -6,6 +7,7 @@ namespace Streamus_Web_API.Domain.Interfaces
     {
         User Get(Guid id);
         User GetByGooglePlusId(string googlePlusId);
-        void UpdateGooglePlusId(Guid id, string googlePlusId);
+        IList<User> GetAllByGooglePlusId(string googlePlusId);
+        void UpdateGooglePlusIds(IList<Guid> ids, string googlePlusId);
     }
 }
