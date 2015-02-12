@@ -17,8 +17,8 @@ namespace Streamus_Web_API.Dao.Mappings
             //  Only update properties which have changed.
             DynamicUpdate();
 
-            Map(e => e.Name).Not.Nullable();
             Map(e => e.GooglePlusId).Not.Nullable();
+            Map(e => e.Language).Not.Nullable();
 
             HasMany(u => u.Playlists)
                 .Inverse()

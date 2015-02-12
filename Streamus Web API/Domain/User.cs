@@ -8,16 +8,16 @@ namespace Streamus_Web_API.Domain
 {
     public class User : AbstractDomainEntity<Guid>
     {
-        public virtual string Name { get; set; }
         public virtual string GooglePlusId { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public virtual ICollection<Playlist> Playlists { get; set; }
+        public virtual string Language { get; set; }
 
         public User()
         {
-            Name = string.Empty;
             GooglePlusId = string.Empty;
             Playlists = new List<Playlist>();
+            Language = string.Empty;
 
             //  A user should always have at least one Playlist.
             CreateAndAddPlaylist();

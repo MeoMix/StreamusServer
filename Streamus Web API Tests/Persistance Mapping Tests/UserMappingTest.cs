@@ -14,8 +14,16 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
         {
             using (var transaction = Session.BeginTransaction())
             {
-                var createdUser = new User {GooglePlusId = "some id?", Name = "user name"};
-                var playlist = new Playlist("boss songs") {User = createdUser};
+                var createdUser = new User
+                    {
+                        GooglePlusId = "some id?"
+                    };
+
+                var playlist = new Playlist("boss songs")
+                    {
+                        User = createdUser
+                    };
+
                 createdUser.AddPlaylist(playlist);
 
                 Session.Save(createdUser);
@@ -26,7 +34,6 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
                 Assert.That(savedUser.Id, Is.Not.EqualTo(Guid.Empty));
 
                 Assert.That(savedUser.GooglePlusId, Is.EqualTo(createdUser.GooglePlusId));
-                Assert.That(savedUser.Name, Is.EqualTo(createdUser.Name));
                 Assert.That(savedUser.Playlists, Has.Count.EqualTo(2));
 
                 Assert.That(Session.Query<Playlist>().Where(p => p.User == savedUser).ToList(), Has.Count.EqualTo(2));

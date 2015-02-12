@@ -16,12 +16,16 @@ namespace Streamus_Web_API.Domain
         public virtual string Architecture { get; set; }
         public virtual string Stack { get; set; }
         public virtual string BrowserVersion { get; set; }
-        public virtual string UserId { get; set; }
+        public virtual Guid UserId { get; set; }
 
+        public const int MaxInstanceIdLength = 25;
         public const int MaxMessageLength = 2000;
+        public const int MaxUrlLength = 100;
+        public const int MaxClientVersionLength = 10;
+        public const int MaxOperatingSystemLength = 10;
+        public const int MaxArchitectureLength = 10;
         public const int MaxStackLength = 2000;
-        public const int MaxClientVersionLength = 255;
-        public const int MaxUrlLength = 255;
+        public const int MaxBrowserVersionLength = 100;
         public const int LineNumberDefault = -1;
         private const string Ellipses = "...";
 
@@ -37,10 +41,10 @@ namespace Streamus_Web_API.Domain
             Architecture = string.Empty;
             Stack = string.Empty;
             BrowserVersion = string.Empty;
-            UserId = string.Empty;
+            UserId = Guid.Empty;
         }
 
-        public ClientError(string instanceId, string architecture, string clientVersion, int lineNumber, string browserVersion, string message, string operatingSystem, string url, string stack, string userId)
+        public ClientError(string instanceId, string architecture, string clientVersion, int lineNumber, string browserVersion, string message, string operatingSystem, string url, string stack, Guid userId)
             : this()
         {
             InstanceId = instanceId;
