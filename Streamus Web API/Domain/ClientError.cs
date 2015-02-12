@@ -16,6 +16,7 @@ namespace Streamus_Web_API.Domain
         public virtual string Architecture { get; set; }
         public virtual string Stack { get; set; }
         public virtual string BrowserVersion { get; set; }
+        public virtual string UserId { get; set; }
 
         public const int MaxMessageLength = 2000;
         public const int MaxStackLength = 2000;
@@ -36,9 +37,10 @@ namespace Streamus_Web_API.Domain
             Architecture = string.Empty;
             Stack = string.Empty;
             BrowserVersion = string.Empty;
+            UserId = string.Empty;
         }
 
-        public ClientError(string instanceId, string architecture, string clientVersion, int lineNumber, string browserVersion, string message, string operatingSystem, string url, string stack)
+        public ClientError(string instanceId, string architecture, string clientVersion, int lineNumber, string browserVersion, string message, string operatingSystem, string url, string stack, string userId)
             : this()
         {
             InstanceId = instanceId;
@@ -50,6 +52,7 @@ namespace Streamus_Web_API.Domain
             OperatingSystem = operatingSystem;
             Url = url;
             Stack = stack;
+            UserId = userId;
 
             if (Message.Length > MaxMessageLength)
                 Message = string.Format("{0}{1}", Message.Substring(0, MaxMessageLength - Ellipses.Length), Ellipses);

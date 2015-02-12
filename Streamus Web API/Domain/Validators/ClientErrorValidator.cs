@@ -14,6 +14,7 @@ namespace Streamus_Web_API.Domain.Validators
             RuleFor(clientError => clientError.Url).NotNull().Length(0, ClientError.MaxUrlLength);
             RuleFor(clientError => clientError.Stack).NotNull().Length(0, ClientError.MaxStackLength);
             RuleFor(clientError => clientError.TimeOccurred).NotNull();
+            RuleFor(clientError => clientError.UserId).NotNull();
         }
     }
 }

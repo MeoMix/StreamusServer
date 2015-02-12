@@ -25,8 +25,7 @@ namespace Streamus_Web_API.Domain
 
         public virtual Playlist CreateAndAddPlaylist()
         {
-            string title = string.Format("Playlist {0:D4}", Playlists.Count);
-            var playlist = new Playlist(title)
+            var playlist = new Playlist("New Playlist")
                 {
                     User = this
                 };
