@@ -17,8 +17,8 @@ namespace Streamus_Web_API.Dao.Mappings
 
             Map(e => e.EntityType).CustomType<ShareableEntityType>().Not.Nullable();
             Map(e => e.EntityId).Not.Nullable();
-            Map(e => e.ShortId).Not.Nullable();
-            Map(e => e.UrlFriendlyEntityTitle).Not.Nullable();
+            Map(e => e.ShortId).Not.Nullable().Length(AbstractShareableDomainEntity.MaxShortIdLength);
+            Map(e => e.UrlFriendlyEntityTitle).Not.Nullable().Length(AbstractShareableDomainEntity.MaxUrlFriendlyTitleLength);
         }
     }
 }

@@ -13,6 +13,8 @@ namespace Streamus_Web_API.Domain
         public virtual ICollection<PlaylistItem> Items { get; set; }
         public virtual double Sequence { get; set; }
 
+        public const int MaxTitleLength = 255;
+
         public Playlist()
         {
             Id = Guid.Empty;

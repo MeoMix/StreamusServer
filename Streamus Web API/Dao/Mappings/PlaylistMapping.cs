@@ -11,7 +11,7 @@ namespace Streamus_Web_API.Dao.Mappings
             Table("[Playlists]");
             Id(e => e.Id).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
-            Map(e => e.Title).Not.Nullable();
+            Map(e => e.Title).Not.Nullable().Length(Playlist.MaxTitleLength);
             Map(e => e.Sequence).Not.Nullable();
 
             //  Only update properties which have changed.

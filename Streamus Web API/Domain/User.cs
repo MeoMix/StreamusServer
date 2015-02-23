@@ -13,6 +13,10 @@ namespace Streamus_Web_API.Domain
         public virtual ICollection<Playlist> Playlists { get; set; }
         public virtual string Language { get; set; }
 
+        //  GooglePlusID is usually a number, but, in some instances, can be a gmail address which is maximum of 75 characters, but doing 100 to be safe.
+        public const int MaxGooglePlusIdLength = 100;
+        public const int MaxLanguageLength = 10;
+
         public User()
         {
             GooglePlusId = string.Empty;

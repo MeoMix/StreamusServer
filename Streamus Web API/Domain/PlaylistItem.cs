@@ -20,6 +20,15 @@ namespace Streamus_Web_API.Domain
         //  Client ID is used to associate a DTO with a client-side entity which wasn't saved before sending to the server.
         public virtual string Cid { get; set; }
 
+        public const int MaxTitleLength = 255;
+        public const int MaxAuthorLength = 100;
+
+        //  The longest YouTube ID currently is 11, but I'm doing 25 just in case that grows in the future.
+        public const int MaxSongIdLength = 25;
+        //  The longest SongType is currently 10, SoundCloud, but I'm doing 25 just in case that grows in the future.
+        public const int MaxSongTypeLength = 25;
+        public const int MaxSongTitleLength = 255;
+
         public PlaylistItem()
         {
             Id = Guid.Empty;
