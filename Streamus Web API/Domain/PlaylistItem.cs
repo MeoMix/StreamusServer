@@ -15,8 +15,7 @@ namespace Streamus_Web_API.Domain
         public virtual string SongTitle { get; set; }
         public virtual int Duration { get; set; }
         public virtual string Author { get; set; }
-        
-        //  TODO: I don't think the Domain layer should know about this. It should be dumb to a client existing.
+
         //  Client ID is used to associate a DTO with a client-side entity which wasn't saved before sending to the server.
         public virtual string Cid { get; set; }
 
