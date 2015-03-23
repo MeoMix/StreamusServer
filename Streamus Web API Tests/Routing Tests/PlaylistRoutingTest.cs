@@ -68,14 +68,14 @@ namespace Streamus_Web_API_Tests.Routing_Tests
         [Test]
         public void POST_CreateCopyByShareCode_Should_route_to_PlaylistController_CreateCopyByShareCode_method()
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, RoutePrefix + "CreateCopyByShareCode/");
+            var request = new HttpRequestMessage(HttpMethod.Post, RoutePrefix + "Copy/");
             var config = new HttpConfiguration();
 
             WebApiConfig.Register(config);
             var route = Helpers.RouteRequest(config, request);
 
             route.Controller.Should().Be<PlaylistController>();
-            route.Action.Should().Be("CreateCopyByShareCode");
+            route.Action.Should().Be("Copy");
         }
     }
 }

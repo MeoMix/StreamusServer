@@ -21,10 +21,10 @@ namespace Streamus_Web_API.Dao
 
             containerBuilder.Register(x => new NHibernateConfiguration().Configure().BuildSessionFactory()).SingleInstance();
 
-            containerBuilder.RegisterType<NHibernateDaoFactory>().As<IDaoFactory>().InstancePerApiRequest();
-            containerBuilder.RegisterType<StreamusManagerFactory>().As<IManagerFactory>().InstancePerApiRequest();
-            containerBuilder.Register(x => x.Resolve<ISessionFactory>().OpenSession()).InstancePerApiRequest();
-            containerBuilder.Register(x => LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType)).InstancePerApiRequest();
+            containerBuilder.RegisterType<NHibernateDaoFactory>().As<IDaoFactory>().InstancePerRequest();
+            containerBuilder.RegisterType<StreamusManagerFactory>().As<IManagerFactory>().InstancePerRequest();
+            containerBuilder.Register(x => x.Resolve<ISessionFactory>().OpenSession()).InstancePerRequest();
+            containerBuilder.Register(x => LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType)).InstancePerRequest();
             
             ILifetimeScope container = containerBuilder.Build();
 
