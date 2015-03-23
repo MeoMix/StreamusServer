@@ -99,23 +99,18 @@ namespace Streamus_Web_API.Controllers
         }
 
         /// <summary>
-        ///     Retrieves a ShareCode relating to a Playlist, create a copy of the Playlist referenced by the ShareCode,
-        ///     and return the copied Playlist.
+        ///     Retrieves a Playlist, create a copy of the Playlist, and returns the copied Playlist
         /// </summary>
-        [Route("CreateCopyByShareCode")]
+        [Route("Copy")]
         [HttpPost]
-        public PlaylistDto CreateCopyByShareCode(ShareCodeRequestDto shareCodeRequestDto)
+        public PlaylistDto Copy(CopyPlaylistRequestDto copyPlaylistRequestDto)
         {
             PlaylistDto playlistDto;
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                ShareCode shareCode = ShareCodeManager.GetByShortIdAndEntityTitle(shareCodeRequestDto.ShortId, shareCodeRequestDto.UrlFriendlyEntityTitle);
-
-                //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
-                Playlist playlistToCopy = PlaylistManager.Get(shareCode.EntityId);
-
-                User user = UserManager.Get(shareCodeRequestDto.UserId);
+                Playlist playlistToCopy = PlaylistManager.Get(copyPlaylistRequestDto.PlaylistId);
+                User user = UserManager.Get(copyPlaylistRequestDto.UserId);
 
                 var playlistCopy = new Playlist(playlistToCopy);
                 user.AddPlaylist(playlistCopy);

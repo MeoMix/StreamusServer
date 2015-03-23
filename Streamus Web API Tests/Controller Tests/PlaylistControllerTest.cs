@@ -141,10 +141,10 @@ namespace Streamus_Web_API_Tests.Controller
             Playlist playlist = PlaylistManager.CopyAndSave(user.Playlists.First().Id);
             ShareCode shareCode = ShareCodeManager.GetShareCode(playlist);
 
-            ShareCodeRequestDto shareCodeRequestDto = new ShareCodeRequestDto(user.Id, shareCode.ShortId, shareCode.UrlFriendlyEntityTitle);
+            CopyPlaylistRequestDto shareCodeRequestDto = new CopyPlaylistRequestDto(user.Id, shareCode.EntityId);
 
             //  Create a new playlist for the given user by loading up the playlist via sharecode.
-            var playlistDto = PlaylistController.CreateCopyByShareCode(shareCodeRequestDto);
+            var playlistDto = PlaylistController.Copy(shareCodeRequestDto);
 
             //  Make sure we actually get a Playlist DTO back from the Controller.
             Assert.NotNull(playlistDto);
