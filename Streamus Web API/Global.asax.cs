@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Streamus_Web_API.App_Start;
@@ -31,6 +32,12 @@ namespace Streamus_Web_API
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
             CreateAutoMapperMaps();
+        }
+
+        //  Make it harder for hackers by removing server information.
+        protected void Application_PreSendRequestHeaders(object sender, EventArgs e)
+        {
+            HttpContext.Current.Response.Headers.Remove("Server");
         }
 
         /// <summary>
