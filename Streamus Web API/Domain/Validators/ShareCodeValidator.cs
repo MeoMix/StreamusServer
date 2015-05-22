@@ -7,7 +7,7 @@ namespace Streamus_Web_API.Domain.Validators
     {
         public ShareCodeValidator()
         {
-            RuleFor(shareCode => shareCode.EntityType).NotEqual(ShareableEntityType.None);
+            RuleFor(shareCode => shareCode.EntityType).NotEqual(EntityType.None);
             RuleFor(shareCode => shareCode.EntityId).NotEqual(Guid.Empty);
             RuleFor(shareCode => shareCode.ShortId).Length(12);
             RuleFor(shareCode => shareCode.UrlFriendlyEntityTitle.Length).GreaterThan(0);

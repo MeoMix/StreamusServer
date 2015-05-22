@@ -15,7 +15,7 @@ namespace Streamus_Web_API.Dao.Mappings
             //  Only update properties which have changed.
             DynamicUpdate();
 
-            Map(e => e.EntityType).CustomType<ShareableEntityType>().Not.Nullable();
+            Map(e => e.EntityType).Not.Nullable().Length(AbstractShareableDomainEntity.MaxEntityTypeLength);
             Map(e => e.EntityId).Not.Nullable();
             Map(e => e.ShortId).Not.Nullable().Length(AbstractShareableDomainEntity.MaxShortIdLength);
             Map(e => e.UrlFriendlyEntityTitle).Not.Nullable().Length(AbstractShareableDomainEntity.MaxUrlFriendlyTitleLength);

@@ -8,6 +8,7 @@ using Streamus_Web_API.Dto;
 using System.Net.Http.Formatting;
 using System.Web;
 using System.Web.Http;
+using Newtonsoft.Json.Converters;
 
 namespace Streamus_Web_API
 {
@@ -25,11 +26,17 @@ namespace Streamus_Web_API
             //NHibernateProfiler.Initialize();
 
             //  I don't want $id, no need to support circular references: http://stackoverflow.com/questions/18355312/map-id-in-web-api-to-custom-id
-            JsonMediaTypeFormatter jsonFormatter = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
-            jsonFormatter.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.None;
+            JsonSerializerSettings serializerSettings = GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings;
+            serializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.None;
 
             //  Convert sentence casing to camel casing when serializing to JSON.
-            jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+            //  Prefer using string names over integer values when dealing with enums for readability
+            serializerSettings.Converters.Add(new StringEnumConverter
+            {
+                CamelCaseText = true
+            });
 
             CreateAutoMapperMaps();
         }

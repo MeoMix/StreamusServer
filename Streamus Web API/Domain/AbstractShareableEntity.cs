@@ -8,6 +8,7 @@ namespace Streamus_Web_API.Domain
 {
     public abstract class AbstractShareableDomainEntity : AbstractDomainEntity<Guid>, IShareableEntity
     {
+        public const int MaxEntityTypeLength = 25;
         public const int MaxShortIdLength = 12;
         public const int MaxUrlFriendlyTitleLength = 40;
 

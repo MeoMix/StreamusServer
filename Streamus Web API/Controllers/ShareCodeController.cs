@@ -41,6 +41,31 @@ namespace Streamus_Web_API.Controllers
 
         [Route("GetShareCode")]
         [HttpGet]
+        public ShareCodeDto GetShareCode(Guid id, EntityType entityType)
+        {
+            ShareCodeDto shareCodeDto;
+
+            if (entityType != EntityType.Playlist)
+            {
+                throw new NotSupportedException("Only playlists can be shared currently");
+            }
+
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                //  Copy the playlist here to serve a static copy instead of whatever the state is when share code is accessed.
+                Playlist playlist = PlaylistManager.CopyAndSave(id);
+                ShareCode shareCode = ShareCodeManager.GetShareCode(playlist);
+                shareCodeDto = ShareCodeDto.Create(shareCode);
+
+                transaction.Commit();
+            }
+
+            return shareCodeDto;
+        }
+
+        //  TODO: Remove this in future update. Kept for backwards compatibility.
+        [Route("GetShareCode")]
+        [HttpGet]
         public ShareCodeDto GetShareCode(Guid playlistId)
         {
             ShareCodeDto shareCodeDto;

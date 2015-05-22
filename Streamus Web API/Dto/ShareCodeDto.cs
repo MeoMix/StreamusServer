@@ -7,7 +7,7 @@ namespace Streamus_Web_API.Dto
     public class ShareCodeDto
     {
         public Guid Id { get; set; }
-        public ShareableEntityType EntityType { get; set; }
+        public EntityType EntityType { get; set; }
         public Guid EntityId { get; set; }
         public string ShortId { get; set; }
         public string UrlFriendlyEntityTitle { get; set; }
@@ -16,7 +16,7 @@ namespace Streamus_Web_API.Dto
         {
             Id = Guid.Empty;
             EntityId = Guid.Empty;
-            EntityType = ShareableEntityType.None;
+            EntityType = EntityType.None;
             ShortId = string.Empty;
             UrlFriendlyEntityTitle = string.Empty;
         }

@@ -5,7 +5,7 @@ using Streamus_Web_API.Domain.Validators;
 
 namespace Streamus_Web_API.Domain
 {
-    public enum ShareableEntityType
+    public enum EntityType
     {
         None = -1,
         Playlist = 0
@@ -13,7 +13,7 @@ namespace Streamus_Web_API.Domain
 
     public class ShareCode : AbstractDomainEntity<Guid>
     {
-        public virtual ShareableEntityType EntityType { get; set; }
+        public virtual EntityType EntityType { get; set; }
         public virtual Guid EntityId { get; set; }
         public virtual string ShortId { get; set; }
         public virtual string UrlFriendlyEntityTitle { get; set; }
@@ -22,7 +22,7 @@ namespace Streamus_Web_API.Domain
         {
             Id = Guid.Empty;
             EntityId = Guid.Empty;
-            EntityType = ShareableEntityType.None;
+            EntityType = EntityType.None;
             ShortId = string.Empty;
             UrlFriendlyEntityTitle = string.Empty;
         }
@@ -33,7 +33,7 @@ namespace Streamus_Web_API.Domain
             if (!(shareableEntity is Playlist))
                 throw new NotSupportedException("Only Playlists are shareable currently.");
                 
-            EntityType = ShareableEntityType.Playlist;
+            EntityType = EntityType.Playlist;
             EntityId = shareableEntity.Id;
             UrlFriendlyEntityTitle = shareableEntity.GetUrlFriendlyTitle();
             ShortId = shareableEntity.GetShortId();
@@ -44,6 +44,5 @@ namespace Streamus_Web_API.Domain
             var validator = new ShareCodeValidator();
             validator.ValidateAndThrow(this);
         }
-
     }
 }

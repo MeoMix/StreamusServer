@@ -25,7 +25,7 @@ namespace Streamus_Web_API.Domain.Managers
                 if (shareCode == null)
                     throw new ApplicationException("Unable to locate shareCode in database.");
 
-                if (shareCode.EntityType != ShareableEntityType.Playlist)
+                if (shareCode.EntityType != EntityType.Playlist)
                     throw new ApplicationException("Expected shareCode to have entityType of Playlist");
             }
             catch (Exception exception)
