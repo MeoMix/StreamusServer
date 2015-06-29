@@ -6,11 +6,15 @@ namespace Streamus_Web_API.Domain.Validators
     {
         public ClientErrorValidator()
         {
-            RuleFor(clientError => clientError.Message).Length(0, 255);
-            RuleFor(clientError => clientError.LineNumber).GreaterThan(-1);
-            RuleFor(clientError => clientError.ClientVersion).Length(0, 255);
-            RuleFor(clientError => clientError.Url).Length(0, 255);
+            RuleFor(clientError => clientError.InstanceId).NotNull();
+            RuleFor(clientError => clientError.Message).NotNull().Length(0, ClientError.MaxMessageLength);
+            RuleFor(clientError => clientError.LineNumber).GreaterThan(ClientError.LineNumberDefault);
+            RuleFor(clientError => clientError.ClientVersion).NotNull().Length(0, ClientError.MaxClientVersionLength);
+            RuleFor(clientError => clientError.BrowserVersion).NotNull();
+            RuleFor(clientError => clientError.Url).NotNull().Length(0, ClientError.MaxUrlLength);
+            RuleFor(clientError => clientError.Stack).NotNull().Length(0, ClientError.MaxStackLength);
             RuleFor(clientError => clientError.TimeOccurred).NotNull();
+            RuleFor(clientError => clientError.UserId).NotNull();
         }
     }
 }

@@ -8,16 +8,20 @@ namespace Streamus_Web_API.Domain
 {
     public class User : AbstractDomainEntity<Guid>
     {
-        public virtual string Name { get; set; }
         public virtual string GooglePlusId { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public virtual ICollection<Playlist> Playlists { get; set; }
+        public virtual string Language { get; set; }
+
+        //  GooglePlusID is usually a number, but, in some instances, can be a gmail address which is maximum of 75 characters, but doing 100 to be safe.
+        public const int MaxGooglePlusIdLength = 100;
+        public const int MaxLanguageLength = 10;
 
         public User()
         {
-            Name = string.Empty;
             GooglePlusId = string.Empty;
             Playlists = new List<Playlist>();
+            Language = string.Empty;
 
             //  A user should always have at least one Playlist.
             CreateAndAddPlaylist();
@@ -25,8 +29,7 @@ namespace Streamus_Web_API.Domain
 
         public virtual Playlist CreateAndAddPlaylist()
         {
-            string title = string.Format("Playlist {0:D4}", Playlists.Count);
-            var playlist = new Playlist(title)
+            var playlist = new Playlist("New Playlist")
                 {
                     User = this
                 };
@@ -64,6 +67,14 @@ namespace Streamus_Web_API.Domain
 
             playlist.User = this;
             Playlists.Add(playlist);
+        }
+
+        public virtual void MergeUser(User user)
+        {
+            foreach (Playlist playlist in user.Playlists.Where(p => p.Items.Count > 0))
+            {
+                AddPlaylist(new Playlist(playlist));
+            }
         }
     }
 }

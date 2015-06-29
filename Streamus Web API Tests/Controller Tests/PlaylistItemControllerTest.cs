@@ -14,12 +14,14 @@ namespace Streamus_Web_API_Tests.Controller
     {
         private PlaylistItemController PlaylistItemController;
         private IPlaylistManager PlaylistManager;
+        private IPlaylistItemManager PlaylistItemManager;
 
         [SetUp]
         public new void TestFixtureSetUp()
         {
             PlaylistItemController = new PlaylistItemController(Logger, Session, ManagerFactory);
             PlaylistManager = ManagerFactory.GetPlaylistManager(Session);
+            PlaylistItemManager = ManagerFactory.GetPlaylistItemManager(Session);
         }
 
         [Test]
@@ -131,7 +133,23 @@ namespace Streamus_Web_API_Tests.Controller
             Assert.That(playlist.Items.Count(i => i.Id == createdPlaylistItemDto.Id) == 1);
 
             PlaylistItemController.Delete(createdPlaylistItemDto.Id);
+        }
 
+        [Test]
+        public void PatchPlaylistItem_SequenceProvided_SequenceModified()
+        {
+            PlaylistItemDto playlistItemDto = Helpers.CreatePlaylistItemDto();
+            var createdPlaylistItemDto = PlaylistItemController.Create(playlistItemDto);
+
+            const double newSequence = 5;
+
+            PlaylistItemDto patchedPlaylistItemDto = new PlaylistItemDto { Sequence = newSequence };
+
+            PlaylistItem playlistItem = PlaylistItemManager.Get(createdPlaylistItemDto.Id);
+
+            PlaylistItemController.Patch(playlistItem.Id, patchedPlaylistItemDto);
+
+            Assert.AreEqual(playlistItem.Sequence, newSequence);
         }
     }
 }

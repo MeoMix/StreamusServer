@@ -6,6 +6,7 @@ namespace Streamus_Web_API.Domain
 {
     public class ClientError : AbstractDomainEntity<Guid>
     {
+        public virtual string InstanceId { get; set; }
         public virtual string Message { get; set; }
         public virtual int LineNumber { get; set; }
         public virtual string Url { get; set; }
@@ -13,33 +14,61 @@ namespace Streamus_Web_API.Domain
         public virtual DateTime TimeOccurred { get; set; }
         public virtual string OperatingSystem { get; set; }
         public virtual string Architecture { get; set; }
+        public virtual string Stack { get; set; }
+        public virtual string BrowserVersion { get; set; }
+        public virtual Guid UserId { get; set; }
+
+        public const int MaxInstanceIdLength = 25;
+        public const int MaxMessageLength = 2000;
+        public const int MaxUrlLength = 100;
+        public const int MaxClientVersionLength = 10;
+        public const int MaxOperatingSystemLength = 10;
+        public const int MaxArchitectureLength = 10;
+        public const int MaxStackLength = 2000;
+        public const int MaxBrowserVersionLength = 100;
+        public const int LineNumberDefault = -1;
+        private const string Ellipses = "...";
 
         public ClientError()
         {
+            InstanceId = string.Empty;
             Message = string.Empty;
-            LineNumber = -1;
+            LineNumber = LineNumberDefault;
             Url = string.Empty;
             ClientVersion = string.Empty;
             TimeOccurred = DateTime.Now;
             OperatingSystem = string.Empty;
             Architecture = string.Empty;
+            Stack = string.Empty;
+            BrowserVersion = string.Empty;
+            UserId = Guid.Empty;
         }
 
-        public ClientError(string architecture, string clientVersion, int lineNumber, string message, string operatingSystem, string url)
+        public ClientError(string instanceId, string architecture, string clientVersion, int lineNumber, string browserVersion, string message, string operatingSystem, string url, string stack, Guid userId)
             : this()
         {
+            InstanceId = instanceId;
             Architecture = architecture;
             ClientVersion = clientVersion;
             LineNumber = lineNumber;
+            BrowserVersion = browserVersion;
             Message = message;
             OperatingSystem = operatingSystem;
             Url = url;
+            Stack = stack;
+            UserId = userId;
 
-            if (Message.Length > 255)
-            {
-                //  Ensure that client error message is a maximum of 255 characters before saving.
-                Message = string.Format("{0}...", Message.Substring(0, 252));
-            }
+            if (Message.Length > MaxMessageLength)
+                Message = string.Format("{0}{1}", Message.Substring(0, MaxMessageLength - Ellipses.Length), Ellipses);
+
+            if (Stack.Length > MaxStackLength)
+                Stack = string.Format("{0}{1}", Stack.Substring(0, MaxStackLength - Ellipses.Length), Ellipses);
+
+            if (ClientVersion.Length > MaxClientVersionLength)
+                ClientVersion = string.Format("{0}{1}", ClientVersion.Substring(0, MaxClientVersionLength - Ellipses.Length), Ellipses);
+
+            if (Url.Length > MaxUrlLength)
+                Url = string.Format("{0}{1}", Url.Substring(0, MaxUrlLength - Ellipses.Length), Ellipses);
         }
 
         public virtual void ValidateAndThrow()

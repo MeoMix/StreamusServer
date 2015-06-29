@@ -40,16 +40,16 @@ namespace Streamus_Web_API_Tests.Routing_Tests
         }
 
         [Test]
-        public void PUT_Should_route_to_PlaylistItemController_Update_method()
+        public void PATCH_Should_route_to_PlaylistItemController_Patch_method()
         {
-            var request = new HttpRequestMessage(HttpMethod.Put, RoutePrefix);
+            var request = new HttpRequestMessage(new HttpMethod("PATCH"), RoutePrefix + Guid.NewGuid());
             var config = new HttpConfiguration();
 
             WebApiConfig.Register(config);
             var route = Helpers.RouteRequest(config, request);
 
             route.Controller.Should().Be<PlaylistItemController>();
-            route.Action.Should().Be("Update");
+            route.Action.Should().Be("Patch");
         }
 
         [Test]

@@ -11,7 +11,9 @@ namespace Streamus_Web_API.Domain
         public virtual User User { get; set; }
         //  Use interfaces so NHibernate can inject with its own collection implementation.
         public virtual ICollection<PlaylistItem> Items { get; set; }
-        public virtual int Sequence { get; set; }
+        public virtual double Sequence { get; set; }
+
+        public const int MaxTitleLength = 255;
 
         public Playlist()
         {
@@ -19,6 +21,12 @@ namespace Streamus_Web_API.Domain
             Title = string.Empty;
             Items = new List<PlaylistItem>();
             Sequence = -1;
+        }
+
+        public Playlist(Guid id)
+            : this()
+        {
+            Id = id;
         }
 
         public Playlist(string title)
@@ -33,12 +41,12 @@ namespace Streamus_Web_API.Domain
             Copy(playlist);
         }
 
-        public Playlist(Guid id, int sequence, string title)
+        public Playlist(Guid id, double sequence, string title)
             : this()
         {
             Id = id;
-            Sequence = sequence;
             Title = title;
+            Sequence = sequence; 
         }
 
         public virtual void Copy(Playlist playlist)
@@ -98,6 +106,5 @@ namespace Streamus_Web_API.Domain
             var validator = new PlaylistValidator();
             validator.ValidateAndThrow(this);
         }
-
     }
 }

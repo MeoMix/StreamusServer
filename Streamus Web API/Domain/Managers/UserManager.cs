@@ -1,4 +1,7 @@
-﻿using log4net;
+﻿using System.Collections.Generic;
+using System.Linq;
+using NHibernate;
+using log4net;
 using Streamus_Web_API.Domain.Interfaces;
 using System;
 
@@ -50,11 +53,64 @@ namespace Streamus_Web_API.Domain.Managers
             {
                 user = UserDao.GetByGooglePlusId(googlePlusId);
             }
+            catch (NonUniqueResultException nonUniqueResultException)
+            {
+                Logger.Error(nonUniqueResultException);
+                user = MergeAllByGooglePlusId(googlePlusId);
+            }
             catch (Exception exception)
             {
                 Logger.Error(exception);
                 throw;
             }
+
+            return user;
+        }
+
+        public IList<User> GetAllByGooglePlusId(string googlePlusId)
+        {
+            IList<User> users;
+
+            try
+            {
+                users = UserDao.GetAllByGooglePlusId(googlePlusId);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+
+            return users;
+        }
+
+        public User MergeByGooglePlusId(Guid id, string googlePlusId)
+        {
+            User googlePlusUser = GetByGooglePlusId(googlePlusId);
+            User user = Get(id);
+            googlePlusUser.MergeUser(user);
+
+            Update(googlePlusUser);
+            UserDao.UpdateGooglePlusIds(new List<Guid> {id}, string.Empty);
+
+            return googlePlusUser;
+        }
+
+        public User MergeAllByGooglePlusId(string googlePlusId)
+        {
+            IList<User> googlePlusUsers = GetAllByGooglePlusId(googlePlusId);
+
+            //  Since I don't have an ID to merge into I will just merge into the first user and treat that as the qualified one.
+            User user = googlePlusUsers[0];
+            googlePlusUsers.RemoveAt(0);
+
+            foreach (User googlePlusUser in googlePlusUsers)
+            {
+                user.MergeUser(googlePlusUser);
+            }
+
+            Update(user);
+            ClearGooglePlusId(googlePlusUsers.Select(u => u.Id).ToList());
 
             return user;
         }
@@ -101,11 +157,12 @@ namespace Streamus_Web_API.Domain.Managers
             }
         }
 
-        public void UpdateGooglePlusId(Guid userId, string googlePlusId)
+        public void Update(User user)
         {
             try
             {
-                UserDao.UpdateGooglePlusId(userId, googlePlusId);
+                user.ValidateAndThrow();
+                UserDao.Update(user);
             }
             catch (Exception exception)
             {
@@ -114,5 +171,17 @@ namespace Streamus_Web_API.Domain.Managers
             }
         }
 
+        private void ClearGooglePlusId(IList<Guid> ids)
+        {
+            try
+            {
+                UserDao.UpdateGooglePlusIds(ids, string.Empty);
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception);
+                throw;
+            }
+        }
     }
 }

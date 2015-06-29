@@ -7,13 +7,11 @@ namespace Streamus_Web_API.Domain.Managers
     public class PlaylistManager : StreamusManager, IPlaylistManager
     {
         private IPlaylistDao PlaylistDao { get; set; }
-        private IVideoDao VideoDao { get; set; }
 
-        public PlaylistManager(ILog logger, IPlaylistDao playlistDao, IVideoDao videoDao)
+        public PlaylistManager(ILog logger, IPlaylistDao playlistDao)
             : base(logger)
         {
             PlaylistDao = playlistDao;
-            VideoDao = videoDao;
         }
 
         public Playlist Get(Guid id)
@@ -75,22 +73,6 @@ namespace Streamus_Web_API.Domain.Managers
             }
         }
 
-        public void UpdateTitle(Guid playlistId, string title)
-        {
-            try
-            {
-                Playlist playlist = Get(playlistId);
-                playlist.Title = title;
-
-                Update(playlist);
-            }
-            catch (Exception exception)
-            {
-                Logger.Error(exception);
-                throw;
-            }
-        }
-
         /// <summary>
         /// Copy a playlist. Useful for sharing.
         /// </summary>
@@ -128,13 +110,7 @@ namespace Streamus_Web_API.Domain.Managers
         {
             foreach (PlaylistItem playlistItem in playlist.Items)
             {
-                //  This is a bit of a hack, but NHibernate pays attention to the "dirtyness" of immutable entities.
-                //  As such, if two PlaylistItems reference the same Video object -- NonUniqueObjectException is thrown even though no changes
-                //  can be persisted to the database.
-                playlistItem.Video = VideoDao.Merge(playlistItem.Video);
-
                 playlistItem.ValidateAndThrow();
-                playlistItem.Video.ValidateAndThrow();
             }
 
             playlist.ValidateAndThrow();

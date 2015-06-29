@@ -56,7 +56,7 @@ namespace Streamus_Web_API_Tests.Controller
 
             Guid firstPlaylistId = user.Playlists.First().Id;
 
-            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
+            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id, "Title");
 
             var createdPlaylistDto = PlaylistController.Create(playlistDto);
 
@@ -72,9 +72,9 @@ namespace Streamus_Web_API_Tests.Controller
             PlaylistController.Delete(firstPlaylistId);
         }
 
-        public static List<List<PlaylistItemDto>> Split(List<PlaylistItemDto> source, int splitSize)
+        public static List<List<PlaylistItemDto>> Split(List<PlaylistItemDto> playlistItemDtos, int splitSize)
         {
-            return source
+            return playlistItemDtos
                 .Select((x, i) => new { Index = i, Value = x })
                 .GroupBy(x => x.Index / splitSize)
                 .Select(x => x.Select(v => v.Value).ToList())
@@ -85,7 +85,7 @@ namespace Streamus_Web_API_Tests.Controller
         public void CreatePlaylist_PlaylistDoesntExist_PlaylistCreated()
         {
             User user = Helpers.CreateUser();
-            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id);
+            PlaylistDto playlistDto = Helpers.CreatePlaylistDto(user.Id, "Title");
 
             var createdPlaylistDto = PlaylistController.Create(playlistDto);
 
@@ -99,6 +99,41 @@ namespace Streamus_Web_API_Tests.Controller
         }
 
         [Test]
+        public void PatchPlaylist_TitleNotProvided_TitleNotModified()
+        {
+            User user = Helpers.CreateUser();
+            const double newSequence = 5;
+
+            PlaylistDto playlistDto = new PlaylistDto { Sequence = newSequence };
+
+            Playlist playlist = user.Playlists.First();
+
+            string originalPlaylistTitle = playlist.Title;
+
+            PlaylistController.Patch(playlist.Id, playlistDto);
+
+            Assert.AreEqual(playlist.Title, originalPlaylistTitle);
+            Assert.AreEqual(playlist.Sequence, newSequence);
+        }
+
+        [Test]
+        public void PatchPlaylist_SequenceNotProvided_SequenceNotModified()
+        {
+            User user = Helpers.CreateUser();
+            const string newTitle = "Hello World";
+            PlaylistDto playlistDto = new PlaylistDto { Title = newTitle };
+
+            Playlist playlist = user.Playlists.First();
+
+            double originalPlaylistSequence = playlist.Sequence;
+
+            PlaylistController.Patch(playlist.Id, playlistDto);
+
+            Assert.AreEqual(playlist.Sequence, originalPlaylistSequence);
+            Assert.AreEqual(playlist.Title, newTitle);
+        }
+
+        [Test]
         public void GetSharedPlaylist_PlaylistShareCodeExists_CopyOfPlaylistCreated()
         {
             User user = Helpers.CreateUser();
@@ -106,10 +141,10 @@ namespace Streamus_Web_API_Tests.Controller
             Playlist playlist = PlaylistManager.CopyAndSave(user.Playlists.First().Id);
             ShareCode shareCode = ShareCodeManager.GetShareCode(playlist);
 
-            ShareCodeRequestDto shareCodeRequestDto = new ShareCodeRequestDto(user.Id, shareCode.ShortId, shareCode.UrlFriendlyEntityTitle);
+            CopyPlaylistRequestDto shareCodeRequestDto = new CopyPlaylistRequestDto(user.Id, shareCode.EntityId);
 
             //  Create a new playlist for the given user by loading up the playlist via sharecode.
-            var playlistDto = PlaylistController.CreateCopyByShareCode(shareCodeRequestDto);
+            var playlistDto = PlaylistController.Copy(shareCodeRequestDto);
 
             //  Make sure we actually get a Playlist DTO back from the Controller.
             Assert.NotNull(playlistDto);

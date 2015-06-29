@@ -90,11 +90,8 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
         [Test]
         public void CreateItem_NotAddedToPlaylistBeforeSave_ItemNotAdded()
         {
-            Video videoNotInDatabase = Helpers.CreateUnsavedVideoWithId();
-
             //  Create a new PlaylistItem and write it to the database.
-            string title = videoNotInDatabase.Title;
-            var playlistItem = new PlaylistItem(title, videoNotInDatabase);
+            var playlistItem = Helpers.CreateUnsavedPlaylistItem();
 
             bool validationExceptionEncountered = false;
 

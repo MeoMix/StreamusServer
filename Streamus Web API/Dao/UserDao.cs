@@ -1,4 +1,5 @@
-﻿using NHibernate;
+﻿using System.Collections.Generic;
+using NHibernate;
 using NHibernate.Criterion;
 using System;
 using Streamus_Web_API.Domain;
@@ -42,12 +43,28 @@ namespace Streamus_Web_API.Dao
             return user;
         }
 
-        //  http://stackoverflow.com/questions/3390561/nhibernate-update-single-field-without-loading-entity
-        public void UpdateGooglePlusId(Guid id, string googlePlusId)
+        public IList<User> GetAllByGooglePlusId(string googlePlusId)
         {
-            Session.CreateQuery("update User set GooglePlusId = :googlePlusId where id = :id")
+            IList<User> users = new List<User>();
+
+            if (googlePlusId != string.Empty)
+            {
+                ICriteria criteria = Session
+                    .CreateCriteria(typeof(User), "User")
+                    .Add(Restrictions.Eq("User.GooglePlusId", googlePlusId));
+
+                users = criteria.List<User>();
+            }
+
+            return users;
+        }
+
+        //  http://stackoverflow.com/questions/3390561/nhibernate-update-single-field-without-loading-entity
+        public void UpdateGooglePlusIds(IList<Guid> ids, string googlePlusId)
+        {
+            Session.CreateQuery("update User set GooglePlusId = :googlePlusId where id in (:ids)")
                .SetParameter("googlePlusId", googlePlusId)
-               .SetParameter("id", id)
+               .SetParameterList("ids", ids)
                .ExecuteUpdate();
         }
     }

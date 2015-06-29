@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using Streamus_Web_API.Domain;
+using System;
+using System.Collections.Generic;
 
 namespace Streamus_Web_API.Dto
 {
@@ -11,12 +11,11 @@ namespace Streamus_Web_API.Dto
         public string Title { get; set; }
         public Guid UserId { get; set; }
         public List<PlaylistItemDto> Items { get; set; }
-        public int Sequence { get; set; }
+        public double? Sequence { get; set; }
 
         public PlaylistDto()
         {
             Id = Guid.Empty;
-            Title = string.Empty;
             Items = new List<PlaylistItemDto>();
         }
 
@@ -24,6 +23,15 @@ namespace Streamus_Web_API.Dto
         {
             PlaylistDto playlistDto = Mapper.Map<Playlist, PlaylistDto>(playlist);
             return playlistDto;
+        }
+
+        public void SetPatchableProperties(Playlist playlist)
+        {
+            if (Title != null)
+                playlist.Title = Title;
+
+            if (Sequence.HasValue)
+                playlist.Sequence = (double)Sequence;
         }
     }
 }

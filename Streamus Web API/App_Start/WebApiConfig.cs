@@ -1,4 +1,5 @@
-﻿using Streamus_Web_API.Dao;
+﻿using System.Web.Http.Cors;
+using Streamus_Web_API.Dao;
 using System.Web.Http;
 
 namespace Streamus_Web_API.App_Start
@@ -7,6 +8,9 @@ namespace Streamus_Web_API.App_Start
     {
         public static void Register(HttpConfiguration config)
         {
+            var cors = new EnableCorsAttribute("http://src.streamus.com,http://dist.streamus.com,https://streamus.com,chrome-extension://jbnkffmindojffecdhbbmekbmkkfpmjd,chrome-extension://nnmcpagedcgekmljdamaeahfbmmjloho", "*", "*");
+            config.EnableCors(cors);
+
             AutofacRegistrations.RegisterAndSetResolver(config);
         }
     }

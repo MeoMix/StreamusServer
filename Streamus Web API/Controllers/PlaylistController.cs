@@ -4,6 +4,7 @@ using Streamus_Web_API.Domain;
 using Streamus_Web_API.Domain.Interfaces;
 using Streamus_Web_API.Dto;
 using System;
+using System.Collections.Generic;
 using System.Web.Http;
 
 namespace Streamus_Web_API.Controllers
@@ -33,23 +34,21 @@ namespace Streamus_Web_API.Controllers
             {
                 User user = UserManager.Get(playlistDto.UserId);
 
-                Playlist playlist = new Playlist(playlistDto.Id, playlistDto.Sequence, playlistDto.Title);
+                Playlist playlist = new Playlist(playlistDto.Id);
+                playlistDto.SetPatchableProperties(playlist);
+
                 user.AddPlaylist(playlist);
 
-                foreach (PlaylistItemDto playlistItemDto in playlistDto.Items)
+                List<PlaylistItem> playlistItems = new List<PlaylistItem>();
+                foreach (PlaylistItemDto dto in playlistDto.Items)
                 {
-                    VideoDto videoDto = playlistItemDto.Video;
-                    Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
-                    PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, video);
-
-                    playlist.AddItem(playlistItem);
+                    PlaylistItem playlistItem = new PlaylistItem(dto.Id, dto.Title, dto.Cid, dto.Song.Id, dto.Song.Type, dto.Song.Title, dto.Song.Duration, dto.Song.Author);
+                    dto.SetPatchableProperties(playlistItem);
+                    playlistItems.Add(playlistItem);
                 }
-
-                //  Make sure the playlist has been setup properly before it is cascade-saved through the User.
-                playlist.ValidateAndThrow();
+                playlist.AddItems(playlistItems);
 
                 PlaylistManager.Save(playlist);
-
                 savedPlaylistDto = PlaylistDto.Create(playlist);
 
                 transaction.Commit();
@@ -85,36 +84,33 @@ namespace Streamus_Web_API.Controllers
             }
         }
 
-        [Route("UpdateTitle")]
+        [Route("{id:guid}")]
         [HttpPatch]
-        public void UpdateTitle(PlaylistDto playlistDto)
+        public void Patch(Guid id, PlaylistDto playlistDto)
         {
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                PlaylistManager.UpdateTitle(playlistDto.Id, playlistDto.Title);
+                Playlist playlist = PlaylistManager.Get(id);
+                playlistDto.SetPatchableProperties(playlist);
+                PlaylistManager.Update(playlist);
 
                 transaction.Commit();
             }
         }
 
         /// <summary>
-        ///     Retrieves a ShareCode relating to a Playlist, create a copy of the Playlist referenced by the ShareCode,
-        ///     and return the copied Playlist.
+        ///     Retrieves a Playlist, create a copy of the Playlist, and returns the copied Playlist
         /// </summary>
-        [Route("CreateCopyByShareCode")]
-        [HttpGet]
-        public PlaylistDto CreateCopyByShareCode(ShareCodeRequestDto shareCodeRequestDto)
+        [Route("Copy")]
+        [HttpPost]
+        public PlaylistDto Copy(CopyPlaylistRequestDto copyPlaylistRequestDto)
         {
             PlaylistDto playlistDto;
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                ShareCode shareCode = ShareCodeManager.GetByShortIdAndEntityTitle(shareCodeRequestDto.ShortId, shareCodeRequestDto.UrlFriendlyEntityTitle);
-
-                //  Never return the sharecode's playlist reference. Make a copy of it to give out so people can't modify the original.
-                Playlist playlistToCopy = PlaylistManager.Get(shareCode.EntityId);
-
-                User user = UserManager.Get(shareCodeRequestDto.UserId);
+                Playlist playlistToCopy = PlaylistManager.Get(copyPlaylistRequestDto.PlaylistId);
+                User user = UserManager.Get(copyPlaylistRequestDto.UserId);
 
                 var playlistCopy = new Playlist(playlistToCopy);
                 user.AddPlaylist(playlistCopy);

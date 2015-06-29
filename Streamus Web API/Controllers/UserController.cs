@@ -25,19 +25,19 @@ namespace Streamus_Web_API.Controllers
         /// <returns>The newly created User</returns>
         [Route("")]
         [HttpPost]
-        public UserDto Create()
+        public UserDto Create(UserDto userDto)
         {
-            UserDto userDto;
+            UserDto createdUserDto;
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                User user = UserManager.CreateUser();
-                userDto = UserDto.Create(user);
+                User user = UserManager.CreateUser(userDto.GooglePlusId ?? string.Empty);
+                createdUserDto = UserDto.Create(user);
 
                 transaction.Commit();
             }
 
-            return userDto;
+            return createdUserDto;
         }
         
         [Route("{id:guid}")]
@@ -57,7 +57,7 @@ namespace Streamus_Web_API.Controllers
             return userDto;
         }
 
-        [Route("GetByGooglePlusId/{googlePlusId}")]
+        [Route("GetByGooglePlusId")]
         [HttpGet]
         public UserDto GetByGooglePlusId(string googlePlusId)
         {
@@ -74,17 +74,53 @@ namespace Streamus_Web_API.Controllers
             return userDto;
         }
 
-        [Route("UpdateGooglePlusId")]
+        [Route("MergeByGooglePlusId")]
+        [HttpPost]
+        public UserDto MergeByGooglePlusId(Guid id, string googlePlusId)
+        {
+            UserDto userDto;
+
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                User googlePlusUser = UserManager.MergeByGooglePlusId(id, googlePlusId);
+                userDto = UserDto.Create(googlePlusUser);
+
+                transaction.Commit();
+            }
+
+            return userDto;
+        }
+
+        [Route("{id:guid}")]
         [HttpPatch]
-        public void UpdateGooglePlusId(UserDto userDto)
+        public void Patch(Guid id, UserDto userDto)
         {            
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                UserManager.UpdateGooglePlusId(userDto.Id, userDto.GooglePlusId);
+                User user = UserManager.Get(id);
+
+                userDto.SetPatchableProperties(user);
+                UserManager.Update(user);
 
                 transaction.Commit();
             }
         }
 
+        [Route("HasLinkedGoogleAccount")]
+        [HttpGet]
+        public bool HasLinkedGoogleAccount(string googlePlusId)
+        {
+            bool hasLinkedGoogleAccount;
+
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                User user = UserManager.GetByGooglePlusId(googlePlusId);
+                hasLinkedGoogleAccount = user != null;
+
+                transaction.Commit();
+            }
+
+            return hasLinkedGoogleAccount;
+        }
     }
 }

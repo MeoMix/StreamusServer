@@ -23,17 +23,6 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
             User = Helpers.CreateUser();
         }
 
-        [Test]
-        public void Updates()
-        {
-            Playlist playlist = User.CreateAndAddPlaylist();
-            PlaylistManager.Save(playlist);
-
-            const string newTitle = "Existing Playlist 001";
-            PlaylistManager.UpdateTitle(playlist.Id, newTitle);
-            Assert.AreEqual(playlist.Title, newTitle);
-        }
-
         /// <summary>
         ///     Verifies that a Playlist can be deleted properly.
         /// </summary>

@@ -9,17 +9,16 @@ namespace Streamus_Web_API.Dto
     {
         public Guid PlaylistId { get; set; }
         public Guid Id { get; set; }
-        public int Sequence { get; set; }
-
-        //  Store Title on PlaylistItem as well as on Video because user might want to rename PlaylistItem.
+        public double? Sequence { get; set; }
         public string Title { get; set; }
-        public VideoDto Video { get; set; }
+        //  Client ID is used to associate a DTO with a client-side entity which wasn't saved before sending to the server.
+        public string Cid { get; set; }
+        public SongDto Song { get; set; }
 
         public PlaylistItemDto()
         {
             Id = Guid.Empty;
-            Title = string.Empty;
-            Sequence = -1;
+            Cid = string.Empty;
         }
 
         public static PlaylistItemDto Create(PlaylistItem playlistItem)
@@ -32,6 +31,12 @@ namespace Streamus_Web_API.Dto
         {
             List<PlaylistItemDto> playlistItemDtos = Mapper.Map<IEnumerable<PlaylistItem>, List<PlaylistItemDto>>(playlistItems);
             return playlistItemDtos;
+        }
+
+        public void SetPatchableProperties(PlaylistItem playlistItem)
+        {
+            if (Sequence.HasValue)
+                playlistItem.Sequence = (double)Sequence;
         }
     }
 }

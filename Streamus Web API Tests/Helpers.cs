@@ -35,11 +35,8 @@ namespace Streamus_Web_API_Tests
         /// </summary>
         public PlaylistItem CreateItemInPlaylist(Playlist playlist)
         {
-            Video videoNotInDatabase = CreateUnsavedVideoWithId();
-
             //  Create a new PlaylistItem and write it to the database.
-            string title = videoNotInDatabase.Title;
-            var playlistItem = new PlaylistItem(title, videoNotInDatabase);
+            var playlistItem = CreateUnsavedPlaylistItem();
 
             playlist.AddItem(playlistItem);
 
@@ -51,31 +48,40 @@ namespace Streamus_Web_API_Tests
         /// <summary>
         ///     Creates a new Video with a random Id, or a given Id if specified, saves it to the database and returns it.
         /// </summary>
-        public Video CreateUnsavedVideoWithId(string idOverride = "", string titleOverride = "")
+        public PlaylistItem CreateUnsavedPlaylistItem(string videoIdOverride = "", string titleOverride = "")
         {
             //  Create a random video ID to ensure the Video doesn't exist in the database currently.
-            string randomVideoId = idOverride == string.Empty ? Guid.NewGuid().ToString().Substring(0, 11) : idOverride;
+            string randomVideoId = videoIdOverride == string.Empty ? Guid.NewGuid().ToString().Substring(0, 11) : videoIdOverride;
             string title = titleOverride == string.Empty ? string.Format("Video {0}", randomVideoId) : titleOverride;
-            var video = new Video(randomVideoId, title, 999, "Author");
+            var playlistItem = new PlaylistItem(title, randomVideoId, "111", SongType.YouTube, title, 999, "Author");
 
-            return video;
+            return playlistItem;
         }
 
-        public User CreateUser()
+        public User CreateUser(string googlePlusId = "")
         {
-            User user = UserManager.CreateUser();
+            User user = UserManager.CreateUser(googlePlusId);
             return user;
+        }
+
+        public string GetRandomGooglePlusId()
+        {
+            Random randNum = new Random();
+            string googlePlusId = string.Join("", Enumerable.Repeat(0, 21).Select(i => randNum.Next(0, 9)).ToArray());
+
+            return googlePlusId;
         }
 
         /// <summary>
         ///     Generate a PlaylistDto which has the User as its parent.
         /// </summary>
         /// <returns></returns>
-        public PlaylistDto CreatePlaylistDto(Guid userIdOverride)
+        public PlaylistDto CreatePlaylistDto(Guid userIdOverride, string title)
         {
             var playlistDto = new PlaylistDto
             {
-                UserId = userIdOverride
+                UserId = userIdOverride,
+                Title = title
             };
 
             return playlistDto;
@@ -89,16 +95,10 @@ namespace Streamus_Web_API_Tests
         {
             User user = CreateUser();
 
-            Guid playlistId = user.Playlists.First().Id;
+            PlaylistItem playlistItem = CreateUnsavedPlaylistItem();
 
-            Video video = CreateUnsavedVideoWithId();
-            VideoDto videoDto = VideoDto.Create(video);
-
-            var playlistItemDto = new PlaylistItemDto
-            {
-                PlaylistId = playlistId,
-                Video = videoDto
-            };
+            var playlistItemDto = PlaylistItemDto.Create(playlistItem);
+            playlistItemDto.PlaylistId = user.Playlists.First().Id;
 
             return playlistItemDto;
         }
@@ -115,18 +115,14 @@ namespace Streamus_Web_API_Tests
                 playlistId = user.Playlists.First().Id;
             }
 
-            Video video = CreateUnsavedVideoWithId();
-            VideoDto videoDto = VideoDto.Create(video);
+            PlaylistItem playlistItem = CreateUnsavedPlaylistItem();
 
             List<PlaylistItemDto> playlistItemDtos = new List<PlaylistItemDto>();
 
             for (int i = 0; i < itemsToCreate; i++)
             {
-                var playlistItemDto = new PlaylistItemDto
-                {
-                    PlaylistId = playlistId,
-                    Video = videoDto
-                };
+                var playlistItemDto = PlaylistItemDto.Create(playlistItem);
+                playlistItemDto.PlaylistId = playlistId;
 
                 playlistItemDtos.Add(playlistItemDto);
             }

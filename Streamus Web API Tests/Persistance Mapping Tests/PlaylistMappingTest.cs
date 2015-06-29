@@ -12,7 +12,10 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
         {
             using (var transaction = Session.BeginTransaction())
             {
-                var createdUser = new User {GooglePlusId = "some id?", Name = "user name"};
+                var createdUser = new User
+                    {
+                        GooglePlusId = "some id?"
+                    };
 
                 Session.Save(createdUser);
 
@@ -25,7 +28,6 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
                 var playlistItem = new PlaylistItem
                     {
                         Playlist = playlist2,
-                        Video = new Video(),
                         Sequence = 200,
                     };
 

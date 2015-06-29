@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Streamus_Web_API.Domain.Interfaces;
 
 namespace Streamus_Web_API.Domain
 {
-    //[DataContract]
     public abstract class AbstractShareableDomainEntity : AbstractDomainEntity<Guid>, IShareableEntity
     {
+        public const int MaxShortIdLength = 12;
+        public const int MaxUrlFriendlyTitleLength = 40;
+
         public virtual string Title { get; set; }
 
         /// <summary>
@@ -17,20 +20,22 @@ namespace Streamus_Web_API.Domain
         /// <returns>A URL friendly title (e.g.): as_one_of_the_few_members_of_congress_who_have </returns>
         public virtual string GetUrlFriendlyTitle()
         {
-            string shortUrlSubstring = Title.Substring(0, Math.Min(Title.Length, 41));
+            //  Foreign characters can't be shown correctly so slugify the title to make it manageable.
+            string urlFriendlyTitle = Slugify(Title);
 
-            if (shortUrlSubstring.Length < Title.Length)
+            urlFriendlyTitle = urlFriendlyTitle.Substring(0, Math.Min(urlFriendlyTitle.Length, MaxUrlFriendlyTitleLength));
+
+            if (urlFriendlyTitle.Length < Title.Length)
             {
                 //  Might've truncated a word -- don't include that in the URL.
-                int indexOfLastSpace = shortUrlSubstring.LastIndexOf(" ");
+                int indexOfLastSpace = urlFriendlyTitle.LastIndexOf(" ");
 
                 if (indexOfLastSpace > -1)
                 {
-                    shortUrlSubstring = shortUrlSubstring.Substring(0, indexOfLastSpace);
+                    urlFriendlyTitle = urlFriendlyTitle.Substring(0, indexOfLastSpace);
                 }
             }
-
-            string urlFriendlyTitle = Slugify(shortUrlSubstring);
+            
             return urlFriendlyTitle;
         }
 
@@ -38,10 +43,10 @@ namespace Streamus_Web_API.Domain
         ///     Just trim off some of the Guid to make it pretty for the URL.
         ///     Essentially guaranteed unique when performing lookup with shortId + UrlFriendlyTitle
         /// </summary>
-        /// <returns>6 digits of Guid without hyphen</returns>
+        /// <returns>12 digits of Guid without hyphen</returns>
         public virtual string GetShortId()
         {
-            return Id.ToString().Replace("-", string.Empty).Substring(0, 12);
+            return Id.ToString().Replace("-", string.Empty).Substring(0, MaxShortIdLength);
         }
 
         public static string RemoveAccent(string text)
@@ -54,6 +59,9 @@ namespace Streamus_Web_API.Domain
         //  Inspired by: http://stackoverflow.com/questions/3275242/how-do-you-remove-invalid-characters-when-creating-a-friendly-url-ie-how-do-you
         public static string Slugify(string text)
         {
+            IdnMapping idnMapping = new IdnMapping();
+            text = idnMapping.GetAscii(text);
+
             text = RemoveAccent(text).ToLower();
 
             //  Remove all invalid characters.  

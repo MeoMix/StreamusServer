@@ -31,11 +31,13 @@ namespace Streamus_Web_API.Controllers
 
             using(ITransaction transaction = Session.BeginTransaction())
             {
-                VideoDto videoDto = playlistItemDto.Video;
-                Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
                 Playlist playlist = PlaylistManager.Get(playlistItemDto.PlaylistId);
 
-                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, video);
+                SongDto songDto = playlistItemDto.Song;
+
+                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Title,  playlistItemDto.Cid, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
+                playlistItemDto.SetPatchableProperties(playlistItem);
+
                 playlist.AddItem(playlistItem);
 
                 PlaylistItemManager.Save(playlistItem);
@@ -57,13 +59,11 @@ namespace Streamus_Web_API.Controllers
             int count = playlistItemDtos.Count;
 
             if (count > 1000)
-            {
                 Session.SetBatchSize(count / 10);
-            }
-            else if (count > 3)
-            {
-                Session.SetBatchSize(count / 3);
-            }
+            else if (count > 500)
+                Session.SetBatchSize(count / 5);
+            else if (count > 2)
+                Session.SetBatchSize(count / 2);
 
             using (ITransaction transaction = Session.BeginTransaction())
             {
@@ -77,15 +77,15 @@ namespace Streamus_Web_API.Controllers
 
                     foreach (var playlistItemDto in groupedPlaylistItemDtos)
                     {
-                        VideoDto videoDto = playlistItemDto.Video;
-                        Video video = new Video(videoDto.Id, videoDto.Title, videoDto.Duration, videoDto.Author);
+                        SongDto songDto = playlistItemDto.Song;
 
-                        PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Sequence, playlistItemDto.Title, video);
+                        PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Title, playlistItemDto.Cid, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
+                        playlistItemDto.SetPatchableProperties(playlistItem);
+                        
                         playlist.AddItem(playlistItem);
 
                         savedPlaylistItems.Add(playlistItem);
                     }
-
                 }
 
                 PlaylistItemManager.Save(savedPlaylistItems);
@@ -97,27 +97,19 @@ namespace Streamus_Web_API.Controllers
 
             return savedPlaylistItemDtos;
         }
-        
-        [Route("")]
-        [HttpPut]
-        public PlaylistItemDto Update(PlaylistItemDto playlistItemDto)
-        {
-            PlaylistItemDto updatedPlaylistItemDto;
 
+        [Route("{id:guid}")]
+        [HttpPatch]
+        public void Patch(Guid id, PlaylistItemDto playlistItemDto)
+        {
             using (ITransaction transaction = Session.BeginTransaction())
             {
-                PlaylistItem playlistItem = PlaylistItemManager.Get(playlistItemDto.Id);
-
-                playlistItem.Title = playlistItemDto.Title;
-                playlistItem.Sequence = playlistItemDto.Sequence;
-
+                PlaylistItem playlistItem = PlaylistItemManager.Get(id);
+                playlistItemDto.SetPatchableProperties(playlistItem);
                 PlaylistItemManager.Update(playlistItem);
 
-                updatedPlaylistItemDto = PlaylistItemDto.Create(playlistItem);
                 transaction.Commit();
             }
-
-            return updatedPlaylistItemDto;
         }
 
         [Route("{id:guid}")]
