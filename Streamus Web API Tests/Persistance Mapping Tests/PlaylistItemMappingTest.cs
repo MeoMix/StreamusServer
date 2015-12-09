@@ -27,11 +27,11 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
                 var playlistItem = new PlaylistItem
                     {
                         Playlist = playlist2,
-                        SongId = "some id",
+                        VideoId = "some id",
                         Author = "author",
                         Duration = 90,
                         Sequence = 300,
-                        Title = "My playlist item",
+                        VideoTitle = "some video title",
                     };
 
                 playlist2.AddItem(playlistItem);
@@ -43,7 +43,7 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
 
                 var savedPlaylistItem = Session.Get<PlaylistItem>(playlistItem.Id);
 
-                Assert.That(savedPlaylistItem.Title, Is.EqualTo("My playlist item"));
+                Assert.That(savedPlaylistItem.VideoTitle, Is.EqualTo("some video title"));
                 Assert.That(savedPlaylistItem.Id, Is.Not.EqualTo(Guid.Empty));
                 Assert.That(savedPlaylistItem.Sequence, Is.EqualTo(300));
 

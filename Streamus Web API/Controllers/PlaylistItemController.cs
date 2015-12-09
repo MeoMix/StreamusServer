@@ -32,10 +32,10 @@ namespace Streamus_Web_API.Controllers
             using(ITransaction transaction = Session.BeginTransaction())
             {
                 Playlist playlist = PlaylistManager.Get(playlistItemDto.PlaylistId);
+                // TODO: Backwards compatibility for old type.
+                VideoDto videoDto = playlistItemDto.Video ?? playlistItemDto.Song;
 
-                SongDto songDto = playlistItemDto.Song;
-
-                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Title,  playlistItemDto.Cid, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
+                PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id,  playlistItemDto.Cid, videoDto.Id, videoDto.Type, videoDto.Title, videoDto.Duration, videoDto.Author);
                 playlistItemDto.SetPatchableProperties(playlistItem);
 
                 playlist.AddItem(playlistItem);
@@ -77,9 +77,10 @@ namespace Streamus_Web_API.Controllers
 
                     foreach (var playlistItemDto in groupedPlaylistItemDtos)
                     {
-                        SongDto songDto = playlistItemDto.Song;
+                        // TODO: Backwards compatibility for old type.
+                        VideoDto videoDto = playlistItemDto.Video ?? playlistItemDto.Song;
 
-                        PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Title, playlistItemDto.Cid, songDto.Id, songDto.Type, songDto.Title, songDto.Duration, songDto.Author);
+                        PlaylistItem playlistItem = new PlaylistItem(playlistItemDto.Id, playlistItemDto.Cid, videoDto.Id, videoDto.Type, videoDto.Title, videoDto.Duration, videoDto.Author);
                         playlistItemDto.SetPatchableProperties(playlistItem);
                         
                         playlist.AddItem(playlistItem);

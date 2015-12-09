@@ -159,7 +159,7 @@
     <Compile Include="Domain\AbstractDomainEntity.cs" />
     <Compile Include="Domain\AbstractShareableEntity.cs" />
     <Compile Include="Domain\ClientError.cs" />
-    <Compile Include="Domain\SongType.cs" />
+    <Compile Include="Domain\VideoType.cs" />
     <Compile Include="Domain\Interfaces\IAbstractDomainEntity.cs" />
     <Compile Include="Domain\Interfaces\IDao.cs" />
     <Compile Include="Domain\Interfaces\IDaoFactory.cs" />
@@ -189,7 +189,7 @@
     <Compile Include="Domain\Validators\ShareCodeValidator.cs" />
     <Compile Include="Domain\Validators\UserValidator.cs" />
     <Compile Include="Dto\CopyPlaylistRequestDto.cs" />
-    <Compile Include="Dto\SongDto.cs" />
+    <Compile Include="Dto\VideoDto.cs" />
     <Compile Include="Dto\ClientErrorDto.cs" />
     <Compile Include="Dto\PlaylistDto.cs" />
     <Compile Include="Dto\PlaylistItemDto.cs" />

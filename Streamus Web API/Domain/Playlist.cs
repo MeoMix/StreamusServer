@@ -65,7 +65,7 @@ namespace Streamus_Web_API.Domain
             //  Item must be removed from other Playlist before AddItem affects it.
             if (playlistItem.Playlist != null && playlistItem.Playlist.Id != Id)
             {
-                string message = string.Format("Item {0} is already a child of Playlist {1}", playlistItem.Title, playlistItem.Playlist.Title);
+                string message = string.Format("Item {0} is already a child of Playlist {1}", playlistItem.VideoTitle, playlistItem.Playlist.Title);
                 throw new Exception(message);
             }
 

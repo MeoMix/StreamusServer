@@ -10,10 +10,10 @@ namespace Streamus_Web_API.Dto
         public Guid PlaylistId { get; set; }
         public Guid Id { get; set; }
         public double? Sequence { get; set; }
-        public string Title { get; set; }
         //  Client ID is used to associate a DTO with a client-side entity which wasn't saved before sending to the server.
         public string Cid { get; set; }
-        public SongDto Song { get; set; }
+        public VideoDto Video { get; set; }
+        public VideoDto Song { get; set; }
 
         public PlaylistItemDto()
         {

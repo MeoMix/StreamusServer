@@ -57,15 +57,25 @@ namespace Streamus_Web_API
             Mapper.CreateMap<ClientError, ClientErrorDto>();
 
             Mapper.CreateMap<Playlist, PlaylistDto>();
+            // TODO: Backwards compatibility for old type.
             Mapper.CreateMap<PlaylistItem, PlaylistItemDto>()
-                  .ForMember(dest => dest.Song, opt => opt.ResolveUsing(src => new SongDto
+                .ForMember(dest => dest.Song, opt => opt.ResolveUsing(src => src == null ? new VideoDto() : new VideoDto
+                    {
+                        Author = src.Author,
+                        Duration = src.Duration,
+                        Id = src.VideoId,
+                        Title = src.VideoTitle,
+                        Type = src.VideoType
+                    }))
+                    .ForMember(dest => dest.Video, opt => opt.ResolveUsing(src => src == null ? new VideoDto() : new VideoDto
                       {
                           Author = src.Author,
                           Duration = src.Duration,
-                          Id = src.SongId,
-                          Title = src.SongTitle,
-                          Type = src.SongType
+                          Id = src.VideoId,
+                          Title = src.VideoTitle,
+                          Type = src.VideoType
                       }));
+
 
             Mapper.CreateMap<ShareCode, ShareCodeDto>();
 

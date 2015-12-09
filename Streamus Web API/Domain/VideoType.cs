@@ -1,7 +1,7 @@
 ﻿
 namespace Streamus_Web_API.Domain
 {
-    public enum SongType
+    public enum VideoType
     {
         None = 0,
         YouTube = 1,

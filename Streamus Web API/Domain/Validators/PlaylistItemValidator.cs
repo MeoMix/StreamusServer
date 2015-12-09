@@ -7,11 +7,10 @@ namespace Streamus_Web_API.Domain.Validators
         public PlaylistItemValidator()
         {
             RuleFor(playlistItem => playlistItem.Playlist).NotNull();
-            RuleFor(playlistItem => playlistItem.Title).NotNull().Length(1, 255);
             RuleFor(playlistItem => playlistItem.Sequence).GreaterThanOrEqualTo(0);
-            RuleFor(playlistItem => playlistItem.SongId).NotNull().Length(1, 255);
-            RuleFor(playlistItem => playlistItem.SongType).NotEqual(SongType.None);
-            RuleFor(playlistItem => playlistItem.SongTitle).NotNull().Length(1, 255);
+            RuleFor(playlistItem => playlistItem.VideoId).NotNull().Length(1, 255);
+            RuleFor(playlistItem => playlistItem.VideoType).NotEqual(VideoType.None);
+            RuleFor(playlistItem => playlistItem.VideoTitle).NotNull().Length(1, 255);
             RuleFor(playlistItem => playlistItem.Duration).GreaterThan(0);
             RuleFor(playlistItem => playlistItem.Author).NotNull().Length(1, 255);
         }

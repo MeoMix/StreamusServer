@@ -19,7 +19,7 @@ namespace Streamus_Web_API_Tests.Tests.PersistanceMappingTests
                         GooglePlusId = "some id?"
                     };
 
-                var playlist = new Playlist("boss songs")
+                var playlist = new Playlist("boss videos")
                     {
                         User = createdUser
                     };

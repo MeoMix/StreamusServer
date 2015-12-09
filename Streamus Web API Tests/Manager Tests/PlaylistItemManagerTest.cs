@@ -115,14 +115,14 @@ namespace Streamus_Web_API_Tests.Tests.Manager_Tests
             PlaylistItem playlistItem = Helpers.CreateItemInPlaylist(Playlist);
 
             //  Change the item's title.
-            const string updatedItemTitle = "Updated PlaylistItem title";
-            playlistItem.Title = updatedItemTitle;
+            const string updatedVideoTitle = "Updated PlaylistItem title";
+            playlistItem.VideoTitle = updatedVideoTitle;
 
             PlaylistItemManager.Update(playlistItem);
 
             //  Check the title of the item from the database -- make sure it updated.
             PlaylistItem itemFromDatabase = PlaylistItemManager.Get(playlistItem.Id);
-            Assert.AreEqual(itemFromDatabase.Title, updatedItemTitle);
+            Assert.AreEqual(itemFromDatabase.VideoTitle, updatedVideoTitle);
         }
 
         /// <summary>

@@ -14,14 +14,12 @@ namespace Streamus_Web_API.Controllers
     {
         private readonly IPlaylistManager PlaylistManager;
         private readonly IUserManager UserManager;
-        private readonly IShareCodeManager ShareCodeManager;
 
         public PlaylistController(ILog logger, ISession session, IManagerFactory managerFactory)
             : base(logger, session)
         {
             PlaylistManager = managerFactory.GetPlaylistManager(session);
             UserManager = managerFactory.GetUserManager(session);
-            ShareCodeManager = managerFactory.GetShareCodeManager(session);
         }
         
         [Route("")]
@@ -42,7 +40,9 @@ namespace Streamus_Web_API.Controllers
                 List<PlaylistItem> playlistItems = new List<PlaylistItem>();
                 foreach (PlaylistItemDto dto in playlistDto.Items)
                 {
-                    PlaylistItem playlistItem = new PlaylistItem(dto.Id, dto.Title, dto.Cid, dto.Song.Id, dto.Song.Type, dto.Song.Title, dto.Song.Duration, dto.Song.Author);
+                    // TODO: Backwards compatibility for old type.
+                    VideoDto videoDto = dto.Video ?? dto.Song;
+                    PlaylistItem playlistItem = new PlaylistItem(dto.Id, dto.Cid, videoDto.Id, videoDto.Type, videoDto.Title, videoDto.Duration, videoDto.Author);
                     dto.SetPatchableProperties(playlistItem);
                     playlistItems.Add(playlistItem);
                 }
