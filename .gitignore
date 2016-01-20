@@ -168,3 +168,4 @@ pip-log.txt
 .DS_Store
 Streamus Web API/Web.config
 Streamus Web API/Web.config
+/.vs/config/applicationhost.config
