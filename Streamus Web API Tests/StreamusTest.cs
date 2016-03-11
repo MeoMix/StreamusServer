@@ -10,45 +10,45 @@ using System.Web.Http.Dependencies;
 
 namespace Streamus_Web_API_Tests
 {
-    public abstract class StreamusTest
+  public abstract class StreamusTest
+  {
+    protected ILog Logger;
+    protected IDaoFactory DaoFactory;
+    protected IManagerFactory ManagerFactory;
+    protected Helpers Helpers;
+    protected ISession Session;
+
+    private HttpRequestMessage _httpRequestMessage;
+
+    [TestFixtureSetUp]
+    public void TestFixtureSetUp()
     {
-        protected ILog Logger;
-        protected IDaoFactory DaoFactory;
-        protected IManagerFactory ManagerFactory;
-        protected Helpers Helpers;
-        protected ISession Session;
-
-        private HttpRequestMessage HttpRequestMessage;
-
-        [TestFixtureSetUp]
-        public void TestFixtureSetUp()
-        {
-            StreamusWebApi.InitializeApplication();
-        }
-
-        [SetUp]
-        public void SetUp()
-        {
-            HttpConfiguration httpConfiguration = new HttpConfiguration();
-            AutofacRegistrations.RegisterAndSetResolver(httpConfiguration);
-
-            HttpRequestMessage = new HttpRequestMessage();
-            HttpRequestMessage.SetConfiguration(httpConfiguration);
-
-            IDependencyScope dependencyScope = HttpRequestMessage.GetDependencyScope();
-
-            Logger = (ILog)dependencyScope.GetService(typeof(ILog));
-            DaoFactory = (IDaoFactory)dependencyScope.GetService(typeof(IDaoFactory));
-            Session = (ISession)dependencyScope.GetService(typeof(ISession));
-            ManagerFactory = (IManagerFactory)dependencyScope.GetService(typeof(IManagerFactory));
-
-            Helpers = new Helpers(Session, ManagerFactory);
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            HttpRequestMessage.Dispose();
-        }
+      StreamusWebApi.InitializeApplication();
     }
+
+    [SetUp]
+    public void SetUp()
+    {
+      HttpConfiguration httpConfiguration = new HttpConfiguration();
+      AutofacRegistrations.RegisterAndSetResolver(httpConfiguration);
+
+      _httpRequestMessage = new HttpRequestMessage();
+      _httpRequestMessage.SetConfiguration(httpConfiguration);
+
+      IDependencyScope dependencyScope = _httpRequestMessage.GetDependencyScope();
+
+      Logger = (ILog)dependencyScope.GetService(typeof(ILog));
+      DaoFactory = (IDaoFactory)dependencyScope.GetService(typeof(IDaoFactory));
+      Session = (ISession)dependencyScope.GetService(typeof(ISession));
+      ManagerFactory = (IManagerFactory)dependencyScope.GetService(typeof(IManagerFactory));
+
+      Helpers = new Helpers(Session, ManagerFactory);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+      _httpRequestMessage.Dispose();
+    }
+  }
 }

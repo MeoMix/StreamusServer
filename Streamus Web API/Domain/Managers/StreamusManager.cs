@@ -2,13 +2,13 @@
 
 namespace Streamus_Web_API.Domain.Managers
 {
-    public abstract class StreamusManager
-    {
-        protected readonly ILog Logger;
+  public abstract class StreamusManager
+  {
+    protected readonly ILog Logger;
 
-        protected StreamusManager(ILog logger)
-        {
-            Logger = logger;
-        }
+    protected StreamusManager(ILog logger)
+    {
+      Logger = logger;
     }
+  }
 }

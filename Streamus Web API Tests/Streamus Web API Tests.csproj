@@ -68,6 +68,10 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -122,10 +126,12 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Controller Tests\ClientErrorControllerTest.cs" />
+    <Compile Include="Controller Tests\EmailControllerTest.cs" />
     <Compile Include="Controller Tests\PlaylistControllerTest.cs" />
     <Compile Include="Controller Tests\PlaylistItemControllerTest.cs" />
     <Compile Include="Controller Tests\UserControllerTest.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="Manager Tests\EmailManagerTest.cs" />
     <Compile Include="Manager Tests\PlaylistItemManagerTest.cs" />
     <Compile Include="Manager Tests\PlaylistManagerTest.cs" />
     <Compile Include="Manager Tests\ShareCodeManagerTest.cs" />
@@ -137,6 +143,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResetDatabase.cs" />
     <Compile Include="Routing Tests\ClientErrorRoutingTest.cs" />
+    <Compile Include="Routing Tests\EmailRoutingTest.cs" />
     <Compile Include="Routing Tests\PlaylistItemRoutingTest.cs" />
     <Compile Include="Routing Tests\PlaylistRoutingTest.cs" />
     <Compile Include="Routing Tests\ShareCodeRoutingTest.cs" />
@@ -148,9 +155,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Streamus Web API\Streamus Web API.csproj">

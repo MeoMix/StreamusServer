@@ -19,6 +19,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -135,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\ClientErrorController.cs" />
     <Compile Include="Controllers\PlaylistController.cs" />
     <Compile Include="Controllers\PlaylistItemController.cs" />
@@ -159,6 +161,9 @@
     <Compile Include="Domain\AbstractDomainEntity.cs" />
     <Compile Include="Domain\AbstractShareableEntity.cs" />
     <Compile Include="Domain\ClientError.cs" />
+    <Compile Include="Domain\Email.cs" />
+    <Compile Include="Domain\Interfaces\IEmailManager.cs" />
+    <Compile Include="Domain\Managers\EmailManager.cs" />
     <Compile Include="Domain\VideoType.cs" />
     <Compile Include="Domain\Interfaces\IAbstractDomainEntity.cs" />
     <Compile Include="Domain\Interfaces\IDao.cs" />
@@ -189,6 +194,7 @@
     <Compile Include="Domain\Validators\ShareCodeValidator.cs" />
     <Compile Include="Domain\Validators\UserValidator.cs" />
     <Compile Include="Dto\CopyPlaylistRequestDto.cs" />
+    <Compile Include="Dto\ContactDto.cs" />
     <Compile Include="Dto\VideoDto.cs" />
     <Compile Include="Dto\ClientErrorDto.cs" />
     <Compile Include="Dto\PlaylistDto.cs" />
@@ -215,7 +221,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

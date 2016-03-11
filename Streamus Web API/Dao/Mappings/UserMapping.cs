@@ -4,28 +4,28 @@ using System;
 
 namespace Streamus_Web_API.Dao.Mappings
 {
-    public class UserMapping : ClassMap<User>
+  public class UserMapping : ClassMap<User>
+  {
+    public UserMapping()
     {
-        public UserMapping()
-        {
-            Table("[Users]");
+      Table("[Users]");
 
-            Not.LazyLoad();
+      Not.LazyLoad();
 
-            Id(e => e.Id).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
+      Id(e => e.Id).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
-            //  Only update properties which have changed.
-            DynamicUpdate();
+      //  Only update properties which have changed.
+      DynamicUpdate();
 
-            Map(e => e.GooglePlusId).Not.Nullable().Length(User.MaxGooglePlusIdLength);
-            Map(e => e.Language).Not.Nullable().Length(User.MaxLanguageLength);
+      Map(e => e.GooglePlusId).Not.Nullable().Length(User.MaxGooglePlusIdLength);
+      Map(e => e.Language).Not.Nullable().Length(User.MaxLanguageLength);
 
-            HasMany(u => u.Playlists)
-                .Inverse()
-                //  100% of the time a user is loaded their playlists are sent back to the server, so it's OK to do this.
-                .Not.LazyLoad()
-                .Cascade.AllDeleteOrphan()
-                .KeyColumn("UserId");
-        }
+      HasMany(u => u.Playlists)
+          .Inverse()
+          //  100% of the time a user is loaded their playlists are sent back to the server, so it's OK to do this.
+          .Not.LazyLoad()
+          .Cascade.AllDeleteOrphan()
+          .KeyColumn("UserId");
     }
+  }
 }

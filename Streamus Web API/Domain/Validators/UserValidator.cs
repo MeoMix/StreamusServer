@@ -2,13 +2,13 @@
 
 namespace Streamus_Web_API.Domain.Validators
 {
-    public class UserValidator : AbstractValidator<User>
+  public class UserValidator : AbstractValidator<User>
+  {
+    public UserValidator()
     {
-        public UserValidator()
-        {
-            RuleFor(user => user.GooglePlusId).NotNull();
-            RuleFor(user => user.Playlists).NotNull();
-            RuleFor(user => user.Language).NotNull().Length(0, 10);
-        }
+      RuleFor(user => user.GooglePlusId).NotNull();
+      RuleFor(user => user.Playlists).NotNull();
+      RuleFor(user => user.Language).NotNull().Length(0, 10);
     }
+  }
 }

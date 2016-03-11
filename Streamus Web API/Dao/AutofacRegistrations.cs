@@ -9,28 +9,28 @@ using System.Web.Http;
 
 namespace Streamus_Web_API.Dao
 {
-    public class AutofacRegistrations
+  public class AutofacRegistrations
+  {
+    public static void RegisterAndSetResolver(HttpConfiguration httpConfiguration)
     {
-        public static void RegisterAndSetResolver(HttpConfiguration httpConfiguration)
-        {
-            httpConfiguration.MapHttpAttributeRoutes();
+      httpConfiguration.MapHttpAttributeRoutes();
 
-            var containerBuilder = new ContainerBuilder();
+      var containerBuilder = new ContainerBuilder();
 
-            containerBuilder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+      containerBuilder.RegisterApiControllers(Assembly.GetExecutingAssembly());
 
-            containerBuilder.Register(x => new NHibernateConfiguration().Configure().BuildSessionFactory()).SingleInstance();
+      containerBuilder.Register(x => new NHibernateConfiguration().Configure().BuildSessionFactory()).SingleInstance();
 
-            containerBuilder.RegisterType<NHibernateDaoFactory>().As<IDaoFactory>().InstancePerRequest();
-            containerBuilder.RegisterType<StreamusManagerFactory>().As<IManagerFactory>().InstancePerRequest();
-            containerBuilder.Register(x => x.Resolve<ISessionFactory>().OpenSession()).InstancePerRequest();
-            containerBuilder.Register(x => LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType)).InstancePerRequest();
-            
-            ILifetimeScope container = containerBuilder.Build();
+      containerBuilder.RegisterType<NHibernateDaoFactory>().As<IDaoFactory>().InstancePerRequest();
+      containerBuilder.RegisterType<StreamusManagerFactory>().As<IManagerFactory>().InstancePerRequest();
+      containerBuilder.Register(x => x.Resolve<ISessionFactory>().OpenSession()).InstancePerRequest();
+      containerBuilder.Register(x => LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType)).InstancePerRequest();
 
-            httpConfiguration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+      ILifetimeScope container = containerBuilder.Build();
 
-            httpConfiguration.EnsureInitialized();
-        }
+      httpConfiguration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+
+      httpConfiguration.EnsureInitialized();
     }
+  }
 }

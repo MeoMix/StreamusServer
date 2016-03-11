@@ -5,44 +5,44 @@ using Streamus_Web_API.Domain.Validators;
 
 namespace Streamus_Web_API.Domain
 {
-    public enum EntityType
+  public enum EntityType
+  {
+    None = -1,
+    Playlist = 0
+  }
+
+  public class ShareCode : AbstractDomainEntity<Guid>
+  {
+    public virtual EntityType EntityType { get; set; }
+    public virtual Guid EntityId { get; set; }
+    public virtual string ShortId { get; set; }
+    public virtual string UrlFriendlyEntityTitle { get; set; }
+
+    public ShareCode()
     {
-        None = -1,
-        Playlist = 0
+      Id = Guid.Empty;
+      EntityId = Guid.Empty;
+      EntityType = EntityType.None;
+      ShortId = string.Empty;
+      UrlFriendlyEntityTitle = string.Empty;
     }
 
-    public class ShareCode : AbstractDomainEntity<Guid>
+    public ShareCode(IShareableEntity shareableEntity)
+        : this()
     {
-        public virtual EntityType EntityType { get; set; }
-        public virtual Guid EntityId { get; set; }
-        public virtual string ShortId { get; set; }
-        public virtual string UrlFriendlyEntityTitle { get; set; }
+      if (!(shareableEntity is Playlist))
+        throw new NotSupportedException("Only Playlists are shareable currently.");
 
-        public ShareCode()
-        {
-            Id = Guid.Empty;
-            EntityId = Guid.Empty;
-            EntityType = EntityType.None;
-            ShortId = string.Empty;
-            UrlFriendlyEntityTitle = string.Empty;
-        }
-
-        public ShareCode(IShareableEntity shareableEntity)
-            : this()
-        {
-            if (!(shareableEntity is Playlist))
-                throw new NotSupportedException("Only Playlists are shareable currently.");
-                
-            EntityType = EntityType.Playlist;
-            EntityId = shareableEntity.Id;
-            UrlFriendlyEntityTitle = shareableEntity.GetUrlFriendlyTitle();
-            ShortId = shareableEntity.GetShortId();
-        }
-
-        public virtual void ValidateAndThrow()
-        {
-            var validator = new ShareCodeValidator();
-            validator.ValidateAndThrow(this);
-        }
+      EntityType = EntityType.Playlist;
+      EntityId = shareableEntity.Id;
+      UrlFriendlyEntityTitle = shareableEntity.GetUrlFriendlyTitle();
+      ShortId = shareableEntity.GetShortId();
     }
+
+    public virtual void ValidateAndThrow()
+    {
+      var validator = new ShareCodeValidator();
+      validator.ValidateAndThrow(this);
+    }
+  }
 }
